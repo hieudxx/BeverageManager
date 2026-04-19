@@ -1,11 +1,6 @@
+package ViewModels;
 
-package DomainModels;
-
-/**
- *
- * @author Admin
- */
-public class NhanVien {
+public class NhanVienViewModel {
 
     private String id;
     private String maNhanVien;
@@ -13,14 +8,12 @@ public class NhanVien {
     private String matKhau;
     private String hoTen;
     private String vaiTro;
-//    ChucVu cv;
     private boolean trangThai;
-    
 
-    public NhanVien() {
+    public NhanVienViewModel() {
     }
 
-    public NhanVien(String id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
+    public NhanVienViewModel(String id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;
         this.tenDangNhap = tenDangNhap;
@@ -29,8 +22,6 @@ public class NhanVien {
         this.vaiTro = vaiTro;
         this.trangThai = trangThai;
     }
-
-   
 
     public String getId() {
         return id;
@@ -72,14 +63,6 @@ public class NhanVien {
         this.hoTen = hoTen;
     }
 
-    public boolean isTrangThai() {
-        return trangThai;
-    }
-
-    public void setTrangThai(boolean trangThai) {
-        this.trangThai = trangThai;
-    }
-
     public String getVaiTro() {
         return vaiTro;
     }
@@ -87,5 +70,15 @@ public class NhanVien {
     public void setVaiTro(String vaiTro) {
         this.vaiTro = vaiTro;
     }
+
+    public boolean isTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
+    }
+    
+    
 
 }
