@@ -14,7 +14,7 @@ import java.util.List;
 public interface INhanVienRes {
     List<NhanVien> getALL();
     
-    NhanVien getOne(String TaiKhoan);
+    NhanVien getOne(String taiKhoan);
     
     boolean insert(NhanVien nv);
     boolean update(NhanVien nv);
