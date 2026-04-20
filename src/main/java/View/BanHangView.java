@@ -2,10 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ViewModels;
+package View;
 
 import Services.SanPhamServices;
 import Services.impl.SanPhamServicesImpl;
+import ViewModels.SanPhamResponse;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
@@ -124,36 +125,95 @@ public class BanHangView extends JFrame {
         add(mainPanel, BorderLayout.CENTER);
     }
     
-    private void loadDataToGrid() {
-    // 1. Xóa hết các card cũ (nếu có)
-    gridProduct.removeAll();
-    
-    // 2. Lấy dữ liệu từ Database thông qua Service
-    List<SanPhamResponse> list = spService.getAll();
-    
-    // 3. Duyệt danh sách và tạo Card
-    for (SanPhamResponse sp : list) {
-        // Chỉ hiển thị sản phẩm đang bán và cho phép hiển thị
-        if (sp.isDangBan() && sp.isTrangThaiHienThi()) {
-            String giaVND = String.format("%,.0f VNĐ", sp.getGiaCoBan());
-            JPanel card = createProductCard(sp.getTenSanPham(), giaVND);
-            
-            // Thêm sự kiện click (Tùy chọn: Để thêm vào giỏ hàng sau này)
-            card.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    System.out.println("Đã chọn: " + sp.getTenSanPham());
-                    // Logic thêm vào giỏ hàng viết ở đây
-                }
-            });
-            
-            gridProduct.add(card);
+private void loadDataToGrid() {
+        gridProduct.removeAll();
+        List<SanPhamResponse> list = spService.getAll();
+        
+        for (SanPhamResponse sp : list) {
+            if (sp.isDangBan() && sp.isTrangThaiHienThi()) {
+                String giaVND = String.format("%,.0f VNĐ", sp.getGiaCoBan());
+                
+                // Lấy tên file từ DB, nếu null/trống thì dùng ảnh mặc định
+                // Ví dụ trong DB lưu: HongTraDaoNhietDoi.png
+                String tenFile = (sp.getHinhAnh() == null || sp.getHinhAnh().isBlank()) 
+                                 ? "default.png" : sp.getHinhAnh();
+
+                JPanel card = createProductCard(sp.getTenSanPham(), giaVND, tenFile);
+
+                card.addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        System.out.println("Đã chọn: " + sp.getTenSanPham());
+                    }
+                });
+                gridProduct.add(card);
+            }
         }
+        gridProduct.revalidate();
+        gridProduct.repaint();
     }
-    
-    // 4. Vẽ lại giao diện
-    gridProduct.revalidate();
-    gridProduct.repaint();
-}
+
+private JPanel createProductCard(String name, String price, String imagePath) {
+        // Giảm khoảng cách dọc (vgap) giữa các vùng xuống 2 hoặc 0 nếu muốn khít hơn
+        JPanel card = new JPanel(new BorderLayout(0, 2)); 
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230)));
+        
+        // Giữ nguyên kích thước Card đã tăng chiều cao
+        card.setPreferredSize(new Dimension(180, 300)); 
+        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // 1. Tên sản phẩm (NORTH)
+        JLabel lblName = new JLabel("<html><center>" + name + "</center></html>", SwingConstants.CENTER);
+        lblName.setFont(new Font("Arial", Font.BOLD, 13));
+        // Cố định chiều cao vùng tên để không chiếm chỗ của ảnh
+        lblName.setPreferredSize(new Dimension(0, 48)); 
+        card.add(lblName, BorderLayout.NORTH);
+
+        // 2. Khu vực ảnh (SỬA ĐỂ GIẢM KHOẢNG XÁM)
+        
+        // JLabel thực sự chứa ảnh
+        JLabel lblImageContent = new JLabel("", SwingConstants.CENTER);
+        
+        // Bỏ màu xám ở đây, chuyển sang JPanel bọc ngoài
+        lblImageContent.setOpaque(false); 
+
+        // JPanel bọc ngoài để căn giữa ảnh và nhận màu nền xám
+        // Dùng GridBagLayout để JLabel ảnh không bị kéo giãn
+        JPanel pnlImageWrapper = new JPanel(new GridBagLayout()); 
+        // Đặt màu nền xám nhạt tại đây (vùng bao quanh ảnh)
+        pnlImageWrapper.setBackground(new Color(245, 245, 245));
+        pnlImageWrapper.add(lblImageContent);
+
+        try {
+            java.net.URL imgURL = getClass().getResource("/images/" + imagePath);
+            if (imgURL != null) {
+                ImageIcon icon = new ImageIcon(imgURL);
+                // Kích thước scale ảnh, bạn có thể tăng chiều cao lên 200 hoặc hơn
+                // để ảnh chiếm nhiều chỗ hơn, giảm vùng xám bao quanh
+                Image img = icon.getImage().getScaledInstance(160, 200, Image.SCALE_SMOOTH);
+                lblImageContent.setIcon(new ImageIcon(img));
+            } else {
+                lblImageContent.setText("NOT FOUND");
+                // Thêm padding cho chữ NOT FOUND để không dính sát mép xám
+                lblImageContent.setBorder(new EmptyBorder(10, 10, 10, 10));
+            }
+        } catch (Exception e) {
+            lblImageContent.setText("ERROR");
+        }
+        
+        // Thêm JPanel bọc ảnh vào vùng CENTER của Card
+        card.add(pnlImageWrapper, BorderLayout.CENTER);
+
+        // 3. Giá tiền (SOUTH)
+        JLabel lblPrice = new JLabel(price, SwingConstants.CENTER);
+        lblPrice.setForeground(new Color(211, 47, 47));
+        lblPrice.setFont(new Font("Arial", Font.BOLD, 14));
+        // Điều chỉnh padding để khoảng cách dưới đẹp hơn
+        lblPrice.setBorder(new EmptyBorder(5, 0, 10, 0)); 
+        card.add(lblPrice, BorderLayout.SOUTH);
+
+        return card;
+    }
     
     private JPanel createSidebar() {
         JPanel p = new JPanel(new GridBagLayout());
@@ -238,34 +298,6 @@ public class BanHangView extends JFrame {
 
         return p;
     }
-
-private JPanel createProductCard(String name, String price) {
-    JPanel card = new JPanel(new BorderLayout(0, 5));
-    card.setBackground(Color.WHITE);
-    card.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230)));
-    card.setPreferredSize(new Dimension(180, 250));
-    card.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Đổi trỏ chuột khi hover
-    
-
-    JLabel lblName = new JLabel("<html><center>" + name + "</center></html>", SwingConstants.CENTER);
-    lblName.setFont(new Font("Arial", Font.BOLD, 13));
-    lblName.setPreferredSize(new Dimension(0, 40)); // Cố định chiều cao cho tên dài
-    
-    card.add(lblName, BorderLayout.NORTH);
-
-    // Khu vực ảnh (Nếu có file ảnh thật thì dùng ImageIcon)
-    JPanel imgPanel = new JPanel(new GridBagLayout()); 
-    imgPanel.setBackground(new Color(245, 245, 245));
-    imgPanel.add(new JLabel("NO IMAGE")); // Bạn có thể thay bằng logic load ảnh từ thư mục
-    card.add(imgPanel, BorderLayout.CENTER);
-
-    JLabel lblPrice = new JLabel(price, SwingConstants.CENTER);
-    lblPrice.setForeground(new Color(211, 47, 47)); // Màu đỏ cho giá tiền
-    lblPrice.setFont(new Font("Arial", Font.BOLD, 12));
-    card.add(lblPrice, BorderLayout.SOUTH);
-
-    return card;
-}
 
     private JButton createYellowBtn(String text) {
         JButton b = new JButton(text);
