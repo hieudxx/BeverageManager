@@ -8,12 +8,12 @@ public class NhanVienViewModel {
     private String matKhau;
     private String hoTen;
     private String vaiTro;
-    private boolean trangThai;
+    private String trangThai;
 
     public NhanVienViewModel() {
     }
 
-    public NhanVienViewModel(String id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
+    public NhanVienViewModel(String id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, String trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;
         this.tenDangNhap = tenDangNhap;
@@ -22,6 +22,8 @@ public class NhanVienViewModel {
         this.vaiTro = vaiTro;
         this.trangThai = trangThai;
     }
+
+    
 
     public String getId() {
         return id;
@@ -71,13 +73,14 @@ public class NhanVienViewModel {
         this.vaiTro = vaiTro;
     }
 
-    public boolean isTrangThai() {
+    public String getTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(boolean trangThai) {
+    public void setTrangThai(String trangThai) {
         this.trangThai = trangThai;
     }
+
     
     
 
