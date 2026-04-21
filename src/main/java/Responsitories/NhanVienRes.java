@@ -1,8 +1,3 @@
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Responsitories;
 
 import DomainModels.NhanVien;
@@ -14,10 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Admin
- */
 public class NhanVienRes {
 
     public List<NhanVienViewModel> getAll() {
@@ -32,8 +23,8 @@ public class NhanVienRes {
                 String matKhau = rs.getString(4);
                 String hoTen = rs.getString(5);
                 String vaiTro = rs.getString(6);
-                boolean trangThai = rs.getBoolean(7);
-                NhanVienViewModel nv = new NhanVienViewModel(id, maNhanVien, tenDangNhap, matKhau, hoTen, vaiTro, trangThai);
+                int trangThai = rs.getInt(7);
+                NhanVienViewModel nv = new NhanVienViewModel(id, maNhanVien, tenDangNhap, matKhau, hoTen, vaiTro, trangThai == 1 ? "Đang làm" : "Đã nghỉ");
                 listNV.add(nv);
             }
             return listNV;
@@ -55,8 +46,8 @@ public class NhanVienRes {
                 String matKhau = rs.getString(4);
                 String hoTen = rs.getString(5);
                 String vaiTro = rs.getString(6);
-                boolean trangThai = rs.getBoolean(7);
-                nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai);
+                 int trangThai = rs.getInt(7);
+                nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai == 1 ? "Đang làm" : "Đã nghỉ");
 
             }
             return nv;
@@ -166,8 +157,8 @@ public class NhanVienRes {
                 String matKhau = rs.getString(4);
                 String hoTen = rs.getString(5);
                 String vaiTro = rs.getString(6);
-                boolean trangThai = rs.getBoolean(7);
-                NhanVienViewModel nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai);
+                 int trangThai = rs.getInt(7);
+                NhanVienViewModel nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai == 1 ? "Đang làm" : "Đã nghỉ");
                 listNv.add(nv);
             }
             return listNv;
@@ -176,4 +167,3 @@ public class NhanVienRes {
         }
     }
 }
-
