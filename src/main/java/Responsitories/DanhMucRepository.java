@@ -13,5 +13,8 @@ import java.util.List;
  * @author ADMIN
  */
 public interface DanhMucRepository {
-    List<DanhMuc> getAllDanhMuc();
+    List<DanhMuc> getAll();
+    boolean add(DanhMuc dm);
+    boolean update(DanhMuc dm, String maDM);
+    boolean delete(String maDM);
 }

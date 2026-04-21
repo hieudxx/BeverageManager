@@ -5,12 +5,21 @@
 package Services;
 
 import DomainModels.DanhMuc;
-import java.util.ArrayList;
+import ViewModels.DanhMucViewModel;
+import java.util.List;
 
 /**
  *
  * @author ADMIN
  */
 public interface DanhMucServices {
-    public ArrayList<DanhMuc> getAllDanhMuc();
+    // Domain
+    List<DanhMuc> getAll();
+    public boolean add(DanhMuc dm);
+    public boolean update(DanhMuc dm, String maDM);
+    public boolean delete(String maDM);
+    
+    // View
+    List<DanhMucViewModel> getAllView();
+    List<DanhMucViewModel> search(String keyword);
 }
