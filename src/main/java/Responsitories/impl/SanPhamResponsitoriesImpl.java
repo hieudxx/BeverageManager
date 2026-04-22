@@ -35,6 +35,7 @@ public class SanPhamResponsitoriesImpl implements SanPhamResponsitories{
                 sp.setHinhAnh(rs.getString("hinh_anh"));
                 sp.setDangBan(rs.getBoolean("dang_ban"));
                 sp.setTrangThaiHienThi(rs.getBoolean("trang_thai_hien_thi"));
+                sp.setTenDanhMuc(rs.getString("ten_danh_muc"));
                 listSP.add(sp);
             }
             return listSP;
