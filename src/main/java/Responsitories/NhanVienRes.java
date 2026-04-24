@@ -13,7 +13,7 @@ public class NhanVienRes {
 
     public List<NhanVienViewModel> getAll() {
         List<NhanVienViewModel> listNV = new ArrayList<>();
-        String sql = "select nv.Id, nv.ma_nhan_vien, nv.ten_dang_nhap, nv.mat_khau, nv.ho_ten, nv.vai_tro, nv.trang_thai_lam_viec  from NhanVien";
+        String sql = "select id, ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten, vai_tro, trang_thai_lam_viec FROM NhanVien";
         try {
             ResultSet rs = JDBC_Helper.selectTongQuat(sql);
             while (rs.next()) {
