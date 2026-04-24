@@ -4,6 +4,7 @@
  */
 package Responsitories;
 
+import DomainModels.SanPham;
 import ViewModels.SanPhamResponse;
 import java.util.List;
 
@@ -16,4 +17,7 @@ public interface SanPhamResponsitories {
     List<SanPhamResponse> getAll();
     SanPhamResponse getOne(String ma);
     
+    boolean add(SanPham sp);
+    boolean update(SanPham sp);
+    boolean delete(String maSP);
 }

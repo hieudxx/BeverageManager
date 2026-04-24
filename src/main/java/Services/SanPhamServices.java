@@ -4,10 +4,15 @@
  */
 package Services;
 
+import DomainModels.SanPham;
 import ViewModels.SanPhamResponse;
 import java.util.List;
 
 public interface SanPhamServices {
     List<SanPhamResponse> getAll();
     SanPhamResponse getOne(String ma);
+    boolean add(SanPham sp);
+    boolean update(SanPham sp);
+    boolean delete(String maSP);
+    List<SanPhamResponse> search (String keyword);
 }
