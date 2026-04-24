@@ -4,18 +4,34 @@
  */
 package View;
 
+import DomainModels.HoaDon;
+import DomainModels.NhanVien;
+import Services.HoaDonService;
 import Services.SanPhamServices;
+import Services.impl.HoaDonServiceImpl;
 import Services.impl.SanPhamServicesImpl;
 import ViewModels.SanPhamResponse;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class BanHangView extends JFrame {
     
     private SanPhamServices spService = new SanPhamServicesImpl();
+    private HoaDonService hoaDonService = new HoaDonServiceImpl();
+    
+    // Components cho bảng Hóa Đơn Chờ
+    private JTable tblPending;
+    private DefaultTableModel dtmPending;
+    
+    // Thêm vào phần khai báo thuộc tính Class ở đầu file
+private JTextField txtSdt; // Ô nhập SĐT
+private JLabel lblMaHoaDon; // Label hiển thị mã HD hoặc trạng thái "Vui lòng tạo"
+    
     private JPanel gridProduct;
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42); 
     private final Color COLOR_ORANGE_ACTIVE = new Color(243, 156, 18); 
@@ -24,6 +40,7 @@ public class BanHangView extends JFrame {
 
     public BanHangView() {
         initUI();
+        loadTableHoaDonCho(null);
     }
 
     private void initUI() {
@@ -80,10 +97,17 @@ public class BanHangView extends JFrame {
         // 2. KHU VỰC HÓA ĐƠN CHỜ
         JPanel pnlPending = new JPanel(new BorderLayout());
         pnlPending.setBackground(Color.WHITE);
-        pnlPending.setPreferredSize(new Dimension(0, 200)); // Cố định chiều cao
+        pnlPending.setPreferredSize(new Dimension(0, 250)); // Tăng nhẹ chiều cao
         pnlPending.setBorder(BorderFactory.createTitledBorder("Hóa đơn chờ"));
-        String[] colsHD = {"Mã HD", "Người tạo", "Khách hàng", "TG tạo", "Trạng thái", "Ghi chú"};
-        JTable tblPending = new JTable(new DefaultTableModel(colsHD, 15));
+
+        String[] colsHD = {"Mã HĐ", "Người tạo", "Khách hàng", "Thời gian tạo", "Trạng thái"};
+        dtmPending = new DefaultTableModel(colsHD, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho sửa trực tiếp trên table
+            }
+        };
+        tblPending = new JTable(dtmPending);
         pnlPending.add(new JScrollPane(tblPending), BorderLayout.CENTER);
 
         leftCol.add(pnlProduct, BorderLayout.CENTER);
@@ -124,7 +148,41 @@ public class BanHangView extends JFrame {
 
         add(mainPanel, BorderLayout.CENTER);
     }
-    
+// Chỉnh sửa kiểu trả về từ void sang int
+    public int loadTableHoaDonCho(String maVuaTao) {
+    dtmPending.setRowCount(0);
+    List<HoaDon> list = hoaDonService.selectByHDChoTT();
+    int targetRow = -1; // Mặc định không tìm thấy
+
+    if (list == null || list.isEmpty()) {
+        return targetRow;
+    }
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+    for (int i = 0; i < list.size(); i++) {
+        HoaDon hd = list.get(i);
+        String tenNV = (hd.getNhanVien() != null) ? hd.getNhanVien().getHoTen() : "N/A";
+        String tenKH = (hd.getKhachHang() != null && hd.getKhachHang().getHoTen() != null) 
+                       ? hd.getKhachHang().getHoTen() : "Khách lẻ";
+        String thoiGian = (hd.getNgayTao() != null) ? hd.getNgayTao().format(formatter) : "";
+
+        dtmPending.addRow(new Object[]{
+            hd.getMaHoaDon(),
+            tenNV,
+            tenKH,
+            thoiGian,
+            hd.getTrangThai(),
+            "" 
+        });
+
+        // Nếu mã hóa đơn trùng với mã vừa tạo, lưu lại index i
+        if (maVuaTao != null && hd.getMaHoaDon().equals(maVuaTao)) {
+            targetRow = i;
+        }
+    }
+    return targetRow;
+}
 private void loadDataToGrid() {
         gridProduct.removeAll();
         List<SanPhamResponse> list = spService.getAll();
@@ -251,6 +309,58 @@ private JPanel createProductCard(String name, String price, String imagePath) {
 
         return p;
     }
+    
+    private void taoHoaDonMoi() {
+    // 1. Khởi tạo đối tượng hóa đơn
+    HoaDon hd = new HoaDon();
+        NhanVien nvGia = new NhanVien();
+    // Thay chuỗi dưới đây bằng ID thực tế bạn lấy trong DB của bạn
+    nvGia.setId("1"); 
+    hd.setNhanVien(nvGia);
+    String maMoi = "HD" + System.currentTimeMillis();
+    hd.setMaHoaDon(maMoi);
+    hd.setNgayTao(java.time.LocalDateTime.now());
+    hd.setTongTien(BigDecimal.ZERO);
+    hd.setTienThanhToan(BigDecimal.ZERO);
+    hd.setTrangThai("Chờ thanh toán");
+    
+    // 2. Set nhân viên (Giả sử bạn có thông tin nhân viên đang đăng nhập)
+    // NhanVien nv = ...; hd.setNhanVien(nv);
+
+    // 3. Xử lý khách hàng
+    String sdt = txtSdt.getText().trim();
+    if (sdt.isEmpty()) {
+        // Nếu SĐT trống -> Mặc định khách lẻ (Để null hoặc object Khách lẻ tùy DB thiết kế)
+        hd.setKhachHang(null); 
+    } else {
+        // Nếu có SĐT -> Gọi service tìm khách hàng theo SĐT
+        // KhachHang kh = khachHangService.findBySdt(sdt);
+        // hd.setKhachHang(kh);
+    }
+
+    // 4. Gọi Service để Insert
+    int result = hoaDonService.insert(hd);
+    
+if (result > 0) {
+        JOptionPane.showMessageDialog(this, "Tạo hóa đơn thành công!");
+        
+        // Gọi hàm load và lấy về vị trí dòng vừa tạo
+        int rowIndex = loadTableHoaDonCho(maMoi); 
+        
+        // Nếu tìm thấy dòng thì thực hiện chọn dòng đó
+        if (rowIndex != -1) {
+            tblPending.setRowSelectionInterval(rowIndex, rowIndex);
+            
+            // Cuộn thanh cuộn tới dòng vừa chọn (nếu bảng quá dài)
+            tblPending.scrollRectToVisible(tblPending.getCellRect(rowIndex, 0, true));
+        }
+
+        lblMaHoaDon.setText(hd.getMaHoaDon());
+        lblMaHoaDon.setForeground(Color.BLUE);
+    } else {
+        JOptionPane.showMessageDialog(this, "Tạo hóa đơn thất bại!");
+    }
+}
 
     private JPanel createPaymentPanel() {
         JPanel p = new JPanel(new GridBagLayout());
@@ -268,23 +378,28 @@ private JPanel createProductCard(String name, String price, String imagePath) {
             if (i == 0) {
                 JPanel pnlSdt = new JPanel(new BorderLayout(5, 0));
                 pnlSdt.setOpaque(false);
-                pnlSdt.add(new JTextField(), BorderLayout.CENTER);
+                txtSdt = new JTextField();
+                pnlSdt.add(txtSdt, BorderLayout.CENTER);
                 pnlSdt.add(new JButton("👤"), BorderLayout.EAST);
                 p.add(pnlSdt, g);
             } else if (i == 2) {
-                JPanel pnlMa = new JPanel(new BorderLayout(5, 0));
-                pnlMa.setOpaque(false);
-                JLabel lbl = new JLabel("Vui lòng tạo!"); lbl.setForeground(Color.RED);
-                pnlMa.add(lbl, BorderLayout.CENTER);
-                pnlMa.add(createYellowBtn("Tạo"), BorderLayout.EAST);
-                p.add(pnlMa, g);
-            } else if (i == 6) {
-                p.add(new JComboBox<>(new String[]{"Tiền mặt", "Chuyển khoản"}), g);
-            } else if (i == 7) {
-                p.add(new JTextField(), g);
-            } else {
-                p.add(new JLabel("0 VNĐ"), g);
-            }
+    JPanel pnlMa = new JPanel(new BorderLayout(5, 0));
+    pnlMa.setOpaque(false);
+    
+    lblMaHoaDon = new JLabel("Vui lòng tạo!"); 
+    lblMaHoaDon.setForeground(Color.RED);
+    
+    JButton btnTaoHD = createYellowBtn("Tạo");
+    
+    // SỰ KIỆN CLICK NÚT TẠO
+    btnTaoHD.addActionListener(e -> {
+        taoHoaDonMoi();
+    });
+
+    pnlMa.add(lblMaHoaDon, BorderLayout.CENTER);
+    pnlMa.add(btnTaoHD, BorderLayout.EAST);
+    p.add(pnlMa, g);
+}
         }
 
         g.gridy = 8; g.gridx = 0; g.gridwidth = 2;
