@@ -45,16 +45,16 @@ public class DanhMucView extends JFrame {
         main.setBackground(COLOR_BG_MAIN);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,10,10,10);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.BOTH;
 
         // ===== FORM =====
         JPanel pnlForm = new JPanel(new GridBagLayout());
         pnlForm.setBackground(Color.WHITE);
-        pnlForm.setBorder(new EmptyBorder(20,20,20,20));
+        pnlForm.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         GridBagConstraints f = new GridBagConstraints();
-        f.insets = new Insets(10,10,10,10);
+        f.insets = new Insets(10, 10, 10, 10);
         f.fill = GridBagConstraints.HORIZONTAL;
 
         txtId = new JTextField();
@@ -69,7 +69,8 @@ public class DanhMucView extends JFrame {
         JComponent[] inputs = {txtId, txtMa, txtTen, cboTrangThai};
 
         for (int i = 0; i < labels.length; i++) {
-            f.gridx = 0; f.gridy = i;
+            f.gridx = 0;
+            f.gridy = i;
             pnlForm.add(new JLabel(labels[i]), f);
 
             f.gridx = 1;
@@ -89,7 +90,9 @@ public class DanhMucView extends JFrame {
         btnPanel.add(btnDelete);
         btnPanel.add(btnReset);
 
-        f.gridx = 0; f.gridy = 5; f.gridwidth = 2;
+        f.gridx = 0;
+        f.gridy = 5;
+        f.gridwidth = 2;
         pnlForm.add(btnPanel, f);
 
         gbc.gridx = 0;
@@ -98,16 +101,16 @@ public class DanhMucView extends JFrame {
         main.add(pnlForm, gbc);
 
         // ===== TABLE =====
-        JPanel pnlTable = new JPanel(new BorderLayout(10,10));
+        JPanel pnlTable = new JPanel(new BorderLayout(10, 10));
         pnlTable.setBackground(Color.WHITE);
-        pnlTable.setBorder(new EmptyBorder(15,15,15,15));
+        pnlTable.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         // ===== SEARCH (ĐÃ FIX) =====
         JPanel searchPanel = new JPanel(new GridBagLayout());
         searchPanel.setOpaque(false);
 
         GridBagConstraints s = new GridBagConstraints();
-        s.insets = new Insets(5,5,5,5);
+        s.insets = new Insets(5, 5, 5, 5);
         s.fill = GridBagConstraints.HORIZONTAL;
 
         // label
@@ -154,7 +157,7 @@ public class DanhMucView extends JFrame {
         add(main, BorderLayout.CENTER);
 
         // ===== EVENT =====
-    // Search
+        // Search
         btnSearch.addActionListener(e -> {
             String ma = txtTim.getText().trim();
             if (ma.isEmpty()) {
@@ -163,8 +166,8 @@ public class DanhMucView extends JFrame {
             }
             loadTable(service.search(ma));
         });
-        
-    // Add
+
+        // Add
         btnAdd.addActionListener(e -> {
             try {
                 String ma = txtMa.getText().trim();
@@ -196,8 +199,8 @@ public class DanhMucView extends JFrame {
                 ex.printStackTrace();
             }
         });
-        
-    // Update
+
+        // Update
         btnUpdate.addActionListener(e -> {
             try {
                 // Lấy ID
@@ -238,8 +241,8 @@ public class DanhMucView extends JFrame {
                 ex.printStackTrace();
             }
         });
-        
-    // Delete
+
+        // Delete
         btnDelete.addActionListener(e -> {
             try {
                 // Lấy mã từ textbox
@@ -259,7 +262,9 @@ public class DanhMucView extends JFrame {
                         JOptionPane.YES_NO_OPTION
                 );
 
-                if (confirm != JOptionPane.YES_OPTION) return;
+                if (confirm != JOptionPane.YES_OPTION) {
+                    return;
+                }
 
                 // Gọi service để xóa
                 boolean check = service.delete(maDM);
@@ -280,7 +285,9 @@ public class DanhMucView extends JFrame {
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int row = table.getSelectedRow();
-                if (row == -1) return;
+                if (row == -1) {
+                    return;
+                }
 
                 txtId.setText(model.getValueAt(row, 0).toString());
                 txtMa.setText(model.getValueAt(row, 1).toString());
@@ -308,7 +315,7 @@ public class DanhMucView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng","Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
         int y = 1;
 
         for (String m : menu) {
@@ -317,7 +324,7 @@ public class DanhMucView extends JFrame {
             btn.setBackground(m.equals("Danh Mục") ? COLOR_ORANGE : COLOR_SIDEBAR);
             btn.setForeground(Color.WHITE);
             btn.setFont(new Font("Arial", Font.BOLD, 14));
-            btn.setBorder(new MatteBorder(0,0,1,0, Color.DARK_GRAY));
+            btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
             g.gridy = y++;
             p.add(btn, g);
@@ -331,7 +338,7 @@ public class DanhMucView extends JFrame {
         btnExit.setBackground(COLOR_SIDEBAR);
         btnExit.setForeground(Color.WHITE);
         btnExit.setFont(new Font("Arial", Font.BOLD, 14));
-        btnExit.setBorder(new MatteBorder(1,0,0,0, Color.DARK_GRAY));
+        btnExit.setBorder(new MatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
 
         g.gridy = y;
         g.weighty = 0;
@@ -351,10 +358,10 @@ public class DanhMucView extends JFrame {
         model.setRowCount(0);
         for (DanhMucViewModel dm : list) {
             model.addRow(new Object[]{
-                    dm.getId(),
-                    dm.getMaDanhMuc(),
-                    dm.getTenDanhMuc(),
-                    dm.isTrangThaiHienThi() ? "Hiển thị" : "Ẩn"
+                dm.getId(),
+                dm.getMaDanhMuc(),
+                dm.getTenDanhMuc(),
+                dm.isTrangThaiHienThi() ? "Hiển thị" : "Ẩn"
             });
         }
     }
@@ -362,12 +369,12 @@ public class DanhMucView extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new DanhMucView().setVisible(true));
     }
-    
+
     private void resetForm() {
-    txtId.setText("");
-    txtMa.setText("");
-    txtTen.setText("");
-    cboTrangThai.setSelectedIndex(0);
-    txtId.setEditable(true);
-}
+        txtId.setText("");
+        txtMa.setText("");
+        txtTen.setText("");
+        cboTrangThai.setSelectedIndex(0);
+        txtId.setEditable(true);
+    }
 }
