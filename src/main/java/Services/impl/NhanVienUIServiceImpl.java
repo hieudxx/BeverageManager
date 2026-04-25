@@ -53,9 +53,14 @@ public class NhanVienUIServiceImpl implements INhanVienUIService {
         return nvRes.delete(id);
     }
 
+//    @Override
+//    public List<NhanVienViewModel> find(String maNv, String hoTen) {
+//        return nvRes.find(maNv);
+//    }
+
     @Override
     public List<NhanVienViewModel> find(String maNv, String hoTen) {
-        return nvRes.find(maNv, maNv);
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

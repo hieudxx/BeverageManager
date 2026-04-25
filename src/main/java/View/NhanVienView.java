@@ -103,6 +103,8 @@ public class NhanVienView extends JFrame {
         formContainer.add(new JLabel("Mã NV:"), gbc);
         gbc.gridx = 1;
         txtMaNV = new JTextField(25);
+        txtMaNV.setEditable(false);  // Không cho phép sửa
+        txtMaNV.setBackground(new Color(230, 230, 230)); // Màu nền xám báo hiệu không nhập
         formContainer.add(txtMaNV, gbc);
 
         gbc.gridx = 0;
@@ -294,6 +296,7 @@ public class NhanVienView extends JFrame {
     }
 
     private void themNhanVien() {
+        String maNvMoi = "NV" + System.currentTimeMillis();
 
         if (!validateInput()) {
             return;
@@ -302,7 +305,7 @@ public class NhanVienView extends JFrame {
 
         if (choice == JOptionPane.YES_OPTION) {
             try {
-                int result = INvService.add(getDataFromForm());
+                int result = INvService.add(getDataFromForm(maNvMoi));
                 if (result > 0) {
                     JOptionPane.showMessageDialog(this, "✅ Thêm nhân viên thành công!");
                     loadDataToTable();
@@ -319,15 +322,19 @@ public class NhanVienView extends JFrame {
     }
 
     private void suaNhanVien() {
-        if (txtMaNV.isEnabled()) {
+        if (!validateInputForUpdate()) {
             return;
         }
-        if (!validateInput()) {
-            return;
+        int rows = tableNhanVien.getSelectedRow();
+        if (rows >= 0) {
+            int choice = JOptionPane.showConfirmDialog(this, "Có muốn sửa nhân viên không ?", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION) {
+                NhanVienViewModel nv = INvService.getAll().get(rows);
+                INvService.update(nv.getMaNhanVien(), getDataFromForm(""));
+                loadDataToTable();
+                resetForm();
+            }
         }
-        INvService.update(txtMaNV.getText(), getDataFromForm());
-        loadDataToTable();
-        resetForm();
     }
 
     private void xoaNhanVien() {
@@ -363,11 +370,7 @@ public class NhanVienView extends JFrame {
     }
 
     private boolean validateInput() {
-        if (txtMaNV.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mã nhân viên không được để trống!");
-            txtMaNV.requestFocus();
-            return false;
-        }
+       
         if (txtHoTen.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Họ tên không được để trống!");
             txtHoTen.requestFocus();
@@ -396,9 +399,34 @@ public class NhanVienView extends JFrame {
         return true;
     }
 
-    private NhanVien getDataFromForm() {
+    private boolean validateInputForUpdate() {
+        if (txtHoTen.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Họ tên không được để trống!");
+            txtHoTen.requestFocus();
+            return false;
+        }
+        if (txtTenDangNhap.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tài khoản không được để trống!");
+            txtTenDangNhap.requestFocus();
+            return false;
+        }
+
+        if (cboVaiTro.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn chức vụ!");
+            cboVaiTro.requestFocus();
+            return false;
+        }
+        if (cboTrangThai.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái!");
+            cboTrangThai.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
+    private NhanVien getDataFromForm(String maNv) {
         NhanVien nv = new NhanVien();
-        nv.setMaNhanVien(txtMaNV.getText());
+        nv.setMaNhanVien(maNv);
         nv.setTenDangNhap(txtTenDangNhap.getText());
         nv.setMatKhau(new String(txtMatKhau.getPassword()));
         nv.setHoTen(txtHoTen.getText());

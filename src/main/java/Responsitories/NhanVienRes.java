@@ -33,6 +33,38 @@ public class NhanVienRes {
         }
     }
 
+    public boolean add(NhanVien nv) {
+        if (isEmployIdDuplicate(nv.getMaNhanVien())) {
+            JOptionPane.showMessageDialog(null, "Đã tồn tại mã nhân viên");
+            return false;
+        } else if (isUsernameDuplicate(nv.getTenDangNhap())) {
+            JOptionPane.showMessageDialog(null, "Đã tồn tại tài khoản");
+            return false;
+        } else {
+            String sql = "insert into NhanVien(ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten, vai_tro, trang_thai_lam_viec) values (?,?,?,?,?,?)";
+            JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getMatKhau(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai());
+            return true;
+        }
+    }
+
+    public boolean isEmployIdDuplicate(String maNhanVien) { // public boolean checktrungma(String ma) {
+        NhanVien nv = getByTenDangNhap(maNhanVien);
+        if (nv == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean isUsernameDuplicate(String tenDangNhap) {
+        NhanVien nv = getByTenDangNhap(tenDangNhap);
+        if (nv == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public NhanVienViewModel getByMaNv(String maNhanVien) {
         NhanVienViewModel nv = null;
         String sql = "select nv.id, nv.ma_nhan_vien, nv.ten_dang_nhap, nv.mat_khau, nv.ho_ten, nv.vai_tro, nv.trang_thai_lam_viec from NhanVien nv where nv.ma_nhan_vien = ?";
@@ -48,29 +80,6 @@ public class NhanVienRes {
                 String vaiTro = rs.getString(6);
                 boolean trangThai = rs.getBoolean(7);
                 nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai ? "Đang làm" : "Đã nghỉ");
-
-            }
-            return nv;
-        } catch (SQLException e) {
-            return null;
-        }
-    }
-
-    public NhanVien findByMaNv(String maNhanVien) {
-        NhanVien nv = null;
-        String sql = "select id, ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten, vai_tro, trang_thai_lam_viec from NhanVien where ma_nhan_vien = ?";
-        try {
-
-            ResultSet rs = JDBC_Helper.selectTongQuat(sql, maNhanVien);
-            while (rs.next()) {
-                String id = rs.getString(1);
-                String maNv = rs.getString(2);
-                String tenDangNhap = rs.getString(3);
-                String matKhau = rs.getString(4);
-                String hoTen = rs.getString(5);
-                String vaiTro = rs.getString(6);
-                boolean trangThai = rs.getBoolean(7);
-                nv = new NhanVien(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai);
 
             }
             return nv;
@@ -102,41 +111,9 @@ public class NhanVienRes {
         }
     }
 
-    public boolean isEmployIdDuplicate(String maNhanVien) { // public boolean checktrungma(String ma) {
-        NhanVien nv = getByTenDangNhap(maNhanVien);
-        if (nv == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public boolean isUsernameDuplicate(String tenDangNhap) {
-        NhanVien nv = getByTenDangNhap(tenDangNhap);
-        if (nv == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public boolean add(NhanVien nv) {
-        if (isEmployIdDuplicate(nv.getMaNhanVien())) {
-            JOptionPane.showMessageDialog(null, "Đã tồn tại mã nhân viên");
-            return false;
-        } else if (isUsernameDuplicate(nv.getTenDangNhap())) {
-            JOptionPane.showMessageDialog(null, "Đã tồn tại tài khoản");
-            return false;
-        } else {
-            String sql = "insert into NhanVien(ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten, vai_tro, trang_thai_lam_viec) values (?,?,?,?,?,?)";
-            JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getMatKhau(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai());
-            return true;
-        }
-    }
-
     public int update(String id, NhanVien nv) {
-        String sql = "update NhanVien set ma_nhan_vien = ?, ten_dang_nhap = ?, mat_khau = ?, ho_ten = ?, vai_tro = ?, trang_thai_lam_viec =? where id = ? ";
-        return JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getMatKhau(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai(), id);
+        String sql = "update NhanVien set ten_dang_nhap = ?, ho_ten = ?, vai_tro = ?, trang_thai_lam_viec =? where ma_nhan_vien = ? ";
+        return JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai(), id);
     }
 
     public int delete(String id) {
@@ -144,10 +121,10 @@ public class NhanVienRes {
         return JDBC_Helper.updateTongQuat(sql, id);
     }
 
-    public List<NhanVienViewModel> find(String maNhanVien, String name) {
+    public List<NhanVienViewModel> findByName(String name) {
         List<NhanVienViewModel> listNv = new ArrayList<>();
-        String sql = "select nv.id, nv.ma_nhan_vien, nv.ten_dang_nhap, nv.mat_khau, nv.ho_ten, nv.vai_tro, nv.trang_thai_lam_viec"
-                + " from NhanVien nv where nv.ma_nhan_vien like '%" + maNhanVien + "' or nv.ma_nhan_vien like '" + maNhanVien + "%' or nv.ma_nhan_vien like '%" + maNhanVien + "%' or nv.ho_ten like N'" + name + "%' or nv.ho_ten like N'%" + name + "' or nv.ho_ten like N'%" + name + "%'";
+        String sql = "select id, ma_nhan_vien, ten_dang_nhap, ho_ten, vai_tro, trang_thai_lam_viec"
+                + " from NhanVien nv where ho_ten like N'" + name + "%' or ho_ten like N'%" + name + "' or ho_ten like N'%" + name + "%'";
         ResultSet rs = JDBC_Helper.selectTongQuat(sql);
         try {
             while (rs.next()) {
@@ -166,4 +143,51 @@ public class NhanVienRes {
             return null;
         }
     }
+
+    public List<NhanVienViewModel> findByManv(String MaNv) {
+        List<NhanVienViewModel> listNv = new ArrayList<>();
+        String sql = "select id, ma_nhan_vien, ten_dang_nhap, ho_ten, vai_tro, trang_thai_lam_viec"
+                + " from NhanVien nv where ma_nhan_vien like N'" + MaNv + "%' or ma_nhan_vien like N'%" + MaNv + "' or ma_nhan_vien like N'%" + MaNv + "%'";
+        ResultSet rs = JDBC_Helper.selectTongQuat(sql);
+        try {
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String maNv = rs.getString(2);
+                String tenDangNhap = rs.getString(3);
+                String matKhau = rs.getString(4);
+                String hoTen = rs.getString(5);
+                String vaiTro = rs.getString(6);
+                boolean trangThai = rs.getBoolean(7);
+                NhanVienViewModel nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai ? "Đang làm" : "Đã nghỉ");
+                listNv.add(nv);
+            }
+            return listNv;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    public NhanVien findByMaNv(String maNhanVien) {
+        NhanVien nv = null;
+        String sql = "select id, ma_nhan_vien, ten_dang_nhap, ho_ten, vai_tro, trang_thai_lam_viec from NhanVien where ma_nhan_vien = ?";
+        try {
+
+            ResultSet rs = JDBC_Helper.selectTongQuat(sql, maNhanVien);
+            while (rs.next()) {
+                String id = rs.getString(1);
+                String maNv = rs.getString(2);
+                String tenDangNhap = rs.getString(3);
+                String matKhau = rs.getString(4);
+                String hoTen = rs.getString(5);
+                String vaiTro = rs.getString(6);
+                boolean trangThai = rs.getBoolean(7);
+                nv = new NhanVien(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai);
+
+            }
+            return nv;
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
 }
