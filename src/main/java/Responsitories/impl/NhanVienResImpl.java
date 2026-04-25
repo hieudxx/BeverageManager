@@ -18,7 +18,7 @@ public class NhanVienResImpl implements INhanVienRes {
     @Override
     public List<NhanVien> getALL() {
         List<NhanVien> listNhanVien = new ArrayList<>();
-        String query = "SELECT [ID], [ten_dang_nhap], [mat_khau], [ho_ten],\n"
+        String query = "SELECT [id], [ten_dang_nhap], [mat_khau], [ho_ten],\n"
                 + "[vai_tro], [trang_thai_lam_viec]FROM [dbo].[NhanVien]";
         ResultSet rs = JDBC_Helper.selectTongQuat(query);
         try {
