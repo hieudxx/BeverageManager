@@ -23,8 +23,8 @@ public class NhanVienRes {
                 String matKhau = rs.getString(4);
                 String hoTen = rs.getString(5);
                 String vaiTro = rs.getString(6);
-                int trangThai = rs.getInt(7);
-                NhanVienViewModel nv = new NhanVienViewModel(id, maNhanVien, tenDangNhap, matKhau, hoTen, vaiTro, trangThai == 1 ? "Đang làm" : "Đã nghỉ");
+                boolean trangThai = rs.getBoolean(7);
+                NhanVienViewModel nv = new NhanVienViewModel(id, maNhanVien, tenDangNhap, matKhau, hoTen, vaiTro, trangThai ? "Đang làm" : "Đã nghỉ");
                 listNV.add(nv);
             }
             return listNV;
@@ -46,8 +46,8 @@ public class NhanVienRes {
                 String matKhau = rs.getString(4);
                 String hoTen = rs.getString(5);
                 String vaiTro = rs.getString(6);
-                 int trangThai = rs.getInt(7);
-                nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai == 1 ? "Đang làm" : "Đã nghỉ");
+                boolean trangThai = rs.getBoolean(7);
+                nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai ? "Đang làm" : "Đã nghỉ");
 
             }
             return nv;
@@ -140,7 +140,7 @@ public class NhanVienRes {
     }
 
     public int delete(String id) {
-        String sql = "delete from NhanVien where id = ?";
+        String sql = "delete from NhanVien where ma_nhan_vien = ?";
         return JDBC_Helper.updateTongQuat(sql, id);
     }
 
@@ -157,8 +157,8 @@ public class NhanVienRes {
                 String matKhau = rs.getString(4);
                 String hoTen = rs.getString(5);
                 String vaiTro = rs.getString(6);
-                 int trangThai = rs.getInt(7);
-                NhanVienViewModel nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai == 1 ? "Đang làm" : "Đã nghỉ");
+                boolean trangThai = rs.getBoolean(7);
+                NhanVienViewModel nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai ? "Đang làm" : "Đã nghỉ");
                 listNv.add(nv);
             }
             return listNv;
