@@ -2,27 +2,28 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package DomainModels;
+package ViewModels;
 
+import DomainModels.SanPham;
 import java.math.BigDecimal;
 
 /**
  *
  * @author ADMIN
  */
-public class Size {
-    private int id;
+public class SizeViewModel {
+ private int id;
     private String maSize;
-    SanPham SanPham;
+    private SanPham SanPham;
     private String tenSizel;
     private BigDecimal giaChenhLech;
     private boolean trangThaiHienThi;
     
-    public Size(){
+    public SizeViewModel(){
         
     }
 
-    public Size(int id, String maSize, SanPham SanPham, String tenSizel, BigDecimal giaChenhLech, boolean trangThaiHienThi) {
+    public SizeViewModel(int id, String maSize, SanPham SanPham, String tenSizel, BigDecimal giaChenhLech, boolean trangThaiHienThi) {
         this.id = id;
         this.maSize = maSize;
         this.SanPham = SanPham;

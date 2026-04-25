@@ -149,7 +149,7 @@ public class SanPhamView extends JFrame {
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.setOpaque(false);
-        searchPanel.add(new JLabel("Tìm:"));
+        searchPanel.add(new JLabel("Tìm mã:"));
         searchPanel.add(txtTim);
         searchPanel.add(btnSearch);
 
