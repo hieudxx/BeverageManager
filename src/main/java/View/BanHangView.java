@@ -29,8 +29,8 @@ public class BanHangView extends JFrame {
     private DefaultTableModel dtmPending;
     
     // Thêm vào phần khai báo thuộc tính Class ở đầu file
-private JTextField txtSdt; // Ô nhập SĐT
-private JLabel lblMaHoaDon; // Label hiển thị mã HD hoặc trạng thái "Vui lòng tạo"
+    private JTextField txtSdt; // Ô nhập SĐT
+    private JLabel lblMaHoaDon; // Label hiển thị mã HD hoặc trạng thái "Vui lòng tạo"
     
     private JPanel gridProduct;
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42); 
