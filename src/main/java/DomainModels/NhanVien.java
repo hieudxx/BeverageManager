@@ -20,6 +20,17 @@ public class NhanVien {
     public NhanVien() {
     }
 
+    public NhanVien(String id, String maNhanVien, String tenDangNhap, String hoTen, String vaiTro, boolean trangThai) {
+        this.id = id;
+        this.maNhanVien = maNhanVien;
+        this.tenDangNhap = tenDangNhap;
+        this.hoTen = hoTen;
+        this.vaiTro = vaiTro;
+        this.trangThai = trangThai;
+    }
+    
+    
+
     public NhanVien(String id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;

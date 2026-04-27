@@ -11,6 +11,17 @@ public class NhanVienViewModel {
     private String trangThai;
 
     public NhanVienViewModel() {
+        
+        
+    }
+
+    public NhanVienViewModel(String id, String maNhanVien, String tenDangNhap, String hoTen, String vaiTro, String trangThai) {
+        this.id = id;
+        this.maNhanVien = maNhanVien;
+        this.tenDangNhap = tenDangNhap;
+        this.hoTen = hoTen;
+        this.vaiTro = vaiTro;
+        this.trangThai = trangThai;
     }
 
     public NhanVienViewModel(String id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, String trangThai) {
