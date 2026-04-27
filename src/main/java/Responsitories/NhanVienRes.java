@@ -113,7 +113,7 @@ public class NhanVienRes {
 
     public int update(String id, NhanVien nv) {
         String sql = "update NhanVien set ten_dang_nhap = ?, ho_ten = ?, vai_tro = ?, trang_thai_lam_viec =? where ma_nhan_vien = ? ";
-        return JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai(), id);
+        return JDBC_Helper.updateTongQuat(sql, nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai(), id);
     }
 
     public int delete(String id) {
