@@ -5,6 +5,7 @@
 package Responsitories.impl;
 
 import DomainModels.SanPham;
+import DomainModels.Size;
 import Responsitories.SizeResponsitories;
 import Utilities.JDBC_Helper;
 import ViewModels.SizeViewModel;
@@ -60,6 +61,6 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
     // Add
     @Override
     public boolean add(Size s){
-        
+        return false;
     }
 }
