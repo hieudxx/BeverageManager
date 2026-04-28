@@ -15,4 +15,6 @@ import java.util.List;
 public interface SizeResponsitories {
     List<SizeViewModel> getAll();
     boolean add(Size s);
+    boolean update(Size s, String maS);
+    boolean delete(String maS);
 } 

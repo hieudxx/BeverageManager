@@ -16,4 +16,6 @@ public interface SizeServices {
     List<SizeViewModel> getAll();
     List<SizeViewModel> search(String keyword);
     public boolean add(Size s);
+    public boolean update(Size s, String maS);
+    public boolean delete(String maS);
 }

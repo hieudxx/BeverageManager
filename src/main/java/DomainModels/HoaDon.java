@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class HoaDon {
     
-    private String id;
+    private int id;
     private String maHoaDon;
     private LocalDateTime ngayTao;
     NhanVien nhanVien;
@@ -27,7 +27,7 @@ public class HoaDon {
     public HoaDon(){
         
     }
-    public HoaDon(String id, String maHoaDon, LocalDateTime ngayTao, NhanVien nhanVien, KhachHang khachHang, BigDecimal tongTien, BigDecimal tienThanhToan, String phuongThucTT, String trangThai){
+    public HoaDon(int id, String maHoaDon, LocalDateTime ngayTao, NhanVien nhanVien, KhachHang khachHang, BigDecimal tongTien, BigDecimal tienThanhToan, String phuongThucTT, String trangThai){
         this.id=id;
         this.maHoaDon=maHoaDon;
         this.ngayTao=ngayTao;
@@ -39,11 +39,11 @@ public class HoaDon {
         
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

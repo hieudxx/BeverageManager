@@ -45,4 +45,15 @@ public class SizeServicesImpl implements SizeServices{
     public boolean add(Size s){
         return SizeRep.add(s);
     }
+    
+    // Update
+    @Override
+    public boolean update(Size s, String maS){
+        return SizeRep.update(s, maS);
+    }
+    
+    // Delete
+    public boolean delete(String maS){
+        return SizeRep.delete(maS);
+    }
 }

@@ -34,7 +34,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
                 NhanVien nv = new NhanVien();
                 KhachHang kh = new KhachHang();
                 nv.setTenDangNhap(rs.getString("ten_dang_nhap")); nv.setHoTen(rs.getString("ho_ten"));
-                hd.setId(rs.getString("id"));
+                hd.setId(rs.getInt("id"));
                 hd.setMaHoaDon(rs.getString("ma_hoa_don"));
                 hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("trang_thai"));
                 kh.setMaKhachHang(rs.getString("ma_khach_hang")); kh.setHoTen(rs.getString("ho_ten")); kh.setSoDienThoai(rs.getString("so_dien_thoai"));
@@ -67,7 +67,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
                 nv.setHoTen(rs.getString("HoTenNV"));
 //vì đã đặt tên bảng tạm là as 'HoTenNV' nên giá trị  phải để tên giống bảng tên trong bảng tạm
                 nv.setMaNhanVien(rs.getString("ma_nhan_vien"));
-                hd.setId(rs.getString("id"));
+                hd.setId(rs.getInt("id"));
                 hd.setMaHoaDon(rs.getString("ma_hoa_don"));
                 hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("trang_thai"));
                 kh.setMaKhachHang(rs.getString("ma_khach_hang")); kh.setHoTen(rs.getString("HoTenKH")); kh.setSoDienThoai(rs.getString("so_dien_thoai"));
