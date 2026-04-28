@@ -50,7 +50,7 @@ List<HoaDonChiTiet> listHDCT = new ArrayList<>();
             // 3. Tạo đối tượng SizeSanPham và SanPham để lấy tên hiển thị
             Size ssp = new Size();
             ssp.setId(rs.getInt("id_size"));
-            ssp.setTenSizel(rs.getString("ten_size"));
+            ssp.setTenSize(rs.getString("ten_size"));
             
             SanPham sp = new SanPham();
             sp.setTenSanPham(rs.getString("ten_san_pham"));
