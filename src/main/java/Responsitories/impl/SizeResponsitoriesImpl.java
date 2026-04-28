@@ -5,13 +5,17 @@
 package Responsitories.impl;
 
 import DomainModels.SanPham;
+import DomainModels.Size;
 import Responsitories.SizeResponsitories;
+import Utilities.DBConnect;
 import Utilities.JDBC_Helper;
 import ViewModels.SizeViewModel;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Connection;
 
 /**
  *
@@ -26,9 +30,13 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
             + "FROM SizeSanPham s "
             + "JOIN SanPham sp ON s.id_san_pham = sp.id";
     private static final String INSERT_SQL
-            = "INSERT INTO Size(ma_size, id_san_pham, ten_size, gia_chenh_lech, trang_thai_hien_thi) values (?,?,?,?,?)";
-
-    // List
+            = "INSERT INTO SizeSanPham(ma_size, id_san_pham, ten_size, gia_chenh_lech, trang_thai_hien_thi) values (?,?,?,?,?)";
+    private static final String UPDATE_SQL
+            = "UPDATE SizeSanPham SET ma_size=?, id_san_pham=?, ten_size=?, gia_chenh_lech=?, trang_thai_hien_thi=? WHERE ma_size=?";
+    private static final String DELETE_SQL
+            = "DELETE FROM SizeSanPham WHERE ma_size=?";
+    
+// List
     @Override
     public List<SizeViewModel> getAll() {
         List<SizeViewModel> ListSize = new ArrayList<>();
@@ -60,6 +68,57 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
     // Add
     @Override
     public boolean add(Size s){
-        
+        try (
+            Connection con = DBConnect.getConnect();
+            PreparedStatement ps = con.prepareStatement(INSERT_SQL);
+        ) {
+            ps.setString(1, s.getMaSize());
+            ps.setInt(2, s.getSanPham().getId());
+            ps.setString(3, s.getTenSize());
+            ps.setBigDecimal(4, s.getGiaChenhLech());
+            ps.setBoolean(5, s.isTrangThaiHienThi());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // Update
+    public boolean update(Size s, String maS){
+        try (
+            Connection con = DBConnect.getConnect();
+            PreparedStatement ps = con.prepareStatement(UPDATE_SQL);
+        ) {
+            ps.setString(1, s.getMaSize());
+            ps.setInt(2, s.getSanPham().getId());
+            ps.setString(3, s.getTenSize());
+            ps.setBigDecimal(4, s.getGiaChenhLech());
+            ps.setBoolean(5, s.isTrangThaiHienThi());
+
+            ps.setString(6, maS);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // Delete
+    public boolean delete(String maS){
+        try(
+            Connection con = DBConnect.getConnect();
+            PreparedStatement ps = con.prepareStatement(DELETE_SQL);
+        ){
+            ps.setString(1, maS);
+            return ps.executeUpdate() > 0;
+        }catch(SQLException  e){
+            e.printStackTrace();
+        }
+        return false;
     }
 }
