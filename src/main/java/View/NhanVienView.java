@@ -1,8 +1,6 @@
 package View;
 
 import DomainModels.NhanVien;
-import Services.INhanVienUIService;
-import Services.impl.NhanVienUIServiceImpl;
 import ViewModels.NhanVienViewModel;
 
 import javax.swing.*;
@@ -11,6 +9,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import Services.INhanVienService;
+import Services.impl.NhanVienServiceImpl;
 
 public class NhanVienView extends JFrame {
 
@@ -20,10 +20,10 @@ public class NhanVienView extends JFrame {
     private JButton btnThem, btnSua, btnXoa, btnReset;
     private JTable tableNhanVien;
     private DefaultTableModel tableModel;
-    private INhanVienUIService INvService;
+    private INhanVienService INvService;
 
     public NhanVienView() {
-        INvService = new NhanVienUIServiceImpl();
+        INvService = new NhanVienServiceImpl();
         initComponents();
         loadDataToTable();
         setTitle("Quản lý nhân viên");
@@ -270,7 +270,7 @@ public class NhanVienView extends JFrame {
             boolean matchRole = role.equals("Tất cả") || nv.getVaiTro().equals(role);
             boolean matchText = nv.getMaNhanVien().toLowerCase().contains(keyword) || nv.getHoTen().toLowerCase().contains(keyword);
             if (matchRole && matchText) {
-                tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.getTrangThai()});
+                tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai()});
             }
         }
     }
@@ -279,7 +279,7 @@ public class NhanVienView extends JFrame {
         tableModel.setRowCount(0);
         List<NhanVienViewModel> list = INvService.getAll();
         for (NhanVienViewModel nv : list) {
-            tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.getTrangThai()});
+            tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai() ? "Đang làm" : "Đã nghỉ việc"});
         }
     }
 
@@ -370,7 +370,7 @@ public class NhanVienView extends JFrame {
     }
 
     private boolean validateInput() {
-       
+
         if (txtHoTen.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Họ tên không được để trống!");
             txtHoTen.requestFocus();
@@ -435,17 +435,16 @@ public class NhanVienView extends JFrame {
         return nv;
     }
 
-    private NhanVien convert(NhanVienViewModel vm) {
-        NhanVien nv = new NhanVien();
-        nv.setMaNhanVien(vm.getMaNhanVien());
-        nv.setTenDangNhap(vm.getTenDangNhap());
-        nv.setMatKhau(vm.getMatKhau());
-        nv.setHoTen(vm.getHoTen());
-        nv.setVaiTro(vm.getVaiTro());
-        nv.setTrangThai(vm.getTrangThai().equals("Đang làm"));
-        return nv;
-    }
-
+//    private NhanVien convert(NhanVienViewModel vm) {
+//        NhanVien nv = new NhanVien();
+//        nv.setMaNhanVien(vm.getMaNhanVien());
+//        nv.setTenDangNhap(vm.getTenDangNhap());
+//        nv.setMatKhau(vm.getMatKhau());
+//        nv.setHoTen(vm.getHoTen());
+//        nv.setVaiTro(vm.getVaiTro());
+//        nv.setTrangThai(vm.getTrangThai().equals("Đang làm"));
+//        return nv;
+//    }
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
