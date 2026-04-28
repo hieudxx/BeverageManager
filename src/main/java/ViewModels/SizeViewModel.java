@@ -15,7 +15,7 @@ public class SizeViewModel {
  private int id;
     private String maSize;
     private SanPham SanPham;
-    private String tenSizel;
+    private String tenSize;
     private BigDecimal giaChenhLech;
     private boolean trangThaiHienThi;
     
@@ -23,11 +23,11 @@ public class SizeViewModel {
         
     }
 
-    public SizeViewModel(int id, String maSize, SanPham SanPham, String tenSizel, BigDecimal giaChenhLech, boolean trangThaiHienThi) {
+    public SizeViewModel(int id, String maSize, SanPham SanPham, String tenSize, BigDecimal giaChenhLech, boolean trangThaiHienThi) {
         this.id = id;
         this.maSize = maSize;
         this.SanPham = SanPham;
-        this.tenSizel = tenSizel;
+        this.tenSize = tenSize;
         this.giaChenhLech = giaChenhLech;
         this.trangThaiHienThi = trangThaiHienThi;
     }
@@ -56,12 +56,12 @@ public class SizeViewModel {
         this.SanPham = SanPham;
     }
 
-    public String getTenSizel() {
-        return tenSizel;
+    public String getTenSize() {
+        return tenSize;
     }
 
-    public void setTenSizel(String tenSizel) {
-        this.tenSizel = tenSizel;
+    public void setTenSize(String tenSize) {
+        this.tenSize = tenSize;
     }
 
     public BigDecimal getGiaChenhLech() {
