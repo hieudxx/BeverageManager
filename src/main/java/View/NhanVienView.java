@@ -103,6 +103,8 @@ public class NhanVienView extends JFrame {
         formContainer.add(new JLabel("Mã NV:"), gbc);
         gbc.gridx = 1;
         txtMaNV = new JTextField(25);
+        txtMaNV.setEditable(false);  // Không cho phép sửa
+        txtMaNV.setBackground(new Color(230, 230, 230)); // Màu nền xám báo hiệu không nhập
         formContainer.add(txtMaNV, gbc);
 
         gbc.gridx = 0;
@@ -130,14 +132,14 @@ public class NhanVienView extends JFrame {
         gbc.gridy = 1;
         formContainer.add(new JLabel("Chức vụ:"), gbc);
         gbc.gridx = 3;
-        cboVaiTro = new JComboBox<>(new String[]{"Nhân viên", "Quản lý"});
+        cboVaiTro = new JComboBox<>(new String[]{"", "Nhân viên", "Quản lý"});
         formContainer.add(cboVaiTro, gbc);
 
         gbc.gridx = 2;
         gbc.gridy = 2;
         formContainer.add(new JLabel("Trạng thái:"), gbc);
         gbc.gridx = 3;
-        cboTrangThai = new JComboBox<>(new String[]{"Đang làm", "Đã nghỉ"});
+        cboTrangThai = new JComboBox<>(new String[]{"", "Đang làm", "Đã nghỉ"});
         formContainer.add(cboTrangThai, gbc);
 
         topMain.add(formContainer);
@@ -173,7 +175,7 @@ public class NhanVienView extends JFrame {
         main.add(topMain, BorderLayout.NORTH);
 
         // --- TABLE ---
-        String[] cols = {"Mã NV", "Tài khoản",  "Họ tên", "Vai trò", "Trạng thái"};
+        String[] cols = {"Mã NV", "Tài khoản", "Họ tên", "Vai trò", "Trạng thái"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int r, int c) {
@@ -277,7 +279,7 @@ public class NhanVienView extends JFrame {
         tableModel.setRowCount(0);
         List<NhanVienViewModel> list = INvService.getAll();
         for (NhanVienViewModel nv : list) {
-            tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(),nv.getHoTen(), nv.getVaiTro(), nv.getTrangThai()});
+            tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.getTrangThai()});
         }
     }
 
@@ -288,39 +290,72 @@ public class NhanVienView extends JFrame {
             txtTenDangNhap.setText(tableModel.getValueAt(i, 1).toString());
             txtHoTen.setText(tableModel.getValueAt(i, 2).toString());
             cboVaiTro.setSelectedItem(tableModel.getValueAt(i, 3));
-            cboTrangThai.setSelectedItem(tableModel.getValueAt(i,4));
+            cboTrangThai.setSelectedItem(tableModel.getValueAt(i, 4));
             txtMaNV.setEnabled(false);
         }
     }
 
     private void themNhanVien() {
+        String maNvMoi = "NV" + System.currentTimeMillis();
+
         if (!validateInput()) {
             return;
         }
-        INvService.add(convert(getDataFromForm()));
-        loadDataToTable();
-        resetForm();
+        int choice = JOptionPane.showConfirmDialog(this, "Có muốn thêm nhân viên", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                int result = INvService.add(getDataFromForm(maNvMoi));
+                if (result > 0) {
+                    JOptionPane.showMessageDialog(this, "✅ Thêm nhân viên thành công!");
+                    loadDataToTable();
+                    resetForm();
+                } else {
+                    JOptionPane.showMessageDialog(this, "❌ Thêm thất bại! Mã NV hoặc tài khoản có thể đã tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "❌ Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
     }
 
     private void suaNhanVien() {
-        if (txtMaNV.isEnabled()) {
+        if (!validateInputForUpdate()) {
             return;
         }
-        if (!validateInput()) {
-            return;
+        int rows = tableNhanVien.getSelectedRow();
+        if (rows >= 0) {
+            int choice = JOptionPane.showConfirmDialog(this, "Có muốn sửa nhân viên không ?", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION) {
+                NhanVienViewModel nv = INvService.getAll().get(rows);
+                INvService.update(nv.getMaNhanVien(), getDataFromForm(""));
+                loadDataToTable();
+                resetForm();
+            }
         }
-        INvService.update(txtMaNV.getText(), convert(getDataFromForm()));
-        loadDataToTable();
-        resetForm();
     }
 
     private void xoaNhanVien() {
-        if (txtMaNV.isEnabled()) {
+        int rows = tableNhanVien.getSelectedRow();
+        if (rows >= 0) {
+            int choice = JOptionPane.showConfirmDialog(this, "Có muốn xóa nhân viên không ?", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION) {
+                INvService.delete(txtMaNV.getText());
+                loadDataToTable();
+                resetForm();
+            } else {
+                return;
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Chọn nhân viên cần xóa");
             return;
         }
-        INvService.delete(txtMaNV.getText());
-        loadDataToTable();
-        resetForm();
+
+//        if (txtMaNV.isEnabled()) {
+//            return;
+//        }
     }
 
     private void resetForm() {
@@ -328,25 +363,75 @@ public class NhanVienView extends JFrame {
         txtTenDangNhap.setText("");
         txtMatKhau.setText("");
         txtHoTen.setText("");
+        cboVaiTro.setSelectedIndex(0);   // item rỗng
+        cboTrangThai.setSelectedIndex(0); // ite
         txtMaNV.setEnabled(true);
+        tableNhanVien.clearSelection();   // thêm dòng này để bỏ chọn dòng trên bảng
     }
 
     private boolean validateInput() {
-        if (txtMaNV.getText().isEmpty() || txtHoTen.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin!");
+       
+        if (txtHoTen.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Họ tên không được để trống!");
+            txtHoTen.requestFocus();
+            return false;
+        }
+        if (txtTenDangNhap.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tài khoản không được để trống!");
+            txtTenDangNhap.requestFocus();
+            return false;
+        }
+        if (txtMatKhau.getPassword().length == 0) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu không được để trống!");
+            txtMatKhau.requestFocus();
+            return false;
+        }
+        if (cboVaiTro.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn chức vụ!");
+            cboVaiTro.requestFocus();
+            return false;
+        }
+        if (cboTrangThai.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái!");
+            cboTrangThai.requestFocus();
             return false;
         }
         return true;
     }
 
-    private NhanVienViewModel getDataFromForm() {
-        NhanVienViewModel nv = new NhanVienViewModel();
-        nv.setMaNhanVien(txtMaNV.getText());
+    private boolean validateInputForUpdate() {
+        if (txtHoTen.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Họ tên không được để trống!");
+            txtHoTen.requestFocus();
+            return false;
+        }
+        if (txtTenDangNhap.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tài khoản không được để trống!");
+            txtTenDangNhap.requestFocus();
+            return false;
+        }
+
+        if (cboVaiTro.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn chức vụ!");
+            cboVaiTro.requestFocus();
+            return false;
+        }
+        if (cboTrangThai.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái!");
+            cboTrangThai.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
+    private NhanVien getDataFromForm(String maNv) {
+        NhanVien nv = new NhanVien();
+        nv.setMaNhanVien(maNv);
         nv.setTenDangNhap(txtTenDangNhap.getText());
-//        nv.setMatKhau(new String(txtMatKhau.getPassword()));
+        nv.setMatKhau(new String(txtMatKhau.getPassword()));
         nv.setHoTen(txtHoTen.getText());
         nv.setVaiTro(cboVaiTro.getSelectedItem().toString());
-        nv.setTrangThai(cboTrangThai.getSelectedItem().toString());
+        nv.setTrangThai(cboTrangThai.getSelectedItem().toString().equals("Đang làm")); // true nếu đang làm, false nếu đã nghỉ
         return nv;
     }
 

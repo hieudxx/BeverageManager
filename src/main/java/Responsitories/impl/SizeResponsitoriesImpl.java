@@ -35,7 +35,7 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
             = "UPDATE SizeSanPham SET ma_size=?, id_san_pham=?, ten_size=?, gia_chenh_lech=?, trang_thai_hien_thi=? WHERE ma_size=?";
     private static final String DELETE_SQL
             = "DELETE FROM SizeSanPham WHERE ma_size=?";
-    
+
 // List
     @Override
     public List<SizeViewModel> getAll() {
@@ -46,15 +46,15 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
                 SizeViewModel size = new SizeViewModel();
                 size.setId(rs.getInt("id"));
                 size.setMaSize(rs.getString("ma_size"));
-                size.setTenSizel(rs.getString("ten_size"));
+                size.setTenSize(rs.getString("ten_size"));
                 size.setGiaChenhLech(rs.getBigDecimal("gia_chenh_lech"));
                 size.setTrangThaiHienThi(rs.getBoolean("trang_thai_hien_thi"));
-                
+
                 SanPham sp = new SanPham();
                 sp.setId(rs.getInt("id_san_pham"));
                 sp.setMaSanPham(rs.getString("ma_san_pham"));
                 sp.setTenSanPham(rs.getString("ten_san_pham"));
-               
+
                 size.setSanPham(sp);
                 ListSize.add(size);
             }
@@ -64,14 +64,12 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
         }
         return null;
     }
-    
-    // Add
+
+// Add
     @Override
-    public boolean add(Size s){
+    public boolean add(Size s) {
         try (
-            Connection con = DBConnect.getConnect();
-            PreparedStatement ps = con.prepareStatement(INSERT_SQL);
-        ) {
+                Connection con = DBConnect.getConnect(); PreparedStatement ps = con.prepareStatement(INSERT_SQL);) {
             ps.setString(1, s.getMaSize());
             ps.setInt(2, s.getSanPham().getId());
             ps.setString(3, s.getTenSize());
@@ -85,13 +83,11 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
             return false;
         }
     }
-    
-    // Update
-    public boolean update(Size s, String maS){
+
+// Update
+    public boolean update(Size s, String maS) {
         try (
-            Connection con = DBConnect.getConnect();
-            PreparedStatement ps = con.prepareStatement(UPDATE_SQL);
-        ) {
+                Connection con = DBConnect.getConnect(); PreparedStatement ps = con.prepareStatement(UPDATE_SQL);) {
             ps.setString(1, s.getMaSize());
             ps.setInt(2, s.getSanPham().getId());
             ps.setString(3, s.getTenSize());
@@ -107,16 +103,14 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
             return false;
         }
     }
-    
-    // Delete
-    public boolean delete(String maS){
-        try(
-            Connection con = DBConnect.getConnect();
-            PreparedStatement ps = con.prepareStatement(DELETE_SQL);
-        ){
+
+// Delete
+    public boolean delete(String maS) {
+        try (
+                Connection con = DBConnect.getConnect(); PreparedStatement ps = con.prepareStatement(DELETE_SQL);) {
             ps.setString(1, maS);
             return ps.executeUpdate() > 0;
-        }catch(SQLException  e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
