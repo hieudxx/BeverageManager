@@ -8,6 +8,7 @@ import DomainModels.SanPham;
 import Responsitories.SizeResponsitories;
 import Utilities.JDBC_Helper;
 import ViewModels.SizeViewModel;
+import DomainModels.Size;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -60,6 +61,6 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
     // Add
     @Override
     public boolean add(Size s){
-        
+        return false;
     }
 }

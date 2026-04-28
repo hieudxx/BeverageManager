@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 public class HoaDonChiTiet {
     private int id;
     HoaDon hoaDon;
+    Size size;
     private int soLuong;
     private BigDecimal giaLucBan;
     
@@ -20,9 +21,10 @@ public class HoaDonChiTiet {
         
     }
     
-    public HoaDonChiTiet(int id, HoaDon hoaDon, int soLuong, BigDecimal giaLucBan){
+    public HoaDonChiTiet(int id, HoaDon hoaDon, int soLuong, BigDecimal giaLucBan, Size size){
         this.id=id;
         this.hoaDon=hoaDon;
+        this.size=size;
         this.soLuong=soLuong;
         this.giaLucBan=giaLucBan;
     }
@@ -57,6 +59,14 @@ public class HoaDonChiTiet {
 
     public void setGiaLucBan(BigDecimal giaLucBan) {
         this.giaLucBan = giaLucBan;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    public void setSize(Size size) {
+        this.size = size;
     }
     
 }
