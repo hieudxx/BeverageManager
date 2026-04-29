@@ -30,17 +30,17 @@ public class HoaDonChiTietServicesImpl implements HoaDonChiTietService{
 
     @Override
     public List<HoaDonChiTiet> selectByID(int idHoaDon) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return hdctRepo.selectByID(idHoaDon);
     }
 
     @Override
     public List<HoaDonChiTiet> getSpByID(int idsanpham) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return hdctRepo.getSpByID(idsanpham);
     }
 
     @Override
     public List<HoaDonChiTiet> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return hdctRepo.getAll();
     }
     
 }

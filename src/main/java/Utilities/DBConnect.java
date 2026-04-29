@@ -22,16 +22,19 @@ public class DBConnect {
     static String url = "jdbc:sqlserver://" + HOSTNAME + ":" + PORT + ";" + "databaseName=" + DBNAME + ";encrypt=true;trustServerCertificate=true;";
     static String user = "sa";
     static String pass = "123";
-
+    private static Connection conn;
+    
     public static Connection getConnect() {
-        try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            return DriverManager.getConnection(url, user, pass);
+try {
+            // Nếu kết nối chưa tồn tại hoặc đã bị đóng thì mới tạo mới
+            if (conn == null || conn.isClosed()) {
+                Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+                conn = DriverManager.getConnection(url, user, pass);
+            }
         } catch (ClassNotFoundException | SQLException ex) {
             ex.printStackTrace(System.out);
-            return null;
-            //Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return conn;
     }
 
     public static void main(String[] args) {
