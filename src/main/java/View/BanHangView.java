@@ -5,11 +5,18 @@
 package View;
 
 import DomainModels.HoaDon;
+import DomainModels.HoaDonChiTiet;
 import DomainModels.NhanVien;
+import DomainModels.Size;
+import DomainModels.SanPham;
+import Services.HoaDonChiTietService;
 import Services.HoaDonService;
 import Services.SanPhamServices;
+import Services.SizeServices;
+import Services.impl.HoaDonChiTietServicesImpl;
 import Services.impl.HoaDonServiceImpl;
 import Services.impl.SanPhamServicesImpl;
+import Services.impl.SizeServicesImpl;
 import ViewModels.SanPhamResponse;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -23,6 +30,11 @@ public class BanHangView extends JFrame {
     
     private SanPhamServices spService = new SanPhamServicesImpl();
     private HoaDonService hoaDonService = new HoaDonServiceImpl();
+    // Thêm vào phần khai báo thuộc tính ở đầu class BanHangView
+    private HoaDonChiTietService hdctService = new HoaDonChiTietServicesImpl();
+    private SizeServices sizeService = new SizeServicesImpl();
+    private DefaultTableModel dtmCart; // Khai báo model cho bảng giỏ hàng
+    private JTable tblCart; // Sửa lại table giỏ hàng
     
     // Components cho bảng Hóa Đơn Chờ
     private JTable tblPending;
@@ -31,6 +43,7 @@ public class BanHangView extends JFrame {
     // Thêm vào phần khai báo thuộc tính Class ở đầu file
     private JTextField txtSdt; // Ô nhập SĐT
     private JLabel lblMaHoaDon; // Label hiển thị mã HD hoặc trạng thái "Vui lòng tạo"
+    private JLabel lblTongTien;
     
     private JPanel gridProduct;
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42); 
@@ -115,6 +128,32 @@ public class BanHangView extends JFrame {
 
         gbc.gridx = 0; gbc.weightx = 0.65; gbc.weighty = 1.0;
         mainPanel.add(leftCol, gbc);
+        
+        // Trong hàm initUI(), sau khi khởi tạo tblPending
+tblPending.addMouseListener(new java.awt.event.MouseAdapter() {
+    @Override
+    public void mouseClicked(java.awt.event.MouseEvent evt) {
+        int row = tblPending.getSelectedRow();
+        if (row != -1) {
+            // Lấy mã hóa đơn từ cột 0
+            String maHD = tblPending.getValueAt(row, 0).toString();
+            
+            // Tìm đối tượng HoaDon tương ứng để lấy ID (số nguyên) 
+            // Hoặc bạn có thể sửa loadTableHoaDonCho để lưu ID vào một cột ẩn
+            DomainModels.HoaDon hdSelected = hoaDonService.selectByMaHD(maHD); 
+            
+            if (hdSelected != null) {
+                // Load giỏ hàng theo ID hóa đơn vừa chọn
+                loadTableGioHang(hdSelected.getId());
+                
+                // Cập nhật thông tin lên panel thanh toán
+                lblMaHoaDon.setText(hdSelected.getMaHoaDon());
+                lblMaHoaDon.setForeground(Color.BLUE);
+                // Cập nhật thêm tổng tiền, SĐT... nếu cần
+            }
+        }
+    }
+});
 
         // --- CỘT PHẢI: Giỏ hàng & Thanh toán ---
         JPanel rightCol = new JPanel(new BorderLayout(0, 10));
@@ -125,8 +164,12 @@ public class BanHangView extends JFrame {
         pnlCart.setBackground(Color.WHITE);
         pnlCart.setBorder(BorderFactory.createTitledBorder("Giỏ hàng"));
         
-        String[] colsCart = {"Mã SP", "Tên SP", "Đơn giá", "Số lượng", "Thành tiền"};
-        JTable tblCart = new JTable(new DefaultTableModel(colsCart, 25)); // Thêm nhiều dòng mẫu
+        String[] colsCart = {"STT", "Tên SP", "Đơn giá", "Số lượng", "Thành tiền"};
+        dtmCart = new DefaultTableModel(colsCart, 0);
+        tblCart = new JTable(dtmCart);
+        
+        tblCart.getColumnModel().getColumn(0).setPreferredWidth(40);  // Cột STT nhỏ lại
+        tblCart.getColumnModel().getColumn(1).setPreferredWidth(200); // Cột Tên SP rộng ra
         
         // SỬA LỖI TẠI ĐÂY: Phải đặt trong JScrollPane và đặt kích thước ưu tiên
         JScrollPane spCart = new JScrollPane(tblCart);
@@ -199,9 +242,58 @@ private void loadDataToGrid() {
                 JPanel card = createProductCard(sp.getTenSanPham(), giaVND, tenFile);
 
                 card.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        System.out.println("Đã chọn: " + sp.getTenSanPham());
+@Override
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    // --- KIỂM TRA HÓA ĐƠN TRƯỚC KHI LÀM BẤT CỨ VIỆC GÌ ---
+                    String maHD = lblMaHoaDon.getText();
+        if (maHD == null || maHD.equals("Vui lòng tạo!") || maHD.isEmpty()) {
+            lblMaHoaDon.setForeground(Color.RED); // Làm nổi bật chỗ cần tạo
+            JOptionPane.showMessageDialog(null, 
+                    "Vui lòng chọn một hóa đơn chờ hoặc nhấn 'Tạo' mới trước khi thêm món!", 
+                    "Thông báo", 
+                    JOptionPane.WARNING_MESSAGE);
+            return; // Dừng toàn bộ xử lý phía dưới, không hiện chọn Size nữa
+        }
+                    // 1. Lấy danh sách Size của sản phẩm này từ DB
+                    List<Size> listSize = sizeService.getSizesBySPId(sp.getId());
+                    
+                    if (listSize == null || listSize.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Sản phẩm này chưa cấu hình Size!");
+                        return;
                     }
+
+                    // 2. Tạo danh sách tên Size để hiển thị trong Popup (ví dụ: "Size S (+0đ)")
+                    Object[] options = new Object[listSize.size()];
+                    for (int i = 0; i < listSize.size(); i++) {
+                        Size s = listSize.get(i);
+                        options[i] = s.getTenSize() + " (+" + String.format("%,.0f", s.getGiaChenhLech()) + "đ)";
+                    }
+
+                    // 3. Hiển thị Popup chọn Size
+                    int choice = JOptionPane.showOptionDialog(null, 
+                            "Chọn Size cho " + sp.getTenSanPham(), 
+                            "Lựa chọn Size", 
+                            JOptionPane.DEFAULT_OPTION, 
+                            JOptionPane.QUESTION_MESSAGE, 
+                            null, options, options[0]);
+
+                    // 4. Nếu người dùng đã chọn một Size
+                    if (choice != -1) {
+                        Size sizeSelected = listSize.get(choice);
+                        
+                        // QUAN TRỌNG: Gán ngược thông tin sản phẩm vào Size 
+                        // để hàm addSanPhamToGioHang có dữ liệu tính giá gốc
+                        SanPham spModel = new DomainModels.SanPham();
+                        spModel.setId(sp.getId());
+                        spModel.setTenSanPham(sp.getTenSanPham());
+                        spModel.setGiaCoBan(sp.getGiaCoBan());
+                        
+                        sizeSelected.setSanPham(spModel);
+
+                        // 5. Gọi hàm thêm vào giỏ hàng
+                        addSanPhamToGioHang(sizeSelected);
+                    }
+                }
                 });
                 gridProduct.add(card);
             }
@@ -354,7 +446,17 @@ if (result > 0) {
             // Cuộn thanh cuộn tới dòng vừa chọn (nếu bảng quá dài)
             tblPending.scrollRectToVisible(tblPending.getCellRect(rowIndex, 0, true));
         }
-
+        
+        HoaDon hdMoi = hoaDonService.selectByMaHD(maMoi);
+        
+        if (hdMoi != null) {
+            loadTableGioHang(hdMoi.getId()); // Gọi hàm load giỏ hàng ngay lập tức
+            
+            // Cập nhật thông tin khách hàng lên các JTextField nếu cần
+            txtSdt.setText(hdMoi.getKhachHang() != null ? hdMoi.getKhachHang().getSoDienThoai() : "");
+            // lblHoTenKH.setText(...);
+        }
+        
         lblMaHoaDon.setText(hd.getMaHoaDon());
         lblMaHoaDon.setForeground(Color.BLUE);
     } else {
@@ -400,6 +502,21 @@ if (result > 0) {
     pnlMa.add(btnTaoHD, BorderLayout.EAST);
     p.add(pnlMa, g);
 }
+            else if (i == 3) { // Tổng tiền
+            // KHỞI TẠO lblTongTien Ở ĐÂY ĐỂ HẾT BÁO ĐỎ
+            lblTongTien = new JLabel("0 VNĐ");
+            lblTongTien.setFont(new Font("Arial", Font.BOLD, 15));
+            lblTongTien.setForeground(Color.RED);
+            p.add(lblTongTien, g);
+        } else if (i == 4) { // Tiền khách đưa
+            p.add(new JTextField(), g);
+        } else if (i == 5) { // Tiền thừa
+            p.add(new JLabel("0 VNĐ"), g);
+        } else if (i == 6) { // Hình thức
+            p.add(new JComboBox<>(new String[]{"Tiền mặt", "Chuyển khoản"}), g);
+        } else if (i == 7) { // Ghi chú
+            p.add(new JTextField(), g);
+        }
         }
 
         g.gridy = 8; g.gridx = 0; g.gridwidth = 2;
@@ -413,7 +530,99 @@ if (result > 0) {
 
         return p;
     }
+    public void loadTableGioHang(int idHoaDon) {
+        
+    List<HoaDonChiTiet> list = hdctService.selectByID(idHoaDon);
+    
+    dtmCart = (DefaultTableModel) tblCart.getModel();
+    dtmCart.setRowCount(0); // Xóa dữ liệu cũ
+    
+    if (list != null) {
+        int stt = 1;
+        for (HoaDonChiTiet hdct : list) {
+            // Lấy tên SP từ đối tượng liên kết (đã được bạn JOIN trong Repository)
+            String tenSP = hdct.getSize().getSanPham().getTenSanPham() + " (" + hdct.getSize().getTenSize() + ")";
+            
+            dtmCart.addRow(new Object[]{
+                // hdct.getSize().getId(), // Mã SP (hoặc mã size)
+                stt++,
+                tenSP,
+                String.format("%,.0f", hdct.getGiaLucBan()),
+                hdct.getSoLuong(),
+                String.format("%,.0f",hdct.getGiaLucBan().multiply(new java.math.BigDecimal(hdct.getSoLuong()))) // Thành tiền
+            });
+        }
+    }
+}
+private void addSanPhamToGioHang(Size sizeSelected) { // Truyền vào đối tượng Size
+    // 1. Kiểm tra hóa đơn đã được chọn chưa
+    String maHD = lblMaHoaDon.getText();
+    if (maHD == null || maHD.equals("Vui lòng tạo!") || maHD.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn hoặc tạo hóa đơn trước!");
+        return;
+    }
 
+    // 2. Popup nhập số lượng
+    String input = JOptionPane.showInputDialog(this, 
+            "Nhập số lượng cho: " + sizeSelected.getSanPham().getTenSanPham() + " (" + sizeSelected.getTenSize() + ")", 
+            "Số lượng", JOptionPane.QUESTION_MESSAGE);
+    
+    if (input != null && !input.isEmpty()) {
+        try {
+            int soLuong = Integer.parseInt(input);
+            if (soLuong <= 0) {
+                JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0!");
+                return;
+            }
+
+            // 3. Lấy đối tượng HoaDon hiện tại
+            DomainModels.HoaDon hdSelected = hoaDonService.selectByMaHD(maHD);
+            
+            // 4. Tạo HoaDonChiTiet theo đúng Model bạn đã gửi
+            HoaDonChiTiet hdct = new HoaDonChiTiet();
+            hdct.setHoaDon(hdSelected);
+            hdct.setSize(sizeSelected); // Sử dụng đối tượng Size thay vì idChiTietSP
+            hdct.setSoLuong(soLuong);
+            
+            // Giá bán = Giá gốc sản phẩm + Giá chênh lệch của Size
+            BigDecimal giaBan = sizeSelected.getSanPham().getGiaCoBan().add(sizeSelected.getGiaChenhLech());
+            hdct.setGiaLucBan(giaBan);
+
+            // 5. Lưu vào Database thông qua Service
+            // Lưu ý: Trong Service/Repository, bạn cần dùng hdct.getSize().getId() để lưu vào cột ID_Size
+        int result = hdctService.insert(hdct); 
+
+        if(result > 0) { // insert trả về int (số dòng thành công), nên so sánh > 0
+    loadTableGioHang(hdSelected.getId());
+    tinhTongTienHoaDon(hdSelected.getId()); 
+}
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số lượng phải là số nguyên!");
+        }
+    }
+}
+private void tinhTongTienHoaDon(int idHoaDon) {
+    // 1. Lấy danh sách chi tiết hóa đơn từ service (dùng selectByID theo interface của bạn)
+    List<HoaDonChiTiet> list = hdctService.selectByID(idHoaDon);
+    
+    BigDecimal tongTien = BigDecimal.ZERO;
+    
+    if (list != null) {
+        for (HoaDonChiTiet hdct : list) {
+            // 2. Tính tiền từng món: Số lượng * Giá lúc bán
+            BigDecimal soLuongBD = new BigDecimal(hdct.getSoLuong());
+            BigDecimal thanhTien = hdct.getGiaLucBan().multiply(soLuongBD);
+            
+            // 3. Cộng dồn vào tổng tiền
+            tongTien = tongTien.add(thanhTien);
+        }
+    }
+    
+    // 4. Hiển thị lên label tổng tiền (đảm bảo lblTongTien đã được định nghĩa)
+    // Bạn có thể định dạng lại số để hiển thị đẹp hơn
+    lblTongTien.setText(String.format("%,.0f VNĐ", tongTien.doubleValue()));
+}
     private JButton createYellowBtn(String text) {
         JButton b = new JButton(text);
         b.setBackground(COLOR_YELLOW_BTN);

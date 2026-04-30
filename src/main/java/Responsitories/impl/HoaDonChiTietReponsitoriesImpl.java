@@ -7,6 +7,7 @@ package Responsitories.impl;
 import DomainModels.HoaDon;
 import DomainModels.HoaDonChiTiet;
 import DomainModels.SanPham;
+import DomainModels.Size;
 import Responsitories.HoaDonChiTietResponsitories;
 import Utilities.JDBC_Helper;
 import java.sql.ResultSet;
@@ -21,49 +22,89 @@ import java.util.List;
 public class HoaDonChiTietReponsitoriesImpl implements HoaDonChiTietResponsitories{
 
     @Override
-    public List<HoaDonChiTiet> selectByID(String idHoaDon) {
-        List<HoaDonChiTiet> listHDCT = new ArrayList<>();
-        String query = "SELECT id, IDSP, MaSP, TenSP, DonGia, SoLuong, ThanhToan FROM HoaDonChiTiet LEFT JOIN SanPham ON HoaDonChiTiet.IDSP = SanPham.ID WHERE IDHD = ?";
-        ResultSet rs = JDBC_Helper.selectTongQuat(query, idHoaDon);
-        try {
-            while (rs.next()) {
-                HoaDonChiTiet hdct = new HoaDonChiTiet();
-                HoaDon hd = new HoaDon();
-//                SanPham sp = new SanPham();
-//                hd.setID(rs.getString("IDHD"));
-//                sp.setID(rs.getString("IDSP"));
-//                sp.setTenSP(rs.getString("TenSP"));
-//                sp.setMaSP(rs.getString("MaSP"));
-//                hdct.setHd(hd);
-//                hdct.setSp(sp);
-//                hdct.setDonGia(rs.getDouble("DonGia"));
-//                hdct.setSoLuong(rs.getInt("SoLuong"));
-//                hdct.setThanhToan(rs.getDouble("ThanhToan"));
-                listHDCT.add(hdct);
-            }
-            return listHDCT;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return null;
+    public List<HoaDonChiTiet> selectByID(int idHoaDon) {
+List<HoaDonChiTiet> listHDCT = new ArrayList<>();
+    
+    // Câu truy vấn JOIN 3 bảng: HoaDonChiTiet -> SizeSanPham -> SanPham
+    String query = "SELECT hdct.id, hdct.id_hoa_don, hdct.id_size, " +
+                   "sp.ten_san_pham, ssp.ten_size, hdct.so_luong, hdct.gia_luc_ban " +
+                   "FROM HoaDonChiTiet hdct " +
+                   "JOIN SizeSanPham ssp ON hdct.id_size = ssp.id " +
+                   "JOIN SanPham sp ON ssp.id_san_pham = sp.id " +
+                   "WHERE hdct.id_hoa_don = ?";
+    
+    ResultSet rs = JDBC_Helper.selectTongQuat(query, idHoaDon);
+    try {
+        while (rs.next()) {
+            // 1. Tạo đối tượng HoaDonChiTiet
+            HoaDonChiTiet hdct = new HoaDonChiTiet();
+            hdct.setId(rs.getInt("id"));
+            hdct.setSoLuong(rs.getInt("so_luong"));
+            hdct.setGiaLucBan(rs.getBigDecimal("gia_luc_ban"));
+            
+            // 2. Tạo đối tượng HoaDon (để set vào hdct)
+            HoaDon hd = new HoaDon();
+            hd.setId(rs.getInt("id_hoa_don"));
+            hdct.setHoaDon(hd);
+            
+            // 3. Tạo đối tượng SizeSanPham và SanPham để lấy tên hiển thị
+            Size ssp = new Size();
+            ssp.setId(rs.getInt("id_size"));
+            ssp.setTenSize(rs.getString("ten_size"));
+            
+            SanPham sp = new SanPham();
+            sp.setTenSanPham(rs.getString("ten_san_pham"));
+            
+            // Liên kết: Size thuộc về Sản phẩm
+            ssp.setSanPham(sp); 
+            // Liên kết: HDCT thuộc về Size này
+            hdct.setSize(ssp); 
+
+            listHDCT.add(hdct);
         }
+        return listHDCT;
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        return null;
+    }
     }
 
     @Override
     public int insert(HoaDonChiTiet hdct) {
-        String query = "INSERT INTO [dbo].[HoaDonChiTiet] ([IDHD], [IDSP], [DonGia], [SoLuong], [ThanhToan]) VALUES (?, ?, ?, ?, ?)";
-        return 
-//                JDBC_Helper.updateTongQuat(query, hdct.getHd().getID(), hdct.getSp().getID(), hdct.getDonGia(), hdct.getSoLuong(), hdct.getThanhToan())
-                0;
+        // 1. Kiểm tra sản phẩm cùng size đã tồn tại trong hóa đơn đó chưa
+    String checkQuery = "SELECT id FROM HoaDonChiTiet WHERE id_hoa_don = ? AND id_size = ?";
+    ResultSet rs = JDBC_Helper.selectTongQuat(checkQuery, 
+            hdct.getHoaDon().getId(), 
+            hdct.getSize().getId());
+    
+    try {
+        if (rs.next()) {
+            // 2. Nếu đã có -> Update cộng thêm số lượng
+            String updateQuery = "UPDATE HoaDonChiTiet SET so_luong = so_luong + ? WHERE id = ?";
+            return JDBC_Helper.updateTongQuat(updateQuery, hdct.getSoLuong(), rs.getInt("id"));
+        } else {
+            // 3. Nếu chưa có -> Insert dòng mới
+            String insertQuery = "INSERT INTO HoaDonChiTiet (id_hoa_don, id_size, so_luong, gia_luc_ban) VALUES (?, ?, ?, ?)";
+            return JDBC_Helper.updateTongQuat(insertQuery, 
+                    hdct.getHoaDon().getId(), 
+                    hdct.getSize().getId(), 
+                    hdct.getSoLuong(), 
+                    hdct.getGiaLucBan());
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return 0;
+    }
     }
 
     @Override
-    public int delete(String IDHD) {
+    public int delete(int IDHD) {
         String query = "DELETE FROM [dbo].[HoaDonChiTiet] WHERE IDHD = ?";
         return JDBC_Helper.updateTongQuat(query, IDHD);
     }
 
     @Override
-    public List<HoaDonChiTiet> getSpByID(String idsanpham) {
+    public List<HoaDonChiTiet> getSpByID(int idsanpham) {
         List<HoaDonChiTiet> listHDCT = new ArrayList<>();
         String query = "SELECT IDHD, sp.ID, sp.MaSP, sp.TenSP, DonGia, SoLuong, ThanhToan FROM HoaDonChiTiet LEFT JOIN SanPham sp ON HoaDonChiTiet.IDSP = SP.ID WHERE sp.MaSP = ?";
         ResultSet rs = JDBC_Helper.selectTongQuat(query, idsanpham);

@@ -10,7 +10,11 @@ import Responsitories.SizeResponsitories;
 import Utilities.DBConnect;
 import Utilities.JDBC_Helper;
 import ViewModels.SizeViewModel;
+
+import DomainModels.Size;
+
 import java.sql.PreparedStatement;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -67,6 +71,7 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
 
 // Add
     @Override
+
     public boolean add(Size s) {
         try (
                 Connection con = DBConnect.getConnect(); PreparedStatement ps = con.prepareStatement(INSERT_SQL);) {
@@ -113,6 +118,34 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return false;
     }
+
+    @Override
+    public List<Size> getSizesBySPId(int spId) {
+        List<Size> listSize = new ArrayList<>();
+        // Truy vấn tất cả các cột của SizeSanPham dựa trên id_san_pham
+        String sql = "SELECT id, ma_size, ten_size, gia_chenh_lech, trang_thai_hien_thi "
+                   + "FROM SizeSanPham WHERE id_san_pham = ? AND trang_thai_hien_thi = 0";
+        
+        ResultSet rs = JDBC_Helper.selectTongQuat(sql, spId);
+        try {
+            while (rs.next()) {
+                Size s = new Size();
+                s.setId(rs.getInt("id"));
+                s.setMaSize(rs.getString("ma_size"));
+                s.setTenSize(rs.getString("ten_size"));
+                s.setGiaChenhLech(rs.getBigDecimal("gia_chenh_lech"));
+                s.setTrangThaiHienThi(rs.getBoolean("trang_thai_hien_thi"));
+                
+                // Trả về danh sách Domain Model để phục vụ tính toán ở tầng Service/View
+                listSize.add(s);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return listSize;
+    }
+    
 }

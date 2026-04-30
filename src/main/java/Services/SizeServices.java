@@ -18,4 +18,5 @@ public interface SizeServices {
     public boolean add(Size s);
     public boolean update(Size s, String maS);
     public boolean delete(String maS);
+    List<Size> getSizesBySPId(int spId);
 }

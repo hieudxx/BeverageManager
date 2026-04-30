@@ -17,4 +17,5 @@ public interface SizeResponsitories {
     boolean add(Size s);
     boolean update(Size s, String maS);
     boolean delete(String maS);
+    List<Size> getSizesBySPId(int spId);
 } 

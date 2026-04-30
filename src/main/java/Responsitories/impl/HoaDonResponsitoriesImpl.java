@@ -23,7 +23,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
     
         @Override
     public HoaDon selectByMaHD(String maHD) {
-        String query = "SELECT HoaDon.id, ma_hoa_don, NhanVien.ma_nhan_vien, NhanVien.ho_ten as 'HoTenNV', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
+        String query = "SELECT HoaDon.id, ma_hoa_don, NhanVien.ma_nhan_vien,NhanVien.ten_dang_nhap, NhanVien.ho_ten as 'HoTenNV', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
 "                       HoaDon.ngay_tao,trang_thai,phuong_thuc_tt,tong_tien, tien_thanh_toan\n" +
 "                       FROM HoaDon LEFT JOIN NhanVien ON HoaDon.id_nhan_vien = NhanVien.id\n" +
 "                                   LEFT JOIN KhachHang ON HoaDon.id_khach_hang = KhachHang.id Where HoaDon.ma_hoa_don = ?";
@@ -33,11 +33,11 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
                 HoaDon hd = new HoaDon();
                 NhanVien nv = new NhanVien();
                 KhachHang kh = new KhachHang();
-                nv.setTenDangNhap(rs.getString("ten_dang_nhap")); nv.setHoTen(rs.getString("ho_ten"));
-                hd.setId(rs.getString("id"));
+                nv.setTenDangNhap(rs.getString("ten_dang_nhap")); nv.setHoTen(rs.getString("HoTenNV"));
+                hd.setId(rs.getInt("id"));
                 hd.setMaHoaDon(rs.getString("ma_hoa_don"));
                 hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("trang_thai"));
-                kh.setMaKhachHang(rs.getString("ma_khach_hang")); kh.setHoTen(rs.getString("ho_ten")); kh.setSoDienThoai(rs.getString("so_dien_thoai"));
+                kh.setMaKhachHang(rs.getString("ma_khach_hang")); kh.setHoTen(rs.getString("HoTenKH")); kh.setSoDienThoai(rs.getString("so_dien_thoai"));
                 hd.setKhachHang(kh);
                 hd.setTongTien(rs.getBigDecimal("tong_tien"));
                 hd.setTienThanhToan(rs.getBigDecimal("tien_thanh_toan"));
@@ -53,7 +53,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
     @Override
     public List<HoaDon> selectByHDChoTT() {
         List<HoaDon> listHD = new ArrayList<>();
-        String query = "SELECT HoaDon.id, ma_hoa_don, NhanVien.ma_nhan_vien, NhanVien.ho_ten as 'HoTenNV', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
+        String query = "SELECT HoaDon.id, ma_hoa_don, NhanVien.ma_nhan_vien,NhanVien.ten_dang_nhap, NhanVien.ho_ten as 'HoTenNV', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
 "                       HoaDon.ngay_tao,trang_thai,phuong_thuc_tt,tong_tien, tien_thanh_toan\n" +
 "                       FROM HoaDon LEFT JOIN NhanVien ON HoaDon.id_nhan_vien = NhanVien.id\n" +
 "                                   LEFT JOIN KhachHang ON HoaDon.id_khach_hang = KhachHang.id Where HoaDon.trang_thai LIKE N'%Chờ thanh toán%'";
@@ -63,11 +63,11 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
                 HoaDon hd = new HoaDon();
                 NhanVien nv = new NhanVien();
                 KhachHang kh = new KhachHang();
-//                nv.setTenDangNhap(rs.getString("ten_dang_nhap")); 
+                nv.setTenDangNhap(rs.getString("ten_dang_nhap")); 
                 nv.setHoTen(rs.getString("HoTenNV"));
 //vì đã đặt tên bảng tạm là as 'HoTenNV' nên giá trị  phải để tên giống bảng tên trong bảng tạm
                 nv.setMaNhanVien(rs.getString("ma_nhan_vien"));
-                hd.setId(rs.getString("id"));
+                hd.setId(rs.getInt("id"));
                 hd.setMaHoaDon(rs.getString("ma_hoa_don"));
                 hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("trang_thai"));
                 kh.setMaKhachHang(rs.getString("ma_khach_hang")); kh.setHoTen(rs.getString("HoTenKH")); kh.setSoDienThoai(rs.getString("so_dien_thoai"));
