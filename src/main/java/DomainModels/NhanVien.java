@@ -7,7 +7,7 @@ package DomainModels;
  */
 public class NhanVien {
 
-    private String id;
+    private int id;
     private String maNhanVien;
     private String tenDangNhap;
     private String matKhau;
@@ -20,7 +20,7 @@ public class NhanVien {
     public NhanVien() {
     }
 
-    public NhanVien(String id, String maNhanVien, String tenDangNhap, String hoTen, String vaiTro, boolean trangThai) {
+    public NhanVien(int id, String maNhanVien, String tenDangNhap, String hoTen, String vaiTro, boolean trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;
         this.tenDangNhap = tenDangNhap;
@@ -31,7 +31,7 @@ public class NhanVien {
     
     
 
-    public NhanVien(String id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
+    public NhanVien(int id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;
         this.tenDangNhap = tenDangNhap;
@@ -43,11 +43,11 @@ public class NhanVien {
 
    
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

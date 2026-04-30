@@ -17,7 +17,7 @@ public class NhanVienRes {
         try {
             ResultSet rs = JDBC_Helper.selectTongQuat(sql);
             while (rs.next()) {
-                String id = rs.getString(1);
+                int id = rs.getInt(1);
                 String maNhanVien = rs.getString(2);
                 String tenDangNhap = rs.getString(3);
                 String matKhau = rs.getString(4);
@@ -72,7 +72,7 @@ public class NhanVienRes {
 
             ResultSet rs = JDBC_Helper.selectTongQuat(sql, maNhanVien);
             while (rs.next()) {
-                String id = rs.getString(1);
+                int id = rs.getInt(1);
                 String maNv = rs.getString(2);
                 String tenDangNhap = rs.getString(3);
                 String matKhau = rs.getString(4);
@@ -95,7 +95,7 @@ public class NhanVienRes {
 
             ResultSet rs = JDBC_Helper.selectTongQuat(sql, tenDangNhap);
             while (rs.next()) {
-                String id = rs.getString(1);
+                int id = rs.getInt(1);
                 String maNv = rs.getString(2);
                 String tk = rs.getString(3);
                 String matKhau = rs.getString(4);
@@ -128,7 +128,7 @@ public class NhanVienRes {
         ResultSet rs = JDBC_Helper.selectTongQuat(sql);
         try {
             while (rs.next()) {
-                String id = rs.getString(1);
+                int id = rs.getInt(1);
                 String maNv = rs.getString(2);
                 String tenDangNhap = rs.getString(3);
                 String matKhau = rs.getString(4);
@@ -151,7 +151,7 @@ public class NhanVienRes {
         ResultSet rs = JDBC_Helper.selectTongQuat(sql);
         try {
             while (rs.next()) {
-                String id = rs.getString(1);
+                int id = rs.getInt(1);
                 String maNv = rs.getString(2);
                 String tenDangNhap = rs.getString(3);
                 String matKhau = rs.getString(4);
@@ -174,7 +174,7 @@ public class NhanVienRes {
 
             ResultSet rs = JDBC_Helper.selectTongQuat(sql, maNhanVien);
             while (rs.next()) {
-                String id = rs.getString(1);
+                int id = rs.getInt(1);
                 String maNv = rs.getString(2);
                 String tenDangNhap = rs.getString(3);
                 String matKhau = rs.getString(4);

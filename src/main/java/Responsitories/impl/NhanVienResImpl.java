@@ -25,7 +25,7 @@ public class NhanVienResImpl implements INhanVienRes {
             while (rs.next()) {
 //                ChucVu cv = new ChucVu();
                 NhanVien nv = new NhanVien();
-                nv.setId(rs.getString("ID"));
+                nv.setId(rs.getInt("ID"));
                 nv.setTenDangNhap(rs.getString("ten_dang_nhap"));
                 nv.setMatKhau(rs.getString("mat_khau"));
                 nv.setHoTen(rs.getString("ho_ten"));
@@ -51,7 +51,7 @@ public class NhanVienResImpl implements INhanVienRes {
             while (rs.next()) {
 //                ChucVu cv = new ChucVu();
                 NhanVien nv = new NhanVien();
-                nv.setId(rs.getString("ID"));
+                nv.setId(rs.getInt("ID"));
                 nv.setTenDangNhap(rs.getString("ten_dang_nhap"));
                 nv.setMatKhau(rs.getString("mat_khau"));
                 nv.setHoTen(rs.getString("ho_ten"));
