@@ -8,14 +8,13 @@ public class NhanVienViewModel {
     private String matKhau;
     private String hoTen;
     private String vaiTro;
-    private String trangThai;
+    private boolean trangThai;
 
     public NhanVienViewModel() {
-        
-        
+
     }
 
-    public NhanVienViewModel(int id, String maNhanVien, String tenDangNhap, String hoTen, String vaiTro, String trangThai) {
+    public NhanVienViewModel(int id, String maNhanVien, String tenDangNhap, String hoTen, String vaiTro, boolean trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;
         this.tenDangNhap = tenDangNhap;
@@ -24,7 +23,7 @@ public class NhanVienViewModel {
         this.trangThai = trangThai;
     }
 
-    public NhanVienViewModel(int id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, String trangThai) {
+    public NhanVienViewModel(int id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;
         this.tenDangNhap = tenDangNhap;
@@ -33,8 +32,6 @@ public class NhanVienViewModel {
         this.vaiTro = vaiTro;
         this.trangThai = trangThai;
     }
-
-    
 
     public int getId() {
         return id;
@@ -84,15 +81,11 @@ public class NhanVienViewModel {
         this.vaiTro = vaiTro;
     }
 
-    public String getTrangThai() {
+    public boolean isTrangThai() {
         return trangThai;
     }
 
-    public void setTrangThai(String trangThai) {
+    public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
     }
-
-    
-    
-
 }

@@ -1,18 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
+
 package Responsitories;
 
 import DomainModels.NhanVien;
+import ViewModels.NhanVienViewModel;
 import java.util.List;
 
-/**
- *
- * @author Admin
- */
 public interface INhanVienRes {
-    List<NhanVien> getALL();
-    
+
+    List<NhanVienViewModel> getAll();
+
     NhanVien getOne(String taiKhoan);
+
+    boolean add(NhanVien nv);
+
+    int update(String id, NhanVien nv);
+
+    int delete(String id);
+
+    public NhanVien getByTenDangNhap(String tenDangNhap);
+//    public List<NhanVienViewModel> find(String maNv, String hoTen);
 }

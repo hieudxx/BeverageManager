@@ -13,7 +13,6 @@ public class NhanVien {
     private String matKhau;
     private String hoTen;
     private String vaiTro;
-//    ChucVu cv;
     private boolean trangThai;
     
 
