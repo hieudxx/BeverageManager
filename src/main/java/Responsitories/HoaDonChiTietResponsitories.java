@@ -15,10 +15,10 @@ public interface HoaDonChiTietResponsitories {
     
     int insert (HoaDonChiTiet hdct);
     
-    int delete (String IDHD);
+    int delete (int IDHD);
     
-     List<HoaDonChiTiet> selectByID(String idHoaDon);
-     List<HoaDonChiTiet> getSpByID(String idsanpham);
+     List<HoaDonChiTiet> selectByID(int idHoaDon);
+     List<HoaDonChiTiet> getSpByID(int idsanpham);
      List<HoaDonChiTiet> getAll();
     
 }

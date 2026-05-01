@@ -5,24 +5,68 @@
 package Services.impl;
 
 import DomainModels.NhanVien;
-import Responsitories.NhanVienRes;
+import Responsitories.INhanVienRes;
 import Responsitories.impl.NhanVienResImpl;
 import Services.INhanVienService;
+import ViewModels.NhanVienViewModel;
 import java.util.List;
 
 /**
  *
  * @author Admin
  */
-public class NhanVienServiceImpl implements INhanVienService{
-    private INhanVienService nv = (INhanVienService) new NhanVienResImpl();
+public class NhanVienServiceImpl implements INhanVienService {
+
+    private INhanVienRes nvRes = new NhanVienResImpl();
+
     @Override
-    public List<NhanVien> getALL() {
-        return nv.getALL();
+    public List<NhanVienViewModel> getAll() {
+        return nvRes.getAll();
     }
 
     @Override
-    public NhanVien getOne(String TaiKhoan) {
-        return nv.getOne(TaiKhoan);
+    public NhanVien getOne(String taiKhoan) {
+        return nvRes.getOne(taiKhoan);
     }
+
+//    @Override
+//    public NhanVienViewModel getByMaNv(String maNhanVien) {
+//        return nvRes.getByMaNv(maNhanVien);
+//    }
+
+//    @Override
+//    public NhanVien getByTenDangNhap(String tenDangNhap) {
+//        return nvRes.getByTenDangNhap(tenDangNhap);
+//    }
+
+    @Override
+    public int add(NhanVien nv) {
+        boolean check = this.nvRes.add(nv);
+        if (check) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int update(String id, NhanVien nv) {
+        return nvRes.update(id, nv);
+    }
+
+    @Override
+    public int delete(String id) {
+        return nvRes.delete(id);
+    }
+
+//    @Override
+//    public List<NhanVienViewModel> find(String maNv, String hoTen) {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
+//
+//    @Override
+//    public NhanVienViewModel getByMaNv(String maNhanVien) {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
+
 }

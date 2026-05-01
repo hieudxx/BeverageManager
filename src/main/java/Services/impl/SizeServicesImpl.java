@@ -56,4 +56,9 @@ public class SizeServicesImpl implements SizeServices{
     public boolean delete(String maS){
         return SizeRep.delete(maS);
     }
+
+    @Override
+    public List<Size> getSizesBySPId(int spId) {
+        return SizeRep.getSizesBySPId(spId);
+    }
 }
