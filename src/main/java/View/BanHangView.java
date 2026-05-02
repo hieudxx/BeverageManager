@@ -438,15 +438,49 @@ public class BanHangView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng", "Sản phẩm", "Nhân viên", "Khách hàng", "Thống kê"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
         int y = 1;
         for (String m : menu) {
             JButton btn = new JButton(m);
             btn.setPreferredSize(new Dimension(200, 60));
+            btn.setContentAreaFilled(false);
+            btn.setOpaque(true);
+            btn.setFocusPainted(false);
             btn.setBackground(m.equals("Bán hàng") ? COLOR_ORANGE_ACTIVE : COLOR_SIDEBAR);
             btn.setForeground(Color.WHITE);
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
+
+            // --- THÊM SỰ KIỆN CLICK TẠI ĐÂY ---
+            // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
+            btn.addActionListener(e -> {
+                switch (m) {
+                    case "Bán hàng":
+                        new BanHangView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Nhân viên":
+                        new NhanVienView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Danh Mục":
+                        new DanhMucView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Size":
+                        new SizeView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Sản phẩm":
+                        new SanPhamView().setVisible(true);
+                        this.dispose();
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
+                        break;
+                }
+            });
+
             g.gridy = y++;
             p.add(btn, g);
         }
@@ -461,6 +495,12 @@ public class BanHangView extends JFrame {
         btnExit.setForeground(Color.WHITE);
         btnExit.setFont(new Font("Arial", Font.BOLD, 14));
         btnExit.setBorder(new MatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
+        btnExit.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát chương trình?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.exit(0); // Thoát toàn bộ ứng dụng
+            }
+        });
         g.gridy = y;
         g.weighty = 0;
         p.add(btnExit, g);
@@ -851,6 +891,12 @@ public class BanHangView extends JFrame {
     }
 
     public static void main(String[] args) {
+        try {
+            // Thêm dòng này để đồng bộ giao diện
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         SwingUtilities.invokeLater(() -> new BanHangView().setVisible(true));
     }
 }
