@@ -99,7 +99,7 @@ List<HoaDonChiTiet> listHDCT = new ArrayList<>();
 
     @Override
     public int delete(int IDHD) {
-        String query = "DELETE FROM [dbo].[HoaDonChiTiet] WHERE IDHD = ?";
+        String query = "DELETE FROM [dbo].[HoaDonChiTiet] WHERE id_hoa_don = ?";
         return JDBC_Helper.updateTongQuat(query, IDHD);
     }
 
@@ -153,6 +153,12 @@ List<HoaDonChiTiet> listHDCT = new ArrayList<>();
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public int deleteOne(int idHDCT) {
+        String query = "DELETE FROM HoaDonChiTiet WHERE id = ?";
+    return JDBC_Helper.updateTongQuat(query, idHDCT);
     }
     
 }

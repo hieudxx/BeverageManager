@@ -312,6 +312,19 @@ public class DanhMucView extends JFrame {
         JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
+                ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+        // Lấy đối tượng Image từ icon
+        Image img = icon.getImage();
+
+// Resize ảnh về đúng kích thước panel (200x150)
+        Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
+
+// Tạo lại ImageIcon từ ảnh đã resize
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+
+// Đưa vào JLabel
+        JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
+        logo.add(lblLogo, BorderLayout.CENTER);
         g.gridy = 0;
         p.add(logo, g);
 
