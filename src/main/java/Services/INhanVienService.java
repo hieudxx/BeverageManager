@@ -1,17 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
+
 package Services;
 
 import DomainModels.NhanVien;
 import ViewModels.NhanVienViewModel;
 import java.util.List;
 
-/**
- *
- * @author Admin
- */
+
 public interface INhanVienService {
 
     public List<NhanVienViewModel> getAll();
@@ -24,9 +18,9 @@ public interface INhanVienService {
 
     public int add(NhanVien nv);
 
-    public int update(String id, NhanVien nv);
+    public int update(String ma_nhan_vien, NhanVien nv);
 
-    public int delete(String id);
+    public int delete(String ma_nhan_vien);
 
 //    public List<NhanVienViewModel> find(String maNv, String hoTen);
 }

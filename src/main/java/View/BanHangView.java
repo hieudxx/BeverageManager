@@ -420,6 +420,21 @@ public class BanHangView extends JFrame {
         JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
+
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+        // Lấy đối tượng Image từ icon
+        Image img = icon.getImage();
+
+// Resize ảnh về đúng kích thước panel (200x150)
+        Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
+
+// Tạo lại ImageIcon từ ảnh đã resize
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+
+// Đưa vào JLabel
+        JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
+        logo.add(lblLogo, BorderLayout.CENTER);
+
         g.gridy = 0;
         p.add(logo, g);
 
@@ -760,73 +775,73 @@ public class BanHangView extends JFrame {
         cboHinhThucThanhToan.setSelectedIndex(0);
     }
 
-private void thanhToan() {
-    String maHD = lblMaHoaDon.getText();
-    if (maHD == null || maHD.equals("Vui lòng tạo!") || maHD.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn hoặc tạo hóa đơn trước khi thanh toán!");
-        return;
-    }
-
-    // 1. Lấy thông tin hóa đơn hiện tại từ database
-    HoaDon hd = hoaDonService.selectByMaHD(maHD);
-    if (hd == null) {
-        JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin hóa đơn trên hệ thống!");
-        return;
-    }
-
-    try {
-        // 2. Lấy dữ liệu từ giao diện
-        String hinhThuc = cboHinhThucThanhToan.getSelectedItem().toString();
-        
-        // Làm sạch chuỗi số (Xử lý trường hợp có VNĐ hoặc dấu phân cách)
-        String sKhachDua = txtTienKhachDua.getText().trim().replaceAll("[^0-9]", "");
-        String sTongTien = lblTongTien.getText().replaceAll("[^0-9]", "");
-
-        if (sKhachDua.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập số tiền khách đưa!");
+    private void thanhToan() {
+        String maHD = lblMaHoaDon.getText();
+        if (maHD == null || maHD.equals("Vui lòng tạo!") || maHD.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn hoặc tạo hóa đơn trước khi thanh toán!");
             return;
         }
 
-        BigDecimal tienKhachDua = new BigDecimal(sKhachDua);
-        BigDecimal tongTien = sTongTien.isEmpty() ? BigDecimal.ZERO : new BigDecimal(sTongTien);
-
-        if (tienKhachDua.compareTo(tongTien) < 0) {
-            JOptionPane.showMessageDialog(this, "Tiền khách đưa không đủ để thanh toán!");
+        // 1. Lấy thông tin hóa đơn hiện tại từ database
+        HoaDon hd = hoaDonService.selectByMaHD(maHD);
+        if (hd == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin hóa đơn trên hệ thống!");
             return;
         }
 
-        // 3. XỬ LÝ LỖI FOREIGN KEY (Quan trọng)
-        // Nếu giao diện đang hiển thị khách bán lẻ, ta set KhachHang của đối tượng hd là null
-        if (lblHoTenKH.getText().equalsIgnoreCase("Khách lẻ") || lblHoTenKH.getText().isBlank()) {
-            hd.setKhachHang(null); 
+        try {
+            // 2. Lấy dữ liệu từ giao diện
+            String hinhThuc = cboHinhThucThanhToan.getSelectedItem().toString();
+
+            // Làm sạch chuỗi số (Xử lý trường hợp có VNĐ hoặc dấu phân cách)
+            String sKhachDua = txtTienKhachDua.getText().trim().replaceAll("[^0-9]", "");
+            String sTongTien = lblTongTien.getText().replaceAll("[^0-9]", "");
+
+            if (sKhachDua.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập số tiền khách đưa!");
+                return;
+            }
+
+            BigDecimal tienKhachDua = new BigDecimal(sKhachDua);
+            BigDecimal tongTien = sTongTien.isEmpty() ? BigDecimal.ZERO : new BigDecimal(sTongTien);
+
+            if (tienKhachDua.compareTo(tongTien) < 0) {
+                JOptionPane.showMessageDialog(this, "Tiền khách đưa không đủ để thanh toán!");
+                return;
+            }
+
+            // 3. XỬ LÝ LỖI FOREIGN KEY (Quan trọng)
+            // Nếu giao diện đang hiển thị khách bán lẻ, ta set KhachHang của đối tượng hd là null
+            if (lblHoTenKH.getText().equalsIgnoreCase("Khách lẻ") || lblHoTenKH.getText().isBlank()) {
+                hd.setKhachHang(null);
+            }
+
+            // 4. Cập nhật các giá trị còn lại
+            hd.setTongTien(tongTien);
+            hd.setTienThanhToan(tienKhachDua);
+            hd.setPhuongThucTT(hinhThuc);
+            hd.setTrangThai("Đã thanh toán");
+
+            // 5. Gọi Service để Update
+            int check = hoaDonService.update(hd);
+
+            if (check > 0) {
+                JOptionPane.showMessageDialog(this, "Thanh toán thành công hóa đơn: " + maHD);
+
+                // 6. Làm mới giao diện
+                loadTableHoaDonCho(null);
+                dtmCart.setRowCount(0);
+                lamMoiGiaoDien();
+            } else {
+                JOptionPane.showMessageDialog(this, "Cập nhật hóa đơn thất bại!");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số tiền không hợp lệ! Vui lòng chỉ nhập số.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
         }
-
-        // 4. Cập nhật các giá trị còn lại
-        hd.setTongTien(tongTien);
-        hd.setTienThanhToan(tienKhachDua);
-        hd.setPhuongThucTT(hinhThuc);
-        hd.setTrangThai("Đã thanh toán");
-
-        // 5. Gọi Service để Update
-        int check = hoaDonService.update(hd);
-
-        if (check > 0) {
-            JOptionPane.showMessageDialog(this, "Thanh toán thành công hóa đơn: " + maHD);
-
-            // 6. Làm mới giao diện
-            loadTableHoaDonCho(null); 
-            dtmCart.setRowCount(0);   
-            lamMoiGiaoDien();         
-        } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật hóa đơn thất bại!");
-        }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Số tiền không hợp lệ! Vui lòng chỉ nhập số.");
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
     }
-}
 
     private JButton createYellowBtn(String text) {
         JButton b = new JButton(text);
