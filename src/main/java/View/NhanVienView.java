@@ -46,85 +46,6 @@ public class NhanVienView extends JFrame {
         // --- GỌI HÀM TẠO SIDEBAR MỚI ---
         add(createSidebar(), BorderLayout.WEST);
 
-//        JPanel sidebar = new JPanel(null);
-//        sidebar.setPreferredSize(new Dimension(220, 0));
-//        sidebar.setBackground(new Color(10, 40, 60));
-//
-//        // Khoảng trống vàng ở đầu Sidebar (To dài hơn - 250px)
-//        JPanel pnlYellowHeader = new JPanel();
-//        pnlYellowHeader.setBounds(0, 0, 220, 250);
-//        pnlYellowHeader.setBackground(new Color(240, 190, 90));
-//        sidebar.add(pnlYellowHeader);
-//
-//        // Các nút Menu - Bắt đầu từ y = 250
-        //// 1. Nút Bán hàng
-//        JButton btnBanHang = menuBtn("Bán hàng", 250, false);
-//        btnBanHang.addActionListener(e -> {
-//            new BanHangView().setVisible(true); // Mở màn hình Bán hàng
-//            this.dispose(); // Đóng màn hình Nhân viên hiện tại
-//        });
-//        sidebar.add(btnBanHang);
-//        
-//        JButton btnDanhMuc = menuBtn("Danh mục", 310, false);
-//        btnDanhMuc.addActionListener(e -> {
-//            new DanhMucView().setVisible(true); // Mở màn hình Bán hàng
-//            this.dispose(); // Đóng màn hình Nhân viên hiện tại
-//        });
-//        sidebar.add(btnDanhMuc);
-//        
-//// 2. Nút Sản phẩm
-//        JButton btnSanPham = menuBtn("Sản phẩm", 370, false);
-//        btnSanPham.addActionListener(e -> {
-//            new SanPhamView().setVisible(true); // Mở màn hình Sản phẩm
-//            this.dispose();
-//        });
-//        sidebar.add(btnSanPham);
-//
-//                JButton btnSize = menuBtn("Size", 430, false);
-//        btnSize.addActionListener(e -> {
-//            new SizeView().setVisible(true); // Mở màn hình Sản phẩm
-//            this.dispose();
-//        });
-//        sidebar.add(btnSize);
-//        
-//// 3. Nút Nhân viên (Màn hình hiện tại - Không cần chuyển)
-//        sidebar.add(menuBtn("Nhân viên", 490, true));
-//
-//// 4. Nút Khách hàng
-//        JButton btnKhachHang = menuBtn("Khách hàng", 550, false);
-//        btnKhachHang.addActionListener(e -> {
-////    new KhachHangView().setVisible(true); // Mở màn hình Khách hàng
-//            this.dispose();
-//        });
-//        sidebar.add(btnKhachHang);
-//
-//// 5. Nút Thống kê
-//        JButton btnThongKe = menuBtn("Thống kê", 610, false);
-//        btnThongKe.addActionListener(e -> {
-////    new ThongKeView().setVisible(true); // Mở màn hình Thống kê
-//            this.dispose();
-//        });
-//        sidebar.add(btnThongKe);
-//
-//// 6. Nút Thoát (Đã sửa logic xác nhận thoát)
-//        JButton btnThoat = menuBtn("🚪 Thoát", 0, false);
-//        btnThoat.addActionListener(e -> {
-//            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn thoát ứng dụng?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-//            if (confirm == JOptionPane.YES_OPTION) {
-//                System.exit(0);
-//            }
-//        });
-//        sidebar.add(btnThoat);
-//
-//        sidebar.addComponentListener(new ComponentAdapter() {
-//            @Override
-//            public void componentResized(ComponentEvent e) {
-//                btnThoat.setLocation(0, sidebar.getHeight() - 60);
-//            }
-//        });
-//
-//        add(sidebar, BorderLayout.WEST);
-
         // --- MAIN PANEL (Vùng quản lý) ---
         JPanel main = new JPanel(new BorderLayout());
         main.setBackground(new Color(240, 190, 90));
@@ -291,11 +212,27 @@ public class NhanVienView extends JFrame {
         g.weightx = 1.0;
 
         // Logo vàng phía trên
-        JPanel logo = new JPanel();
+      JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
+
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+        // Lấy đối tượng Image từ icon
+        Image img = icon.getImage();
+
+// Resize ảnh về đúng kích thước panel (200x150)
+        Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
+
+// Tạo lại ImageIcon từ ảnh đã resize
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+
+// Đưa vào JLabel
+        JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
+        logo.add(lblLogo, BorderLayout.CENTER);
+
         g.gridy = 0;
         p.add(logo, g);
+
 
         String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
         int y = 1;
@@ -333,6 +270,10 @@ public class NhanVienView extends JFrame {
                         break;
                     case "Sản phẩm":
                         new SanPhamView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Khách hàng":
+                        new KhachHangView().setVisible(true);
                         this.dispose();
                         break;
                     default:

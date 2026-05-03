@@ -475,6 +475,10 @@ public class BanHangView extends JFrame {
                         new SanPhamView().setVisible(true);
                         this.dispose();
                         break;
+                    case "Khách hàng":
+                        new KhachHangView().setVisible(true);
+                        this.dispose();
+                        break;
                     default:
                         JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
                         break;
