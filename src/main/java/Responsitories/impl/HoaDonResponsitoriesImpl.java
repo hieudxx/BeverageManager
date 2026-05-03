@@ -23,7 +23,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
     
         @Override
     public HoaDon selectByMaHD(String maHD) {
-        String query = "SELECT HoaDon.id, ma_hoa_don, NhanVien.ma_nhan_vien,NhanVien.ten_dang_nhap, NhanVien.ho_ten as 'HoTenNV', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
+        String query = "SELECT HoaDon.id, ma_hoa_don,NhanVien.id as 'IDNV', NhanVien.ma_nhan_vien,NhanVien.ten_dang_nhap, NhanVien.ho_ten as 'HoTenNV', KhachHang.id as 'IDKH', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
 "                       HoaDon.ngay_tao,trang_thai,phuong_thuc_tt,tong_tien, tien_thanh_toan\n" +
 "                       FROM HoaDon LEFT JOIN NhanVien ON HoaDon.id_nhan_vien = NhanVien.id\n" +
 "                                   LEFT JOIN KhachHang ON HoaDon.id_khach_hang = KhachHang.id Where HoaDon.ma_hoa_don = ?";
@@ -33,10 +33,12 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
                 HoaDon hd = new HoaDon();
                 NhanVien nv = new NhanVien();
                 KhachHang kh = new KhachHang();
+                nv.setId(rs.getInt("IDNV"));
                 nv.setTenDangNhap(rs.getString("ten_dang_nhap")); nv.setHoTen(rs.getString("HoTenNV"));
                 hd.setId(rs.getInt("id"));
                 hd.setMaHoaDon(rs.getString("ma_hoa_don"));
                 hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("trang_thai"));
+                kh.setId(rs.getInt("IDKH"));
                 kh.setMaKhachHang(rs.getString("ma_khach_hang")); kh.setHoTen(rs.getString("HoTenKH")); kh.setSoDienThoai(rs.getString("so_dien_thoai"));
                 hd.setKhachHang(kh);
                 hd.setTongTien(rs.getBigDecimal("tong_tien"));
@@ -56,7 +58,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
         String query = "SELECT HoaDon.id, ma_hoa_don, NhanVien.ma_nhan_vien,NhanVien.ten_dang_nhap, NhanVien.ho_ten as 'HoTenNV', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
 "                       HoaDon.ngay_tao,trang_thai,phuong_thuc_tt,tong_tien, tien_thanh_toan\n" +
 "                       FROM HoaDon LEFT JOIN NhanVien ON HoaDon.id_nhan_vien = NhanVien.id\n" +
-"                                   LEFT JOIN KhachHang ON HoaDon.id_khach_hang = KhachHang.id Where HoaDon.trang_thai LIKE N'%Chờ thanh toán%'";
+"                                   LEFT JOIN KhachHang ON HoaDon.id_khach_hang = KhachHang.id Where HoaDon.trang_thai LIKE N'%Chờ thanh toán%' ORDER BY HoaDon.ngay_tao DESC";
         ResultSet rs = JDBC_Helper.selectTongQuat(query);
         try {                
             while (rs.next()) {
@@ -88,8 +90,17 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
     public int update(HoaDon hd) {
         String query = "UPDATE HoaDon SET [id_nhan_vien] = ?, [id_khach_hang] = ?, \n" +
                        " [tong_tien] = ?,[tien_thanh_toan] = ?, [phuong_thuc_tt] = ?, [trang_thai] = ? WHERE ma_hoa_don = ?";
-        return JDBC_Helper.updateTongQuat(query, hd.getNhanVien().getId(), hd.getTongTien(),
-        hd.getTienThanhToan(), hd.getPhuongThucTT(), hd.getTrangThai(), hd.getMaHoaDon()
+        // Kiểm tra null an toàn trước khi lấy ID
+    Object idNV = (hd.getNhanVien() != null) ? hd.getNhanVien().getId() : null;
+    Object idKH = (hd.getKhachHang() != null) ? hd.getKhachHang().getId() : null;
+        return JDBC_Helper.updateTongQuat(query, 
+        idNV,             // ? 1
+        idKH,             // ? 2 (Nếu null, SQL sẽ tự động set NULL cho cột FK)
+        hd.getTongTien(),                                             // ? 3
+        hd.getTienThanhToan(),                                        // ? 4
+        hd.getPhuongThucTT(),                                         // ? 5
+        hd.getTrangThai(),                                            // ? 6
+        hd.getMaHoaDon()
         );
     }
     
@@ -106,6 +117,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
         hd.getTienThanhToan() != null ? hd.getTienThanhToan() : 0,    // 5
         hd.getPhuongThucTT(),                                         // 6
         hd.getTrangThai()
+                
         );
     }
 

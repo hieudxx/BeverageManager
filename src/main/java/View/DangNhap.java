@@ -42,7 +42,7 @@ public class DangNhap extends JFrame {
 
         try {
             ImageIcon icon = new ImageIcon(
-                    getClass().getResource("/images/logoNootea_1.png")
+                    getClass().getResource("/images/logoNootea.png")
             );
             Image img = icon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
             lblLogo.setIcon(new ImageIcon(img));
@@ -182,10 +182,11 @@ public class DangNhap extends JFrame {
             // SUCCESS
             lblMessage.setText(" ");
             Auth.user = nv;
+            SessionUser.getInstance().setCurrentUser(nv);
 
             JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
-            SessionUser.getInstance().setCurrentUser(nv);
             System.out.println("Đăng nhập thành công!");
+            System.out.println("id: " + nv.getId());
             System.out.println("Mã NV: " + nv.getMaNhanVien());
             System.out.println("Tên đăng nhập: " + nv.getTenDangNhap());
             System.out.println("Họ tên: " + nv.getHoTen());

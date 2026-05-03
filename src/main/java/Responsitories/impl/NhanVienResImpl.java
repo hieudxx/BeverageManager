@@ -17,7 +17,6 @@ import Responsitories.INhanVienRes;
 
 public class NhanVienResImpl implements INhanVienRes {
 
-    @Override
     public NhanVien getOne(String TaiKhoan) {
         String query = """
                        SELECT id, ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten,
@@ -26,7 +25,7 @@ public class NhanVienResImpl implements INhanVienRes {
         try {
             while (rs.next()) {
                 NhanVien nv = new NhanVien();
-                nv.setId(rs.getString("id"));
+                nv.setId(rs.getInt("id"));
                 nv.setMaNhanVien(rs.getString("ma_nhan_vien"));
                 nv.setTenDangNhap(rs.getString("ten_dang_nhap"));
                 nv.setMatKhau(rs.getString("mat_khau"));
@@ -75,7 +74,7 @@ public class NhanVienResImpl implements INhanVienRes {
             ResultSet rs = JDBC_Helper.selectTongQuat(sql);
             while (rs.next()) {
                 NhanVienViewModel nv = new NhanVienViewModel();
-                nv.setId(rs.getString("id"));
+                nv.setId(rs.getInt("id"));
                 nv.setMaNhanVien(rs.getString("ma_nhan_vien"));
                 nv.setTenDangNhap(rs.getString("ten_dang_nhap"));
                 nv.setMatKhau(rs.getString("mat_khau"));
@@ -115,7 +114,7 @@ public class NhanVienResImpl implements INhanVienRes {
 
             ResultSet rs = JDBC_Helper.selectTongQuat(sql, tenDangNhap);
             while (rs.next()) {
-                String id = rs.getString(1);
+                int id = rs.getInt(1);
                 String maNv = rs.getString(2);
                 String tk = rs.getString(3);
                 String matKhau = rs.getString(4);

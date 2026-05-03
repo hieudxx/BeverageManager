@@ -2,7 +2,7 @@ package ViewModels;
 
 public class NhanVienViewModel {
 
-    private String id;
+    private int id;
     private String maNhanVien;
     private String tenDangNhap;
     private String matKhau;
@@ -11,11 +11,10 @@ public class NhanVienViewModel {
     private boolean trangThai;
 
     public NhanVienViewModel() {
-        
-        
+
     }
 
-    public NhanVienViewModel(String id, String maNhanVien, String tenDangNhap, String hoTen, String vaiTro, boolean trangThai) {
+    public NhanVienViewModel(int id, String maNhanVien, String tenDangNhap, String hoTen, String vaiTro, boolean trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;
         this.tenDangNhap = tenDangNhap;
@@ -24,7 +23,7 @@ public class NhanVienViewModel {
         this.trangThai = trangThai;
     }
 
-    public NhanVienViewModel(String id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
+    public NhanVienViewModel(int id, String maNhanVien, String tenDangNhap, String matKhau, String hoTen, String vaiTro, boolean trangThai) {
         this.id = id;
         this.maNhanVien = maNhanVien;
         this.tenDangNhap = tenDangNhap;
@@ -34,13 +33,11 @@ public class NhanVienViewModel {
         this.trangThai = trangThai;
     }
 
-    
-
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

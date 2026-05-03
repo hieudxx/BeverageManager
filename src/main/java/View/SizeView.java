@@ -86,12 +86,12 @@ public class SizeView extends JFrame {
         String[] labels = {"ID:", "Mã Size:", "Mã Sản phẩm:", "Tên Size:", "Giá:", "Trạng thái:"};
 
         JComponent[] inputs = {
-                txtId,
-                txtMaSize,
-                cboSanPham,
-                txtTenSize,
-                txtGia,
-                cboTrangThai
+            txtId,
+            txtMaSize,
+            cboSanPham,
+            txtTenSize,
+            txtGia,
+            cboTrangThai
         };
 
         for (int i = 0; i < labels.length; i++) {
@@ -162,13 +162,12 @@ public class SizeView extends JFrame {
         add(main, BorderLayout.CENTER);
 
         // ===== EVENT =====
-
         // Search
         btnSearch.addActionListener(e -> {
             String key = txtTim.getText().trim();
             loadTable(key.isEmpty() ? service.getAll() : service.search(key));
         });
-        
+
         // Add
         btnAdd.addActionListener(e -> {
             try {
@@ -280,7 +279,7 @@ public class SizeView extends JFrame {
                 JOptionPane.showMessageDialog(this, "Có lỗi xảy ra!");
             }
         });
-        
+
         // Delete
         btnDelete.addActionListener(e -> {
             String id = txtId.getText().trim();
@@ -312,7 +311,7 @@ public class SizeView extends JFrame {
                 JOptionPane.showMessageDialog(this, "Xóa thất bại!");
             }
         });
-        
+
         // Reset
         btnReset.addActionListener(e -> {
             resetForm();
@@ -322,7 +321,9 @@ public class SizeView extends JFrame {
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int row = table.getSelectedRow();
-                if (row == -1) return;
+                if (row == -1) {
+                    return;
+                }
 
                 txtId.setText(model.getValueAt(row, 0).toString());
                 txtMaSize.setText(model.getValueAt(row, 1).toString());
@@ -348,12 +349,12 @@ public class SizeView extends JFrame {
         model.setRowCount(0);
         for (SizeViewModel s : list) {
             model.addRow(new Object[]{
-                    s.getId(),
-                    s.getMaSize(),
-                    (s.getSanPham() != null) ? s.getSanPham().getMaSanPham() : "",
-                    s.getTenSize(),
-                    s.getGiaChenhLech(),
-                    s.isTrangThaiHienThi() ? "Hiển thị" : "Ẩn"
+                s.getId(),
+                s.getMaSize(),
+                (s.getSanPham() != null) ? s.getSanPham().getMaSanPham() : "",
+                s.getTenSize(),
+                s.getGiaChenhLech(),
+                s.isTrangThaiHienThi() ? "Hiển thị" : "Ẩn"
             });
         }
     }
@@ -400,25 +401,109 @@ public class SizeView extends JFrame {
         GridBagConstraints g = new GridBagConstraints();
         g.gridx = 0;
         g.fill = GridBagConstraints.HORIZONTAL;
+        g.weightx = 1;
 
-        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size"};
+        JPanel logo = new JPanel();
+        logo.setBackground(new Color(255, 204, 0));
+        logo.setPreferredSize(new Dimension(200, 150));
+                ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+        // Lấy đối tượng Image từ icon
+        Image img = icon.getImage();
 
-        int y = 0;
+// Resize ảnh về đúng kích thước panel (200x150)
+        Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
+
+// Tạo lại ImageIcon từ ảnh đã resize
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+
+// Đưa vào JLabel
+        JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
+        logo.add(lblLogo, BorderLayout.CENTER);
+        g.gridy = 0;
+        p.add(logo, g);
+
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+
+        int y = 1;
         for (String m : menu) {
             JButton btn = new JButton(m);
-            btn.setBackground(m.equals("Size") ? COLOR_ORANGE : COLOR_SIDEBAR);
+            btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setForeground(Color.WHITE);
+            btn.setContentAreaFilled(false);
+            btn.setOpaque(true);
+            btn.setFocusPainted(false);
             btn.setPreferredSize(new Dimension(200, 60));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
+
+            // Logic tô màu cam cho nút "Size" đang được chọn
+            if (m.equals("Size")) {
+                btn.setBackground(COLOR_ORANGE);
+            } else {
+                btn.setBackground(COLOR_SIDEBAR);
+            }
+            
+            // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
+            btn.addActionListener(e -> {
+                switch (m) {
+                    case "Bán hàng":
+                        new BanHangView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Nhân viên":
+                        new NhanVienView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Danh Mục":
+                        new DanhMucView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Size":
+                        new SizeView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Sản phẩm":
+                        new SanPhamView().setVisible(true);
+                        this.dispose();
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
+                        break;
+                }
+            });
 
             g.gridy = y++;
             p.add(btn, g);
         }
+        g.gridy = y++;
+        g.weighty = 1;
+        p.add(new JLabel(""), g);
 
+        JButton btnExit = new JButton("Thoát");
+        btnExit.setBackground(COLOR_SIDEBAR);
+        btnExit.setForeground(Color.WHITE);
+        btnExit.setFont(new Font("Arial", Font.BOLD, 14));
+        btnExit.setBorder(new MatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
+
+        btnExit.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát chương trình?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.exit(0); // Thoát toàn bộ ứng dụng
+            }
+        });
+        
+        g.gridy = y;
+        g.weighty = 0;
+        p.add(btnExit, g);
         return p;
     }
 
     public static void main(String[] args) {
+        try {
+            // Thêm dòng này để đồng bộ giao diện
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         SwingUtilities.invokeLater(() -> new SizeView().setVisible(true));
     }
 }

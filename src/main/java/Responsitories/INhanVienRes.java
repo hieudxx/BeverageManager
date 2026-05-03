@@ -13,9 +13,9 @@ public interface INhanVienRes {
 
     boolean add(NhanVien nv);
 
-    int update(String id, NhanVien nv);
+    int update(String ma_nhan_vien, NhanVien nv);
 
-    int delete(String id);
+    int delete(String ma_nhan_vien);
 
     public NhanVien getByTenDangNhap(String tenDangNhap);
 //    public List<NhanVienViewModel> find(String maNv, String hoTen);

@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.util.List;
 import Services.INhanVienService;
 import Services.impl.NhanVienServiceImpl;
+import javax.swing.border.MatteBorder;
 
 public class NhanVienView extends JFrame {
 
@@ -21,6 +22,10 @@ public class NhanVienView extends JFrame {
     private JTable tableNhanVien;
     private DefaultTableModel tableModel;
     private INhanVienService INvService;
+    private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
+    private final Color COLOR_ORANGE_ACTIVE = new Color(243, 156, 18);
+    private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
+    private final Color COLOR_YELLOW_BTN = new Color(255, 215, 0);
 
     public NhanVienView() {
         INvService = new NhanVienServiceImpl();
@@ -34,40 +39,91 @@ public class NhanVienView extends JFrame {
 
     private void initComponents() {
         // 1. TẠO KHE HỞ 15px VÀ ĐẶT MÀU NỀN CỬA SỔ (Màu xám nhạt để lộ khe hở)
-        setLayout(new BorderLayout(15, 0));
-        getContentPane().setBackground(new Color(225, 225, 225));
+        setLayout(new BorderLayout(0, 0));
+        getContentPane().setBackground(COLOR_BG_MAIN);
 
         // --- SIDEBAR ---
-        JPanel sidebar = new JPanel(null);
-        sidebar.setPreferredSize(new Dimension(220, 0));
-        sidebar.setBackground(new Color(10, 40, 60));
+        // --- GỌI HÀM TẠO SIDEBAR MỚI ---
+        add(createSidebar(), BorderLayout.WEST);
 
-        // Khoảng trống vàng ở đầu Sidebar (To dài hơn - 250px)
-        JPanel pnlYellowHeader = new JPanel();
-        pnlYellowHeader.setBounds(0, 0, 220, 250);
-        pnlYellowHeader.setBackground(new Color(240, 190, 90));
-        sidebar.add(pnlYellowHeader);
-
-        // Các nút Menu - Bắt đầu từ y = 250
-        sidebar.add(menuBtn("Bán hàng", 250, false));
-        sidebar.add(menuBtn("Sản phẩm", 310, false));
-
-        sidebar.add(menuBtn("Nhân viên", 370, true));
-
-        sidebar.add(menuBtn("Khách hàng", 430, false));
-        sidebar.add(menuBtn("Thống kê", 490, false));
-
-        JButton btnThoat = menuBtn("🚪 Thoát", 0, false);
-        sidebar.add(btnThoat);
-
-        sidebar.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                btnThoat.setLocation(0, sidebar.getHeight() - 60);
-            }
-        });
-
-        add(sidebar, BorderLayout.WEST);
+//        JPanel sidebar = new JPanel(null);
+//        sidebar.setPreferredSize(new Dimension(220, 0));
+//        sidebar.setBackground(new Color(10, 40, 60));
+//
+//        // Khoảng trống vàng ở đầu Sidebar (To dài hơn - 250px)
+//        JPanel pnlYellowHeader = new JPanel();
+//        pnlYellowHeader.setBounds(0, 0, 220, 250);
+//        pnlYellowHeader.setBackground(new Color(240, 190, 90));
+//        sidebar.add(pnlYellowHeader);
+//
+//        // Các nút Menu - Bắt đầu từ y = 250
+        //// 1. Nút Bán hàng
+//        JButton btnBanHang = menuBtn("Bán hàng", 250, false);
+//        btnBanHang.addActionListener(e -> {
+//            new BanHangView().setVisible(true); // Mở màn hình Bán hàng
+//            this.dispose(); // Đóng màn hình Nhân viên hiện tại
+//        });
+//        sidebar.add(btnBanHang);
+//        
+//        JButton btnDanhMuc = menuBtn("Danh mục", 310, false);
+//        btnDanhMuc.addActionListener(e -> {
+//            new DanhMucView().setVisible(true); // Mở màn hình Bán hàng
+//            this.dispose(); // Đóng màn hình Nhân viên hiện tại
+//        });
+//        sidebar.add(btnDanhMuc);
+//        
+//// 2. Nút Sản phẩm
+//        JButton btnSanPham = menuBtn("Sản phẩm", 370, false);
+//        btnSanPham.addActionListener(e -> {
+//            new SanPhamView().setVisible(true); // Mở màn hình Sản phẩm
+//            this.dispose();
+//        });
+//        sidebar.add(btnSanPham);
+//
+//                JButton btnSize = menuBtn("Size", 430, false);
+//        btnSize.addActionListener(e -> {
+//            new SizeView().setVisible(true); // Mở màn hình Sản phẩm
+//            this.dispose();
+//        });
+//        sidebar.add(btnSize);
+//        
+//// 3. Nút Nhân viên (Màn hình hiện tại - Không cần chuyển)
+//        sidebar.add(menuBtn("Nhân viên", 490, true));
+//
+//// 4. Nút Khách hàng
+//        JButton btnKhachHang = menuBtn("Khách hàng", 550, false);
+//        btnKhachHang.addActionListener(e -> {
+////    new KhachHangView().setVisible(true); // Mở màn hình Khách hàng
+//            this.dispose();
+//        });
+//        sidebar.add(btnKhachHang);
+//
+//// 5. Nút Thống kê
+//        JButton btnThongKe = menuBtn("Thống kê", 610, false);
+//        btnThongKe.addActionListener(e -> {
+////    new ThongKeView().setVisible(true); // Mở màn hình Thống kê
+//            this.dispose();
+//        });
+//        sidebar.add(btnThongKe);
+//
+//// 6. Nút Thoát (Đã sửa logic xác nhận thoát)
+//        JButton btnThoat = menuBtn("🚪 Thoát", 0, false);
+//        btnThoat.addActionListener(e -> {
+//            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn thoát ứng dụng?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+//            if (confirm == JOptionPane.YES_OPTION) {
+//                System.exit(0);
+//            }
+//        });
+//        sidebar.add(btnThoat);
+//
+//        sidebar.addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                btnThoat.setLocation(0, sidebar.getHeight() - 60);
+//            }
+//        });
+//
+//        add(sidebar, BorderLayout.WEST);
 
         // --- MAIN PANEL (Vùng quản lý) ---
         JPanel main = new JPanel(new BorderLayout());
@@ -223,6 +279,110 @@ public class NhanVienView extends JFrame {
             }
         });
         tableNhanVien.getSelectionModel().addListSelectionListener(e -> loadSelectedRowToForm());
+    }
+
+    private JPanel createSidebar() {
+        JPanel p = new JPanel(new GridBagLayout());
+        p.setBackground(COLOR_SIDEBAR);
+        p.setPreferredSize(new Dimension(200, 0));
+        GridBagConstraints g = new GridBagConstraints();
+        g.gridx = 0;
+        g.fill = GridBagConstraints.HORIZONTAL;
+        g.weightx = 1.0;
+
+        // Logo vàng phía trên
+        JPanel logo = new JPanel();
+        logo.setBackground(new Color(255, 204, 0));
+        logo.setPreferredSize(new Dimension(200, 150));
+                ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+        // Lấy đối tượng Image từ icon
+        Image img = icon.getImage();
+
+// Resize ảnh về đúng kích thước panel (200x150)
+        Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
+
+// Tạo lại ImageIcon từ ảnh đã resize
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+
+// Đưa vào JLabel
+        JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
+        logo.add(lblLogo, BorderLayout.CENTER);
+        g.gridy = 0;
+        p.add(logo, g);
+
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+        int y = 1;
+        for (String m : menu) {
+            JButton btn = new JButton(m);
+            btn.setPreferredSize(new Dimension(200, 60));
+            btn.setContentAreaFilled(false); // Tắt vẽ nền mặc định của Look and Feel
+            btn.setOpaque(true);             // Cho phép hiển thị màu nền tự chọn
+            // Highlight màu cam nếu là mục "Nhân viên"
+            btn.setBackground(m.equals("Nhân viên") ? COLOR_ORANGE_ACTIVE : COLOR_SIDEBAR);
+
+            btn.setForeground(Color.WHITE);
+            btn.setFont(new Font("Arial", Font.BOLD, 14));
+            btn.setFocusPainted(false);
+            btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
+
+            // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
+            btn.addActionListener(e -> {
+                switch (m) {
+                    case "Bán hàng":
+                        new BanHangView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Nhân viên":
+                        new NhanVienView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Danh Mục":
+                        new DanhMucView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Size":
+                        new SizeView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Sản phẩm":
+                        new SanPhamView().setVisible(true);
+                        this.dispose();
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
+                        break;
+                }
+            });
+
+            g.gridy = y++;
+            p.add(btn, g);
+        }
+
+        // Tạo khoảng trống đẩy nút Thoát xuống cuối
+        g.gridy = y++;
+        g.weighty = 1.0;
+        p.add(new JLabel(""), g);
+
+        // Nút Thoát
+        JButton btnExit = new JButton("🚪 Thoát");
+        btnExit.setPreferredSize(new Dimension(200, 60));
+        btnExit.setBackground(COLOR_SIDEBAR);
+        btnExit.setForeground(Color.WHITE);
+        btnExit.setFont(new Font("Arial", Font.BOLD, 14));
+        btnExit.setFocusPainted(false);
+        btnExit.setBorder(new MatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
+        btnExit.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn thoát?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        });
+
+        g.gridy = y;
+        g.weighty = 0;
+        p.add(btnExit, g);
+
+        return p;
     }
 
     private JButton menuBtn(String text, int y, boolean active) {
@@ -447,8 +607,9 @@ public class NhanVienView extends JFrame {
 //    }
     public static void main(String[] args) {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
+            e.printStackTrace(); // Nên in lỗi ra để kiểm tra
         }
         SwingUtilities.invokeLater(() -> new NhanVienView().setVisible(true));
     }
