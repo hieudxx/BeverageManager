@@ -8,11 +8,14 @@ import DomainModels.HoaDon;
 import DomainModels.HoaDonChiTiet;
 import DomainModels.NhanVien;
 import DomainModels.Size;
+import DomainModels.DanhMuc;
 import DomainModels.SanPham;
+import Services.DanhMucServices;
 import Services.HoaDonChiTietService;
 import Services.HoaDonService;
 import Services.SanPhamServices;
 import Services.SizeServices;
+import Services.impl.DanhMucServicesImpl;
 import Services.impl.HoaDonChiTietServicesImpl;
 import Services.impl.HoaDonServiceImpl;
 import Services.impl.SanPhamServicesImpl;
@@ -25,6 +28,22 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+// Import hỗ trợ File
+import java.io.File;
+import java.io.FileOutputStream;
+import java.awt.Desktop;
+
+// Import iText (Bỏ qua Font để tránh lỗi trùng tên với java.awt.Font)
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.BaseFont;
+import java.io.InputStream;
 
 public class BanHangView extends JFrame {
 
@@ -35,6 +54,11 @@ public class BanHangView extends JFrame {
     private SizeServices sizeService = new SizeServicesImpl();
     private DefaultTableModel dtmCart; // Khai báo model cho bảng giỏ hàng
     private JTable tblCart; // Sửa lại table giỏ hàng
+    // Thêm vào phần khai báo thuộc tính đầu class BanHangView
+    private DanhMucServices dmService = new DanhMucServicesImpl(); // Giả định bạn đã có class Impl
+    private JTextField txtSearchSP;
+    private JComboBox<Object> cboDanhMuc; // Dùng Object để chứa cả đối tượng DanhMuc hoặc String
+    private List<SanPhamResponse> allProducts;
 
     // Components cho bảng Hóa Đơn Chờ
     private JTable tblPending;
@@ -56,6 +80,9 @@ public class BanHangView extends JFrame {
     private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
 
     public BanHangView() {
+
+        allProducts = spService.getAll();
+
         initUI();
         loadTableHoaDonCho(null);
     }
@@ -86,15 +113,32 @@ public class BanHangView extends JFrame {
         pnlProduct.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // Thanh tìm kiếm
+// --- Trong hàm initUI(), thay thế đoạn pnlFilter cũ ---
         JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 5));
         pnlFilter.setOpaque(false);
+
         pnlFilter.add(new JLabel("Tìm kiếm sản phẩm"));
-        pnlFilter.add(new JTextField(12));
-        pnlFilter.add(new JLabel("Size"));
-        pnlFilter.add(new JComboBox<>(new String[]{"ALL", "S", "M", "L"}));
+        txtSearchSP = new JTextField(12);
+        pnlFilter.add(txtSearchSP);
+
         pnlFilter.add(new JLabel("Loại sản phẩm"));
-        pnlFilter.add(new JComboBox<>(new String[]{"ALL", "Trà sữa", "Coffee"}));
+        cboDanhMuc = new JComboBox<>();
+        loadComboDanhMuc(); // Hàm tự viết để đổ dữ liệu từ DB
+        pnlFilter.add(cboDanhMuc);
+
         pnlProduct.add(pnlFilter, BorderLayout.NORTH);
+
+// --- GÁN SỰ KIỆN TÌM KIẾM ---
+// 1. Sự kiện gõ phím trong ô tìm kiếm
+        txtSearchSP.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                loadDataToGrid();
+            }
+        });
+
+// 2. Sự kiện chọn trong ComboBox
+        cboDanhMuc.addActionListener(e -> loadDataToGrid());
 
         // Container chứa các Card sản phẩm
         // 1. Khởi tạo gridProduct TRƯỚC
@@ -195,8 +239,14 @@ public class BanHangView extends JFrame {
         pnlCart.setBackground(Color.WHITE);
         pnlCart.setBorder(BorderFactory.createTitledBorder("Giỏ hàng"));
 
-        String[] colsCart = {"STT", "Tên SP", "Đơn giá", "Số lượng", "Thành tiền"};
-        dtmCart = new DefaultTableModel(colsCart, 0);
+// Thêm cột "ID" vào cuối cùng để phục vụ việc xóa từ Database
+        String[] colsCart = {"STT", "Tên SP", "Đơn giá", "Số lượng", "Thành tiền", "ID"};
+        dtmCart = new DefaultTableModel(colsCart, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho sửa trực tiếp trên bảng
+            }
+        };
         tblCart = new JTable(dtmCart);
         tblCart.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 // Hoặc nếu bạn muốn giữ đúng các khoảng cách PreferredWidth đã set:
@@ -206,6 +256,10 @@ public class BanHangView extends JFrame {
         tblCart.getColumnModel().getColumn(2).setPreferredWidth(65);  // Đơn giá
         tblCart.getColumnModel().getColumn(3).setPreferredWidth(60);  // Số lượng
         tblCart.getColumnModel().getColumn(4).setPreferredWidth(70);  // Thành tiền
+        // Ẩn cột ID (cột số 5) để người dùng không nhìn thấy
+        tblCart.getColumnModel().getColumn(5).setMinWidth(0);
+        tblCart.getColumnModel().getColumn(5).setMaxWidth(0);
+        tblCart.getColumnModel().getColumn(5).setPreferredWidth(0);
 
         // SỬA LỖI TẠI ĐÂY: Phải đặt trong JScrollPane và đặt kích thước ưu tiên
         JScrollPane spCart = new JScrollPane(tblCart);
@@ -217,8 +271,54 @@ public class BanHangView extends JFrame {
 
         JPanel pnlCartBtn = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         pnlCartBtn.setOpaque(false);
-        pnlCartBtn.add(createYellowBtn("Xóa sản phẩm"));
-        pnlCartBtn.add(createYellowBtn("Xóa tất cả"));
+// --- NÚT XÓA 1 SẢN PHẨM ---
+        JButton btnXoaSp = createYellowBtn("Xóa sản phẩm");
+        btnXoaSp.addActionListener(e -> {
+            int row = tblCart.getSelectedRow();
+            if (row == -1) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn 1 sản phẩm trong giỏ hàng để xóa!");
+                return;
+            }
+
+// Lấy ID của HoaDonChiTiet từ cột ẩn
+    int idHDCT = Integer.parseInt(tblCart.getValueAt(row, 5).toString());
+
+            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn xóa sản phẩm này khỏi giỏ?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Gọi Service để xóa (Cần đảm bảo Service của bạn có hàm delete này)
+                hdctService.deleteOne(idHDCT);
+
+                // Load lại bảng và tính lại tiền
+                HoaDon hd = hoaDonService.selectByMaHD(lblMaHoaDon.getText());
+                loadTableGioHang(hd.getId());
+                tinhTongTienHoaDon(hd.getId());
+            }
+        });
+
+// --- NÚT XÓA TẤT CẢ ---
+        JButton btnXoaTatCa = createYellowBtn("Xóa tất cả");
+        btnXoaTatCa.addActionListener(e -> {
+            String maHD = lblMaHoaDon.getText();
+            if (maHD.equals("Vui lòng tạo!") || maHD.isEmpty()) {
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa TOÀN BỘ giỏ hàng?", "Cảnh báo", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                HoaDon hd = hoaDonService.selectByMaHD(maHD);
+                // Lưu ý: Bạn cần viết 1 hàm trong Service xóa tất cả HDCT theo ID_HoaDon
+                // Ví dụ giả định: hdctService.deleteAllByHoaDon(hd.getId());
+
+                // Tạm thời nếu chưa có hàm xóa tất cả, bạn có thể lặp hoặc gọi hàm delete chung
+                hdctService.delete(hd.getId());
+
+                loadTableGioHang(hd.getId());
+                tinhTongTienHoaDon(hd.getId());
+            }
+        });
+
+        pnlCartBtn.add(btnXoaSp);
+        pnlCartBtn.add(btnXoaTatCa);
         pnlCart.add(pnlCartBtn, BorderLayout.SOUTH);
 
         rightCol.add(pnlCart, BorderLayout.CENTER);
@@ -269,17 +369,47 @@ public class BanHangView extends JFrame {
         }
         return targetRow;
     }
+// Hàm đổ dữ liệu từ Database vào ComboBox
 
+    private void loadComboDanhMuc() {
+        cboDanhMuc.removeAllItems();
+        cboDanhMuc.addItem("Tất cả"); // Mặc định ban đầu
+        try {
+            List<DanhMuc> list = dmService.getAll();
+            for (DanhMuc dm : list) {
+                cboDanhMuc.addItem(dm.getTenDanhMuc());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//
     private void loadDataToGrid() {
         gridProduct.removeAll();
-        List<SanPhamResponse> list = spService.getAll();
 
-        for (SanPhamResponse sp : list) {
-            if (sp.isDangBan() && sp.isTrangThaiHienThi()) {
+// 2. Lấy tiêu chí lọc từ giao diện
+        String keyword = txtSearchSP.getText().trim().toLowerCase();
+        // Đồng bộ: Nếu trong Combo là "Tất cả" thì code kiểm tra "Tất cả"
+        String loaiSelected = (cboDanhMuc.getSelectedItem() == null)
+                ? "Tất cả" : cboDanhMuc.getSelectedItem().toString();
+
+        // 3. Duyệt danh sách sản phẩm (allProducts đã load từ DB)
+        for (SanPhamResponse sp : allProducts) {
+
+// --- LOGIC BỘ LỌC TẠI ĐÂY ---
+            // Điều kiện 1: Đang bán và được hiển thị
+            boolean isPublic = sp.isDangBan() && sp.isTrangThaiHienThi();
+
+            // Điều kiện 2: Tên sản phẩm chứa từ khóa tìm kiếm
+            boolean matchesName = sp.getTenSanPham().toLowerCase().contains(keyword);
+
+            // Điều kiện 3: Loại sản phẩm khớp với ComboBox (hoặc chọn "ALL")
+            boolean matchesCategory = loaiSelected.equals("Tất cả")
+                    || sp.getTenDanhMuc().equalsIgnoreCase(loaiSelected);
+
+            if (isPublic && matchesName && matchesCategory) {
                 String giaVND = String.format("%,.0f VNĐ", sp.getGiaCoBan());
-
-                // Lấy tên file từ DB, nếu null/trống thì dùng ảnh mặc định
-                // Ví dụ trong DB lưu: HongTraDaoNhietDoi.png
                 String tenFile = (sp.getHinhAnh() == null || sp.getHinhAnh().isBlank())
                         ? "default.png" : sp.getHinhAnh();
 
@@ -509,12 +639,16 @@ public class BanHangView extends JFrame {
     }
 
     private void taoHoaDonMoi() {
+        
+        // 1. Kiểm tra xem đã có nhân viên đăng nhập chưa
+    if (Utilities.Auth.user == null) {
+        JOptionPane.showMessageDialog(this, "Lỗi: Không tìm thấy thông tin nhân viên đăng nhập. Vui lòng đăng nhập lại!");
+        return;
+    }
         // 1. Khởi tạo đối tượng hóa đơn
         HoaDon hd = new HoaDon();
-        NhanVien nvGia = new NhanVien();
-        // Thay chuỗi dưới đây bằng ID thực tế bạn lấy trong DB của bạn
-        nvGia.setId(1);
-        hd.setNhanVien(nvGia);
+// LẤY NHÂN VIÊN TỪ AUTH (Đã được set ở màn hình DangNhap)
+    hd.setNhanVien(Utilities.Auth.user);
         String maMoi = "HD" + System.currentTimeMillis();
         String hinhThucChon = cboHinhThucThanhToan.getSelectedItem().toString();
         hd.setMaHoaDon(maMoi);
@@ -693,10 +827,15 @@ public class BanHangView extends JFrame {
                     tenSP,
                     String.format("%,.0f", hdct.getGiaLucBan()),
                     hdct.getSoLuong(),
-                    String.format("%,.0f", hdct.getGiaLucBan().multiply(new java.math.BigDecimal(hdct.getSoLuong()))) // Thành tiền
+                    String.format("%,.0f", hdct.getGiaLucBan().multiply(new java.math.BigDecimal(hdct.getSoLuong()))), // Thành tiền
+                    hdct.getId() // Thêm ID vào cột cuối cùng để xử lý xóa
                 });
             }
         }
+        // Ẩn cột ID (giả sử là cột thứ 5) để người dùng không thấy
+        tblCart.getColumnModel().getColumn(5).setMinWidth(0);
+        tblCart.getColumnModel().getColumn(5).setMaxWidth(0);
+        tblCart.getColumnModel().getColumn(5).setPreferredWidth(0);
     }
 
     private void addSanPhamToGioHang(Size sizeSelected) { // Truyền vào đối tượng Size
@@ -868,6 +1007,20 @@ public class BanHangView extends JFrame {
             if (check > 0) {
                 JOptionPane.showMessageDialog(this, "Thanh toán thành công hóa đơn: " + maHD);
 
+// --- BẮT ĐẦU PHẦN SỬA ĐỔI: XUẤT HÓA ĐƠN ---
+                int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn in hóa đơn PDF không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Lấy danh sách chi tiết hóa đơn từ service (phải có hàm này trong HoaDonChiTietService)
+                    List<HoaDonChiTiet> listCT = hdctService.selectByID(hd.getId());
+
+                    if (listCT != null && !listCT.isEmpty()) {
+                        exportToPDF(hd, listCT);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Không tìm thấy chi tiết hóa đơn để in!");
+                    }
+                }
+                // --- KẾT THÚC PHẦN SỬA ĐỔI ---
+
                 // 6. Làm mới giao diện
                 loadTableHoaDonCho(null);
                 dtmCart.setRowCount(0);
@@ -880,6 +1033,118 @@ public class BanHangView extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+        }
+    }
+
+    private void exportToPDF(HoaDon hd, List<HoaDonChiTiet> listCT) {
+        try {
+            // 1. Tạo hộp thoại chọn nơi lưu file
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Chọn nơi lưu hóa đơn");
+            fileChooser.setSelectedFile(new File("HoaDon_" + hd.getMaHoaDon() + ".pdf"));
+
+            if (fileChooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+
+            File fileToSave = fileChooser.getSelectedFile();
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(fileToSave));
+            document.open();
+
+            // 2. Cấu hình Font (Đọc từ Resources thay vì ổ C)
+            BaseFont bf;
+            try {
+                // Lấy font từ src/main/resources/fonts/arial.ttf
+                InputStream fontStream = getClass().getClassLoader().getResourceAsStream("fonts/arial.ttf");
+                if (fontStream == null) {
+                    // Nếu không tìm thấy trong resources, dự phòng dùng font hệ thống
+                    bf = BaseFont.createFont("C:\\Windows\\Fonts\\Arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                } else {
+                    byte[] fontBytes = fontStream.readAllBytes();
+                    bf = BaseFont.createFont("arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, true, fontBytes, null);
+                }
+            } catch (Exception e) {
+                // Nếu hỏng cả 2 cách, buộc phải dùng font mặc định (không hỗ trợ Tiếng Việt tốt)
+                bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            }
+
+            com.itextpdf.text.Font fontTitle = new com.itextpdf.text.Font(bf, 18, com.itextpdf.text.Font.BOLD);
+            com.itextpdf.text.Font fontBold = new com.itextpdf.text.Font(bf, 12, com.itextpdf.text.Font.BOLD);
+            com.itextpdf.text.Font fontNormal = new com.itextpdf.text.Font(bf, 12, com.itextpdf.text.Font.NORMAL);
+            // 3. Tiêu đề
+            Paragraph title = new Paragraph("HÓA ĐƠN THANH TOÁN", fontTitle);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            document.add(new Paragraph(" "));
+
+            // 4. Thông tin chung
+            document.add(new Paragraph("Mã hóa đơn: " + hd.getMaHoaDon(), fontNormal));
+            document.add(new Paragraph("Ngày tạo: " + hd.getNgayTao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")), fontNormal));
+            String khachHang = (hd.getKhachHang() != null) ? hd.getKhachHang().getHoTen() : "Khách lẻ";
+            document.add(new Paragraph("Khách hàng: " + khachHang, fontNormal));
+            document.add(new Paragraph("--------------------------------------------------------------------------------", fontNormal));
+
+            // 5. Bảng sản phẩm
+            PdfPTable table = new PdfPTable(5);
+            table.setWidthPercentage(100);
+            table.setSpacingBefore(10f);
+            table.setWidths(new float[]{1f, 4f, 2f, 2f, 2f});
+
+            String[] headers = {"STT", "Tên SP", "Đơn giá", "SL", "Thành tiền"};
+            for (String h : headers) {
+                PdfPCell cell = new PdfPCell(new Phrase(h, fontBold));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                table.addCell(cell);
+            }
+
+// Đổ dữ liệu từ listCT
+            int stt = 1;
+            for (HoaDonChiTiet ct : listCT) {
+                // 1. STT
+                PdfPCell cellStt = new PdfPCell(new Phrase(String.valueOf(stt++), fontNormal));
+                cellStt.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cellStt);
+
+                // 2. Tên SP + Size (Lấy giống hàm loadTableGioHang của bạn)
+                // Cấu trúc: ct.getSize() -> getSanPham() -> getTenSanPham()
+                String tenSPFull = "N/A";
+                if (ct.getSize() != null && ct.getSize().getSanPham() != null) {
+                    tenSPFull = ct.getSize().getSanPham().getTenSanPham() + " (" + ct.getSize().getTenSize() + ")";
+                }
+                table.addCell(new Phrase(tenSPFull, fontNormal));
+
+                // 3. Đơn giá (Sử dụng getGiaLucBan() như hàm tham khảo)
+                table.addCell(new Phrase(String.format("%,.0f", ct.getGiaLucBan()), fontNormal));
+
+                // 4. Số lượng
+                PdfPCell cellSL = new PdfPCell(new Phrase(String.valueOf(ct.getSoLuong()), fontNormal));
+                cellSL.setHorizontalAlignment(Element.ALIGN_CENTER);
+                table.addCell(cellSL);
+
+                // 5. Thành tiền
+                java.math.BigDecimal thanhTien = ct.getGiaLucBan().multiply(new java.math.BigDecimal(ct.getSoLuong()));
+                table.addCell(new Phrase(String.format("%,.0f", thanhTien), fontNormal));
+            }
+
+            document.add(table);
+
+            // 6. Tổng kết tiền
+            document.add(new Paragraph(" "));
+            Paragraph tongTienPara = new Paragraph("Tổng tiền: " + String.format("%,.0f", hd.getTongTien()) + " VNĐ", fontBold);
+            tongTienPara.setAlignment(Element.ALIGN_RIGHT);
+            document.add(tongTienPara);
+
+            document.add(new Paragraph("Hình thức thanh toán: " + hd.getPhuongThucTT(), fontNormal));
+
+            document.close();
+            JOptionPane.showMessageDialog(this, "Đã xuất hóa đơn PDF thành công!");
+            Desktop.getDesktop().open(fileToSave);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi xuất PDF: " + e.getMessage());
         }
     }
 

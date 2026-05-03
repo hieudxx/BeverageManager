@@ -42,5 +42,10 @@ public class HoaDonChiTietServicesImpl implements HoaDonChiTietService{
     public List<HoaDonChiTiet> getAll() {
         return hdctRepo.getAll();
     }
+
+    @Override
+    public int deleteOne(int idHDCT) {
+        return hdctRepo.deleteOne(idHDCT);
+    }
     
 }
