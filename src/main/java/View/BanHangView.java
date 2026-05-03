@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package View;
 
 import DomainModels.HoaDon;
@@ -603,6 +599,10 @@ public class BanHangView extends JFrame {
                         break;
                     case "Sản phẩm":
                         new SanPhamView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Khách hàng":
+                        new KhachHangView().setVisible(true);
                         this.dispose();
                         break;
                     default:
