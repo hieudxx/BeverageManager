@@ -16,7 +16,7 @@ public interface HoaDonChiTietResponsitories {
     int insert (HoaDonChiTiet hdct);
     
     int delete (int IDHD);
-    
+    int deleteOne (int idHDCT);
      List<HoaDonChiTiet> selectByID(int idHoaDon);
      List<HoaDonChiTiet> getSpByID(int idsanpham);
      List<HoaDonChiTiet> getAll();

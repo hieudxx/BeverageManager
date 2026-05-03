@@ -212,11 +212,11 @@ public class NhanVienView extends JFrame {
         g.weightx = 1.0;
 
         // Logo vàng phía trên
-      JPanel logo = new JPanel();
+        JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
-
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+
         // Lấy đối tượng Image từ icon
         Image img = icon.getImage();
 
@@ -229,10 +229,8 @@ public class NhanVienView extends JFrame {
 // Đưa vào JLabel
         JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
         logo.add(lblLogo, BorderLayout.CENTER);
-
         g.gridy = 0;
         p.add(logo, g);
-
 
         String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
         int y = 1;
