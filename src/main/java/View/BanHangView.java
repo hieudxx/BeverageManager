@@ -16,6 +16,7 @@ import Services.impl.HoaDonChiTietServicesImpl;
 import Services.impl.HoaDonServiceImpl;
 import Services.impl.SanPhamServicesImpl;
 import Services.impl.SizeServicesImpl;
+import Utilities.SessionUser;
 import ViewModels.SanPhamResponse;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -277,7 +278,7 @@ public class BanHangView extends JFrame {
             }
 
 // Lấy ID của HoaDonChiTiet từ cột ẩn
-    int idHDCT = Integer.parseInt(tblCart.getValueAt(row, 5).toString());
+            int idHDCT = Integer.parseInt(tblCart.getValueAt(row, 5).toString());
 
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn xóa sản phẩm này khỏi giỏ?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
@@ -565,6 +566,10 @@ public class BanHangView extends JFrame {
         p.add(logo, g);
 
         String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+
+        NhanVien user = SessionUser.getInstance().getCurrentUser();
+        String role = user.getVaiTro();
+
         int y = 1;
         for (String m : menu) {
             JButton btn = new JButton(m);
@@ -577,9 +582,20 @@ public class BanHangView extends JFrame {
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
+            if (role.equalsIgnoreCase("Nhân viên") && !m.equals("Bán hàng")) {
+                btn.setEnabled(false);
+                btn.setBackground(new Color(60, 60, 60)); // xám đi cho giống bị khóa
+            }
+
             // --- THÊM SỰ KIỆN CLICK TẠI ĐÂY ---
             // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
             btn.addActionListener(e -> {
+
+                if (role.equalsIgnoreCase("Nhân viên") && !m.equals("Bán hàng")) {
+                    JOptionPane.showMessageDialog(this, "Bạn không có quyền truy cập!");
+                    return;
+                }
+                
                 switch (m) {
                     case "Bán hàng":
                         new BanHangView().setVisible(true);
@@ -639,16 +655,16 @@ public class BanHangView extends JFrame {
     }
 
     private void taoHoaDonMoi() {
-        
+
         // 1. Kiểm tra xem đã có nhân viên đăng nhập chưa
-    if (Utilities.Auth.user == null) {
-        JOptionPane.showMessageDialog(this, "Lỗi: Không tìm thấy thông tin nhân viên đăng nhập. Vui lòng đăng nhập lại!");
-        return;
-    }
+        if (Utilities.Auth.user == null) {
+            JOptionPane.showMessageDialog(this, "Lỗi: Không tìm thấy thông tin nhân viên đăng nhập. Vui lòng đăng nhập lại!");
+            return;
+        }
         // 1. Khởi tạo đối tượng hóa đơn
         HoaDon hd = new HoaDon();
 // LẤY NHÂN VIÊN TỪ AUTH (Đã được set ở màn hình DangNhap)
-    hd.setNhanVien(Utilities.Auth.user);
+        hd.setNhanVien(Utilities.Auth.user);
         String maMoi = "HD" + System.currentTimeMillis();
         String hinhThucChon = cboHinhThucThanhToan.getSelectedItem().toString();
         hd.setMaHoaDon(maMoi);
