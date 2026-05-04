@@ -1,20 +1,14 @@
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package View;
 
-/**
- *
- * @author ADMIN
- */
-
+import Services.IKhachHangService;
+import Services.impl.KhachHangServicesImpl;
+import ViewModels.KhachHangViewModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.MatteBorder;
+import java.util.List;
 
 public class KhachHangView extends JFrame {
 
@@ -26,9 +20,12 @@ public class KhachHangView extends JFrame {
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE_ACTIVE = new Color(243, 156, 18);
     private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
+    private IKhachHangService IKhService;
 
     public KhachHangView() {
+        IKhService = new KhachHangServicesImpl();
         initComponents();
+        loadDataToTable();
         setTitle("Quản lý khách hàng");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
@@ -271,6 +268,14 @@ public class KhachHangView extends JFrame {
         p.add(btnExit, g);
 
         return p;
+    }
+
+    private void loadDataToTable() {
+        tableModel.setRowCount(0);
+        List<KhachHangViewModel> list = IKhService.getAll();
+        for (KhachHangViewModel kh : list) {
+            tableModel.addRow(new Object[]{kh.getMaKhachHang(), kh.getHoTen(), kh.getSoDienThoai()});
+        }
     }
 
     public static void main(String[] args) {

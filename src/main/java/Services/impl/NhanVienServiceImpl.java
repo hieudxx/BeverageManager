@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Services.impl;
 
 import DomainModels.NhanVien;
@@ -11,13 +7,9 @@ import Services.INhanVienService;
 import ViewModels.NhanVienViewModel;
 import java.util.List;
 
-/**
- *
- * @author Admin
- */
 public class NhanVienServiceImpl implements INhanVienService {
 
-    private INhanVienRes nvRes = new NhanVienResImpl();
+    private final INhanVienRes nvRes = new NhanVienResImpl();
 
     @Override
     public List<NhanVienViewModel> getAll() {
