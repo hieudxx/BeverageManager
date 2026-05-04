@@ -38,7 +38,6 @@ try {
     }
 
     public static void main(String[] args) {
-        // check thử
         Connection con = getConnect();
         if (con.equals("")) {
             System.out.println("loi ket noi");

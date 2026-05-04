@@ -9,14 +9,13 @@ import java.sql.SQLException;
 public class JDBC_Helper {
     public static ResultSet selectTongQuat(String sql, Object...params) {
 try {
-            // Lấy kết nối Static từ DBConnect
+            
             Connection con = DBConnect.getConnect(); 
             PreparedStatement ps = con.prepareStatement(sql);
             for (int i = 0; i < params.length; i++) {
                 ps.setObject(i + 1, params[i]);
             }
-            // QUAN TRỌNG: Không đóng ps hay con ở đây, 
-            // vì ResultSet cần chúng để duy trì dữ liệu khi bạn đọc rs.next()
+
             return ps.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -46,8 +45,8 @@ try {
      }
      
      public static int updateTongQuat(String sql, Object...params) {
-// Sử dụng try-with-resources để tự động đóng ps sau khi chạy xong
-        // Tuyệt đối không để DBConnect.getConnect() vào trong ngoặc này 
+// try-with-resources để tự động đóng ps sau khi chạy xong
+        //không để DBConnect.getConnect() vào trong ngoặc này 
         // để tránh việc đóng nhầm kết nối dùng chung.
         try (PreparedStatement ps = DBConnect.getConnect().prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
