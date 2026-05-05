@@ -1,4 +1,3 @@
-
 package Responsitories;
 
 import DomainModels.NhanVien;
@@ -18,5 +17,4 @@ public interface INhanVienRes {
     int delete(String ma_nhan_vien);
 
     public NhanVien getByTenDangNhap(String tenDangNhap);
-//    public List<NhanVienViewModel> find(String maNv, String hoTen);
 }

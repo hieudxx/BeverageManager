@@ -390,6 +390,7 @@ public class NhanVienView extends JFrame {
         int choice = JOptionPane.showConfirmDialog(this, "Có muốn thêm nhân viên", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
         if (choice == JOptionPane.YES_OPTION) {
+            btnThem.setEnabled(false);
             try {
                 int result = INvService.add(getDataFromForm(maNvMoi));
                 if (result > 0) {
@@ -402,6 +403,8 @@ public class NhanVienView extends JFrame {
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "❌ Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                btnThem.setEnabled(true);
             }
         }
 

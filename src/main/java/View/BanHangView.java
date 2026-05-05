@@ -16,6 +16,7 @@ import Services.impl.HoaDonChiTietServicesImpl;
 import Services.impl.HoaDonServiceImpl;
 import Services.impl.SanPhamServicesImpl;
 import Services.impl.SizeServicesImpl;
+import Utilities.SessionUser;
 import ViewModels.SanPhamResponse;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -46,21 +47,20 @@ public class BanHangView extends JFrame {
     private HoaDonService hoaDonService = new HoaDonServiceImpl();
     private HoaDonChiTietService hdctService = new HoaDonChiTietServicesImpl();
     private SizeServices sizeService = new SizeServicesImpl();
-    private DefaultTableModel dtmCart; 
-    private JTable tblCart; 
-    
+    private DefaultTableModel dtmCart;
+    private JTable tblCart;
+
     private DanhMucServices dmService = new DanhMucServicesImpl();
     private JTextField txtSearchSP;
-    private JComboBox<Object> cboDanhMuc; 
+    private JComboBox<Object> cboDanhMuc;
     private List<SanPhamResponse> allProducts;
 
     private JTable tblPending;
     private DefaultTableModel dtmPending;
 
-    
-    private JTextField txtSdt; 
+    private JTextField txtSdt;
     private JLabel lblHoTenKH;
-    private JLabel lblMaHoaDon; 
+    private JLabel lblMaHoaDon;
     private JLabel lblTongTien;
     private JTextField txtTienKhachDua;
     private JLabel lblTienThua;
@@ -120,7 +120,6 @@ public class BanHangView extends JFrame {
 
         pnlProduct.add(pnlFilter, BorderLayout.NORTH);
 
-
 // Sự kiện gõ phím trong ô tìm kiếm
         txtSearchSP.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -174,7 +173,6 @@ public class BanHangView extends JFrame {
         gbc.weighty = 1.0;
         mainPanel.add(leftCol, gbc);
 
-        
         tblPending.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -182,11 +180,11 @@ public class BanHangView extends JFrame {
                 if (row != -1) {
                     // Lấy mã hóa đơn từ cột 0
                     String maHD = tblPending.getValueAt(row, 0).toString();
- 
+
                     HoaDon hdSelected = hoaDonService.selectByMaHD(maHD);
 
                     if (hdSelected != null) {
-                        
+
                         loadTableGioHang(hdSelected.getId());
                         // CẬP NHẬT TỔNG TIỀN
                         tinhTongTienHoaDon(hdSelected.getId());
@@ -198,15 +196,14 @@ public class BanHangView extends JFrame {
                                 && hdSelected.getKhachHang().getHoTen() != null
                                 && !hdSelected.getKhachHang().getHoTen().isBlank()) {
 
-                            
                             txtSdt.setText(hdSelected.getKhachHang().getSoDienThoai());
                             lblHoTenKH.setText(hdSelected.getKhachHang().getHoTen());
-                            lblHoTenKH.setForeground(Color.BLACK); 
+                            lblHoTenKH.setForeground(Color.BLACK);
                         } else {
                             // Trường hợp Khách lẻ (Object null hoặc tên bị rỗng)
                             txtSdt.setText("");
                             lblHoTenKH.setText("Khách lẻ");
-                            lblHoTenKH.setForeground(Color.GRAY); 
+                            lblHoTenKH.setForeground(Color.GRAY);
                         }
 
                         // --- BỔ SUNG: LÀM MỚI Ô NHẬP TIỀN KHI ĐỔI HÓA ĐƠN ---
@@ -237,7 +234,7 @@ public class BanHangView extends JFrame {
         tblCart = new JTable(dtmCart);
         tblCart.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-        tblCart.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); 
+        tblCart.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblCart.getColumnModel().getColumn(0).setPreferredWidth(30);  // STT
         tblCart.getColumnModel().getColumn(1).setPreferredWidth(190); // Tên SP
         tblCart.getColumnModel().getColumn(2).setPreferredWidth(65);  // Đơn giá
@@ -248,11 +245,10 @@ public class BanHangView extends JFrame {
         tblCart.getColumnModel().getColumn(5).setMaxWidth(0);
         tblCart.getColumnModel().getColumn(5).setPreferredWidth(0);
 
-        
         JScrollPane spCart = new JScrollPane(tblCart);
 
         spCart.setPreferredSize(new Dimension(430, 350));
-        spCart.setMinimumSize(new Dimension(430, 300)); 
+        spCart.setMinimumSize(new Dimension(430, 300));
         spCart.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         pnlCart.add(spCart, BorderLayout.CENTER);
 
@@ -267,12 +263,12 @@ public class BanHangView extends JFrame {
                 return;
             }
 
-// Lấy ID HoaDonChiTiet từ cột ẩn
-    int idHDCT = Integer.parseInt(tblCart.getValueAt(row, 5).toString());
+// Lấy ID của HoaDonChiTiet từ cột ẩn
+            int idHDCT = Integer.parseInt(tblCart.getValueAt(row, 5).toString());
 
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn xóa sản phẩm này khỏi giỏ?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                
+
                 hdctService.deleteOne(idHDCT);
                 // Load lại bảng và tính lại tiền
                 HoaDon hd = hoaDonService.selectByMaHD(lblMaHoaDon.getText());
@@ -280,7 +276,6 @@ public class BanHangView extends JFrame {
                 tinhTongTienHoaDon(hd.getId());
             }
         });
-
 
         JButton btnXoaTatCa = createYellowBtn("Xóa tất cả");
         btnXoaTatCa.addActionListener(e -> {
@@ -371,7 +366,7 @@ public class BanHangView extends JFrame {
 
 // Lấy tiêu chí lọc từ giao diện
         String keyword = txtSearchSP.getText().trim().toLowerCase();
-        
+
         String loaiSelected = (cboDanhMuc.getSelectedItem() == null)
                 ? "Tất cả" : cboDanhMuc.getSelectedItem().toString();
 
@@ -400,7 +395,7 @@ public class BanHangView extends JFrame {
                         // --- KIỂM TRA HÓA ĐƠN TRƯỚC KHI LÀM ---
                         String maHD = lblMaHoaDon.getText();
                         if (maHD == null || maHD.equals("Vui lòng tạo!") || maHD.isEmpty()) {
-                            lblMaHoaDon.setForeground(Color.RED); 
+                            lblMaHoaDon.setForeground(Color.RED);
                             JOptionPane.showMessageDialog(null,
                                     "Vui lòng chọn một hóa đơn chờ hoặc nhấn 'Tạo' mới trước khi thêm món!",
                                     "Thông báo",
@@ -415,7 +410,6 @@ public class BanHangView extends JFrame {
                             return;
                         }
 
-                        
                         Object[] options = new Object[listSize.size()];
                         for (int i = 0; i < listSize.size(); i++) {
                             Size s = listSize.get(i);
@@ -461,7 +455,6 @@ public class BanHangView extends JFrame {
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230)));
 
-        
         card.setPreferredSize(new Dimension(180, 300));
         card.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -545,6 +538,10 @@ public class BanHangView extends JFrame {
         p.add(logo, g);
 
         String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+
+        NhanVien user = SessionUser.getInstance().getCurrentUser();
+        String role = user.getVaiTro();
+
         int y = 1;
         for (String m : menu) {
             JButton btn = new JButton(m);
@@ -557,9 +554,20 @@ public class BanHangView extends JFrame {
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
-            
+            if (role.equalsIgnoreCase("Nhân viên") && !m.equals("Bán hàng")) {
+                btn.setEnabled(false);
+                btn.setBackground(new Color(60, 60, 60)); // xám đi cho giống bị khóa
+            }
+
+            // --- THÊM SỰ KIỆN CLICK TẠI ĐÂY ---
             // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
             btn.addActionListener(e -> {
+
+                if (role.equalsIgnoreCase("Nhân viên") && !m.equals("Bán hàng")) {
+                    JOptionPane.showMessageDialog(this, "Bạn không có quyền truy cập!");
+                    return;
+                }
+
                 switch (m) {
                     case "Bán hàng":
                         new BanHangView().setVisible(true);
@@ -619,15 +627,25 @@ public class BanHangView extends JFrame {
     }
 
     private void taoHoaDonMoi() {
-        
-    if (Utilities.Auth.user == null) {
-        JOptionPane.showMessageDialog(this, "Lỗi: Không tìm thấy thông tin nhân viên đăng nhập. Vui lòng đăng nhập lại!");
-        return;
-    }
-        
+
+        // 1. Kiểm tra xem đã có nhân viên đăng nhập chưa
+        if (Utilities.Auth.user == null) {
+            JOptionPane.showMessageDialog(this, "Lỗi: Không tìm thấy thông tin nhân viên đăng nhập. Vui lòng đăng nhập lại!");
+            return;
+        }
+        // 1. Khởi tạo đối tượng hóa đơn
         HoaDon hd = new HoaDon();
+// LẤY NHÂN VIÊN TỪ AUTH (Đã được set ở màn hình DangNhap)
+        hd.setNhanVien(Utilities.Auth.user);
+
+        if (Utilities.Auth.user == null) {
+            JOptionPane.showMessageDialog(this, "Lỗi: Không tìm thấy thông tin nhân viên đăng nhập. Vui lòng đăng nhập lại!");
+            return;
+        }
+
 // LẤY NHÂN VIÊN TỪ AUTH 
-    hd.setNhanVien(Utilities.Auth.user);
+        hd.setNhanVien(Utilities.Auth.user);
+
         String maMoi = "HD" + System.currentTimeMillis();
         String hinhThucChon = cboHinhThucThanhToan.getSelectedItem().toString();
         hd.setMaHoaDon(maMoi);
@@ -670,7 +688,7 @@ public class BanHangView extends JFrame {
 
                 // Cập nhật thông tin khách hàng lên các JTextField
                 txtSdt.setText(hdMoi.getKhachHang() != null ? hdMoi.getKhachHang().getSoDienThoai() : "");
-                
+
             }
 
             lblMaHoaDon.setText(hd.getMaHoaDon());
@@ -728,7 +746,7 @@ public class BanHangView extends JFrame {
                 pnlMa.add(btnTaoHD, BorderLayout.EAST);
                 p.add(pnlMa, g);
             } else if (i == 3) { // Tổng tiền
-                
+
                 lblTongTien = new JLabel("0 VNĐ");
                 lblTongTien.setPreferredSize(new Dimension(150, 25));
                 lblTongTien.setFont(new Font("Arial", Font.BOLD, 15));
@@ -748,10 +766,10 @@ public class BanHangView extends JFrame {
             } else if (i == 5) { // Tiền thừa
                 lblTienThua = new JLabel("0 VNĐ");
                 lblTienThua.setFont(new Font("Arial", Font.BOLD, 14));
-                lblTienThua.setForeground(new Color(0, 153, 51)); 
+                lblTienThua.setForeground(new Color(0, 153, 51));
                 p.add(lblTienThua, g);
             } else if (i == 6) { // Hình thức TT
-                
+
                 String[] hinhThuc = {"Tiền mặt", "Chuyển khoản"};
                 cboHinhThucThanhToan = new JComboBox<>(hinhThuc);
 
@@ -797,13 +815,12 @@ public class BanHangView extends JFrame {
                 String tenSP = hdct.getSize().getSanPham().getTenSanPham() + " (" + hdct.getSize().getTenSize() + ")";
 
                 dtmCart.addRow(new Object[]{
-                    
                     stt++,
                     tenSP,
                     String.format("%,.0f", hdct.getGiaLucBan()),
                     hdct.getSoLuong(),
                     String.format("%,.0f", hdct.getGiaLucBan().multiply(new java.math.BigDecimal(hdct.getSoLuong()))),
-                    hdct.getId() 
+                    hdct.getId()
                 });
             }
         }
@@ -861,7 +878,7 @@ public class BanHangView extends JFrame {
     }
 
     private void tinhTongTienHoaDon(int idHoaDon) {
-        
+
         List<HoaDonChiTiet> list = hdctService.selectByID(idHoaDon);
 
         BigDecimal tongTien = BigDecimal.ZERO;
@@ -898,7 +915,7 @@ public class BanHangView extends JFrame {
                 return;
             }
             double khachDua = Double.parseDouble(sKhachDua);
-            
+
             double tienThua = khachDua - tongTien;
 
             if (tienThua < 0) {
@@ -930,7 +947,6 @@ public class BanHangView extends JFrame {
             return;
         }
 
-        
         HoaDon hd = hoaDonService.selectByMaHD(maHD);
         if (hd == null) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin hóa đơn trên hệ thống!");
@@ -959,18 +975,15 @@ public class BanHangView extends JFrame {
             }
 
             // 3. XỬ LÝ LỖI FOREIGN KEY (Quan trọng)
-            
             if (lblHoTenKH.getText().equalsIgnoreCase("Khách lẻ") || lblHoTenKH.getText().isBlank()) {
                 hd.setKhachHang(null);
             }
 
-            
             hd.setTongTien(tongTien);
             hd.setTienThanhToan(tienKhachDua);
             hd.setPhuongThucTT(hinhThuc);
             hd.setTrangThai("Đã thanh toán");
 
-            
             int check = hoaDonService.update(hd);
 
             if (check > 0) {
@@ -1070,7 +1083,7 @@ public class BanHangView extends JFrame {
 // Đổ dữ liệu từ listCT
             int stt = 1;
             for (HoaDonChiTiet ct : listCT) {
-                
+
                 PdfPCell cellStt = new PdfPCell(new Phrase(String.valueOf(stt++), fontNormal));
                 cellStt.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(cellStt);

@@ -1,11 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Responsitories.impl;
 
 import DomainModels.NhanVien;
-import Responsitories.INhanVienRes;
 import Utilities.JDBC_Helper;
 import ViewModels.NhanVienViewModel;
 import java.sql.ResultSet;
@@ -17,6 +12,7 @@ import Responsitories.INhanVienRes;
 
 public class NhanVienResImpl implements INhanVienRes {
 
+    @Override
     public NhanVien getOne(String TaiKhoan) {
         String query = """
                        SELECT id, ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten,
@@ -40,6 +36,7 @@ public class NhanVienResImpl implements INhanVienRes {
         return null;
     }
 
+    @Override
     public boolean add(NhanVien nv) {
         if (isEmployIdDuplicate(nv.getMaNhanVien())) {
             JOptionPane.showMessageDialog(null, "Đã tồn tại mã nhân viên");
@@ -91,22 +88,15 @@ public class NhanVienResImpl implements INhanVienRes {
 
     public boolean isEmployIdDuplicate(String maNhanVien) { // public boolean checktrungma(String ma) {
         NhanVien nv = getByTenDangNhap(maNhanVien);
-        if (nv == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return nv != null;
     }
 
     public boolean isUsernameDuplicate(String tenDangNhap) {
         NhanVien nv = getByTenDangNhap(tenDangNhap);
-        if (nv == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return nv != null;
     }
 
+    @Override
     public NhanVien getByTenDangNhap(String tenDangNhap) {
         NhanVien nv = null;
         String sql = "select id, ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten, vai_tro, trang_thai_lam_viec from NhanVien where ten_dang_nhap = ?";
@@ -129,74 +119,4 @@ public class NhanVienResImpl implements INhanVienRes {
             return null;
         }
     }
-//    
-//    public List<NhanVienViewModel> findByName(String name) {
-//        List<NhanVienViewModel> listNv = new ArrayList<>();
-//        String sql = "select id, ma_nhan_vien, ten_dang_nhap, ho_ten, vai_tro, trang_thai_lam_viec"
-//                + " from NhanVien nv where ho_ten like N'" + name + "%' or ho_ten like N'%" + name + "' or ho_ten like N'%" + name + "%'";
-//        ResultSet rs = JDBC_Helper.selectTongQuat(sql);
-//        try {
-//            while (rs.next()) {
-//                String id = rs.getString(1);
-//                String maNv = rs.getString(2);
-//                String tenDangNhap = rs.getString(3);
-//                String matKhau = rs.getString(4);
-//                String hoTen = rs.getString(5);
-//                String vaiTro = rs.getString(6);
-//                boolean trangThai = rs.getBoolean(7);
-//                NhanVienViewModel nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai ? "Đang làm" : "Đã nghỉ");
-//                listNv.add(nv);
-//            }
-//            return listNv;
-//        } catch (SQLException e) {
-//            return null;
-//        }
-//    }
-//
-//    public List<NhanVienViewModel> findByManv(String MaNv) {
-//        List<NhanVienViewModel> listNv = new ArrayList<>();
-//        String sql = "select id, ma_nhan_vien, ten_dang_nhap, ho_ten, vai_tro, trang_thai_lam_viec"
-//                + " from NhanVien nv where ma_nhan_vien like N'" + MaNv + "%' or ma_nhan_vien like N'%" + MaNv + "' or ma_nhan_vien like N'%" + MaNv + "%'";
-//        ResultSet rs = JDBC_Helper.selectTongQuat(sql);
-//        try {
-//            while (rs.next()) {
-//                String id = rs.getString(1);
-//                String maNv = rs.getString(2);
-//                String tenDangNhap = rs.getString(3);
-//                String matKhau = rs.getString(4);
-//                String hoTen = rs.getString(5);
-//                String vaiTro = rs.getString(6);
-//                boolean trangThai = rs.getBoolean(7);
-//                NhanVienViewModel nv = new NhanVienViewModel(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai ? "Đang làm" : "Đã nghỉ");
-//                listNv.add(nv);
-//            }
-//            return listNv;
-//        } catch (SQLException e) {
-//            return null;
-//        }
-//    }
-//
-//    public NhanVien findByMaNv(String maNhanVien) {
-//        NhanVien nv = null;
-//        String sql = "select id, ma_nhan_vien, ten_dang_nhap, ho_ten, vai_tro, trang_thai_lam_viec from NhanVien where ma_nhan_vien = ?";
-//        try {
-//
-//            ResultSet rs = JDBC_Helper.selectTongQuat(sql, maNhanVien);
-//            while (rs.next()) {
-//                String id = rs.getString(1);
-//                String maNv = rs.getString(2);
-//                String tenDangNhap = rs.getString(3);
-//                String matKhau = rs.getString(4);
-//                String hoTen = rs.getString(5);
-//                String vaiTro = rs.getString(6);
-//                boolean trangThai = rs.getBoolean(7);
-//                nv = new NhanVien(id, maNv, tenDangNhap, matKhau, hoTen, vaiTro, trangThai);
-//
-//            }
-//            return nv;
-//        } catch (SQLException e) {
-//            return null;
-//        }
-//    }
-//
 }

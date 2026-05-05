@@ -1,20 +1,15 @@
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package View;
 
-/**
- *
- * @author ADMIN
- */
-
+import DomainModels.KhachHang;
+import Services.IKhachHangService;
+import Services.impl.KhachHangServicesImpl;
+import ViewModels.KhachHangViewModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.MatteBorder;
+import java.util.List;
 
 public class KhachHangView extends JFrame {
 
@@ -26,9 +21,12 @@ public class KhachHangView extends JFrame {
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE_ACTIVE = new Color(243, 156, 18);
     private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
+    private IKhachHangService IKhService;
 
     public KhachHangView() {
+        IKhService = new KhachHangServicesImpl();
         initComponents();
+        loadDataToTable();
         setTitle("Quản lý khách hàng");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
@@ -68,6 +66,8 @@ public class KhachHangView extends JFrame {
         form.add(new JLabel("Mã KH:"), gbc);
         gbc.gridx = 1;
         txtMaKH = new JTextField(20);
+        txtMaKH.setEditable(false);  // Không cho phép sửa
+        txtMaKH.setBackground(new Color(230, 230, 230)); // Màu nền xám báo hiệu không nhập
         form.add(txtMaKH, gbc);
 
         // Họ tên
@@ -130,20 +130,11 @@ public class KhachHangView extends JFrame {
         main.add(sp, BorderLayout.CENTER);
 
         // ===== EVENT DEMO (UI ONLY) =====
-        btnThem.addActionListener(e -> {
-            tableModel.addRow(new Object[]{
-                txtMaKH.getText(),
-                txtHoTen.getText(),
-                txtSDT.getText()
-            });
-        });
+        btnThem.addActionListener(e -> themKh());
 
-        btnXoa.addActionListener(e -> {
-            int row = tableKhachHang.getSelectedRow();
-            if (row >= 0) {
-                tableModel.removeRow(row);
-            }
-        });
+        btnXoa.addActionListener(e -> xoaKhachHang());
+
+        btnSua.addActionListener(e -> suaKhachHang());
 
         btnReset.addActionListener(e -> {
             txtMaKH.setText("");
@@ -273,7 +264,125 @@ public class KhachHangView extends JFrame {
         return p;
     }
 
+    private void loadDataToTable() {
+        tableModel.setRowCount(0);
+        List<KhachHangViewModel> list = IKhService.getAll();
+        for (KhachHangViewModel kh : list) {
+            tableModel.addRow(new Object[]{kh.getMaKhachHang(), kh.getHoTen(), kh.getSoDienThoai()});
+        }
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new KhachHangView().setVisible(true));
+    }
+
+    private void themKh() {
+        String maKhMoi = "KH" + System.currentTimeMillis();
+        if (!validateInput()) {
+            return;
+        }
+        int choice = JOptionPane.showConfirmDialog(this, "Có muốn thêm khách hàng", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (choice == JOptionPane.YES_OPTION) {
+            btnThem.setEnabled(false);
+            try {
+                boolean result = IKhService.add(getDataFromForm(maKhMoi));
+                if (result) {
+                    JOptionPane.showMessageDialog(this, "✅ Thêm khách hàng thành công!");
+                    loadDataToTable();
+                    resetForm();
+                } else {
+                    JOptionPane.showMessageDialog(this, "❌ Thêm thất bại! Mã KH hoặc SĐT có thể đã tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "❌ Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                btnThem.setEnabled(true);
+
+            }
+        }
+    }
+
+    private boolean validateInput() {
+        if (txtHoTen.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Họ tên không được để trống!");
+            txtHoTen.requestFocus();
+            return false;
+        }
+
+        if (txtSDT.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!");
+            txtSDT.requestFocus();
+            return false;
+        }
+
+        if (!txtSDT.getText().matches("^0\\d{9}$")) {
+            JOptionPane.showMessageDialog(this,
+                    "SĐT phải gồm 10 số và bắt đầu bằng 0!",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            txtSDT.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
+    private KhachHang getDataFromForm(String maKh) {
+        KhachHang kh = new KhachHang();
+        kh.setMaKhachHang(maKh);
+        kh.setHoTen(txtHoTen.getText());
+        kh.setSoDienThoai(txtSDT.getText());
+        kh.setTrangThai(true);
+        return kh;
+    }
+
+    private void resetForm() {
+        txtMaKH.setText("");
+        txtHoTen.setText("");
+        txtSDT.setText("");
+        txtMaKH.setEnabled(true);
+        tableKhachHang.clearSelection();   // thêm dòng này để bỏ chọn dòng trên bảng
+    }
+
+    private void xoaKhachHang() {
+        int rows = tableKhachHang.getSelectedRow();
+        if (rows >= 0) {
+            int choice = JOptionPane.showConfirmDialog(this, "Có muốn xóa khách hàng không ?", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION) {
+                try {
+                    boolean result = IKhService.delete(txtMaKH.getText());
+                    if (result) {
+                        JOptionPane.showMessageDialog(this, "✅ Xóa khách hàng thành công!");
+                        loadDataToTable();
+                        resetForm();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "❌ Xóa thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "❌ Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Chọn khách hàng cần xóa");
+        }
+    }
+
+    private void suaKhachHang() {
+        if (!validateInput()) {
+            return;
+        }
+        int rows = tableKhachHang.getSelectedRow();
+        if (rows >= 0) {
+            int choice = JOptionPane.showConfirmDialog(this, "Có muốn sửa khách hàng", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (choice == JOptionPane.YES_OPTION) {
+                KhachHangViewModel kh = IKhService.getAll().get(rows);
+                IKhService.update(kh.getMaKhachHang(), getDataFromForm(txtMaKH.getText()));
+                loadDataToTable();
+                resetForm();
+
+            }
+        }
+
     }
 }

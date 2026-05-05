@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Services.impl;
 
 import DomainModels.NhanVien;
@@ -11,13 +7,9 @@ import Services.INhanVienService;
 import ViewModels.NhanVienViewModel;
 import java.util.List;
 
-/**
- *
- * @author Admin
- */
 public class NhanVienServiceImpl implements INhanVienService {
 
-    private INhanVienRes nvRes = new NhanVienResImpl();
+    private final INhanVienRes nvRes = new NhanVienResImpl();
 
     @Override
     public List<NhanVienViewModel> getAll() {
@@ -28,16 +20,6 @@ public class NhanVienServiceImpl implements INhanVienService {
     public NhanVien getOne(String taiKhoan) {
         return nvRes.getOne(taiKhoan);
     }
-
-//    @Override
-//    public NhanVienViewModel getByMaNv(String maNhanVien) {
-//        return nvRes.getByMaNv(maNhanVien);
-//    }
-
-//    @Override
-//    public NhanVien getByTenDangNhap(String tenDangNhap) {
-//        return nvRes.getByTenDangNhap(tenDangNhap);
-//    }
 
     @Override
     public int add(NhanVien nv) {
@@ -58,15 +40,4 @@ public class NhanVienServiceImpl implements INhanVienService {
     public int delete(String id) {
         return nvRes.delete(id);
     }
-
-//    @Override
-//    public List<NhanVienViewModel> find(String maNv, String hoTen) {
-//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-//    }
-//
-//    @Override
-//    public NhanVienViewModel getByMaNv(String maNhanVien) {
-//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-//    }
-
 }

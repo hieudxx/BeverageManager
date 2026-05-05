@@ -1,29 +1,38 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package DomainModels;
 
-/**
- *
- * @author admin
- */
 public class KhachHang {
-    
+
     private int id;
     private String maKhachHang;
     private String soDienThoai;
     private String hoTen;
-    
-    public KhachHang(){
-        
+    private boolean trangThai;
+
+    public KhachHang() {
+
     }
-    
-    public KhachHang(int id, String maKhachHang, String soDienThoai, String hoTen){
-        this.id=id;
-        this.maKhachHang=maKhachHang;
-        this.soDienThoai=soDienThoai;
-        this.hoTen=hoTen;
+
+    public KhachHang(String maKhachHang, String soDienThoai, String hoTen, boolean trangThai) {
+        this.maKhachHang = maKhachHang;
+        this.soDienThoai = soDienThoai;
+        this.hoTen = hoTen;
+        this.trangThai = trangThai;
+    }
+
+    public KhachHang(int id, String maKhachHang, String soDienThoai, String hoTen, boolean trangThai) {
+        this.id = id;
+        this.maKhachHang = maKhachHang;
+        this.soDienThoai = soDienThoai;
+        this.hoTen = hoTen;
+        this.trangThai = trangThai;
+    }
+
+    public boolean isTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(boolean trangThai) {
+        this.trangThai = trangThai;
     }
 
     public int getId() {
@@ -57,5 +66,5 @@ public class KhachHang {
     public void setHoTen(String hoTen) {
         this.hoTen = hoTen;
     }
-    
+
 }
