@@ -7,9 +7,8 @@ import Services.IKhachHangService;
 import ViewModels.KhachHangViewModel;
 import java.util.List;
 
+public class KhachHangServicesImpl implements IKhachHangService {
 
-public class KhachHangServicesImpl implements IKhachHangService{
-    
     private final IKhachHangRes khRes = new KhachHangResImpl();
 
     @Override
@@ -18,18 +17,19 @@ public class KhachHangServicesImpl implements IKhachHangService{
     }
 
     @Override
-    public int add(KhachHang kh) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean add(KhachHang kh) {
+        return khRes.add(kh);
     }
 
     @Override
-    public int update(String ma_kh, KhachHang kh) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(String ma_kh, KhachHang kh) {
+        return khRes.update(ma_kh, kh);
     }
 
     @Override
-    public int delete(String ma_kh) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(String ma_kh) {
+        return khRes.delete(ma_kh);
+
     }
-    
+
 }

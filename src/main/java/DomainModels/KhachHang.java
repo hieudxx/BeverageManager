@@ -12,6 +12,13 @@ public class KhachHang {
 
     }
 
+    public KhachHang(String maKhachHang, String soDienThoai, String hoTen, boolean trangThai) {
+        this.maKhachHang = maKhachHang;
+        this.soDienThoai = soDienThoai;
+        this.hoTen = hoTen;
+        this.trangThai = trangThai;
+    }
+
     public KhachHang(int id, String maKhachHang, String soDienThoai, String hoTen, boolean trangThai) {
         this.id = id;
         this.maKhachHang = maKhachHang;
@@ -27,7 +34,7 @@ public class KhachHang {
     public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
     }
-    
+
     public int getId() {
         return id;
     }

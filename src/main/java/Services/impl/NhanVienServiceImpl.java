@@ -21,16 +21,6 @@ public class NhanVienServiceImpl implements INhanVienService {
         return nvRes.getOne(taiKhoan);
     }
 
-//    @Override
-//    public NhanVienViewModel getByMaNv(String maNhanVien) {
-//        return nvRes.getByMaNv(maNhanVien);
-//    }
-
-//    @Override
-//    public NhanVien getByTenDangNhap(String tenDangNhap) {
-//        return nvRes.getByTenDangNhap(tenDangNhap);
-//    }
-
     @Override
     public int add(NhanVien nv) {
         boolean check = this.nvRes.add(nv);
@@ -50,15 +40,4 @@ public class NhanVienServiceImpl implements INhanVienService {
     public int delete(String id) {
         return nvRes.delete(id);
     }
-
-//    @Override
-//    public List<NhanVienViewModel> find(String maNv, String hoTen) {
-//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-//    }
-//
-//    @Override
-//    public NhanVienViewModel getByMaNv(String maNhanVien) {
-//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-//    }
-
 }

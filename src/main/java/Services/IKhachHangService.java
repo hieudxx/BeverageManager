@@ -7,12 +7,10 @@ import java.util.List;
 public interface IKhachHangService {
 
     public List<KhachHangViewModel> getAll();
-    
-//    NhanVien getOne(String taiKhoan);
 
-    public int add(KhachHang kh);
+    boolean add(KhachHang kh);
 
-    public int update(String ma_kh, KhachHang kh);
+    boolean update(String ma_kh, KhachHang kh);
 
-    public int delete(String ma_kh);
+    boolean delete(String ma_kh);
 }

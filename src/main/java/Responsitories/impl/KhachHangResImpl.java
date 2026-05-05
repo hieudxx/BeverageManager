@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KhachHangResImpl implements IKhachHangRes{
+public class KhachHangResImpl implements IKhachHangRes {
 
     @Override
     public List<KhachHangViewModel> getAll() {
@@ -34,23 +34,60 @@ public class KhachHangResImpl implements IKhachHangRes{
     }
 
     @Override
-    public KhachHang getOne(String taiKhoan) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
     public boolean add(KhachHang kh) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "INSERT INTO KhachHang (ma_khach_hang, so_dien_thoai, ho_ten, trang_thai) VALUES (?, ?, ?, ?)";
+        try {
+            int result = JDBC_Helper.updateTongQuat(sql, kh.getMaKhachHang(), kh.getSoDienThoai(), kh.getHoTen(), 1);
+            return result > 0;
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            if (msg != null) {
+                if (msg.contains("ma_kh_active")) {
+                    throw new RuntimeException("Mã khách hàng đã tồn tại!");
+                }
+                if (msg.contains("sdt_active")) {
+                    throw new RuntimeException("Số điện thoại đã tồn tại!");
+                }
+            }
+            e.printStackTrace();
+            throw new RuntimeException("Thêm khách hàng thất bại!");
+        }
     }
 
     @Override
-    public int update(String maKh, KhachHang kh) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean update(String maKh, KhachHang kh) {
+        String sql = "UPDATE KhachHang SET so_dien_thoai = ?, ho_ten = ? "
+                + "WHERE ma_khach_hang = ? AND trang_thai = 1";
+
+        try {
+            int result = JDBC_Helper.updateTongQuat(sql, kh.getSoDienThoai(), kh.getHoTen(), maKh);
+            return result > 0;
+
+        } catch (Exception e) {
+            String msg = e.getMessage();
+
+            if (msg != null) {
+                if (msg.contains("ma_kh_active")) {
+                    throw new RuntimeException("Mã khách hàng đã tồn tại!");
+                }
+                if (msg.contains("sdt_active")) {
+                    throw new RuntimeException("Số điện thoại đã tồn tại!");
+                }
+            }
+            throw new RuntimeException("Cập nhật khách hàng thất bại!");
+        }
     }
 
     @Override
-    public int delete(String maKH) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public boolean delete(String maKH) {
+        String sql = "UPDATE KhachHang SET trang_thai = 0 WHERE ma_khach_hang = ?";
+
+        try {
+            int result = JDBC_Helper.updateTongQuat(sql, maKH);
+            return result > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Xóa khách hàng thất bại!");
+        }
     }
-    
 }
