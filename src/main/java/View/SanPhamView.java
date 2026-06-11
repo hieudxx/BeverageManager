@@ -1,8 +1,6 @@
 package View;
 
-import Services.SanPhamServices;
 import Services.impl.SanPhamServiceImpl;
-import Services.DanhMucServices;
 import Services.impl.DanhMucServiceImpl;
 
 import ViewModels.SanPhamResponse;
@@ -15,6 +13,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import Services.DanhMucService;
+import Services.SanPhamService;
 
 public class SanPhamView extends JFrame {
 
@@ -27,8 +27,8 @@ public class SanPhamView extends JFrame {
     private JLabel lblHinhAnh;
     private List<DanhMuc> listDanhMuc;
 
-    private SanPhamServices service = new SanPhamServiceImpl();
-    private DanhMucServices danhMucService = new DanhMucServiceImpl();
+    private SanPhamService service = new SanPhamServiceImpl();
+    private DanhMucService danhMucService = new DanhMucServiceImpl();
 
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);
@@ -173,7 +173,8 @@ public class SanPhamView extends JFrame {
         // ===== EVENT =====
         // chọn ảnh
         btnChonAnh.addActionListener(e -> {
-            JFileChooser fc = new JFileChooser();
+            String projectPath = System.getProperty("user.dir");
+            JFileChooser fc = new JFileChooser(projectPath + "/src/main/resources/images");
             fc.setFileFilter(new FileNameExtensionFilter("Image", "jpg", "png", "jpeg"));
 
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -476,7 +477,7 @@ public class SanPhamView extends JFrame {
         JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
-                ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
         // Lấy đối tượng Image từ icon
         Image img = icon.getImage();
 
@@ -492,7 +493,7 @@ public class SanPhamView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng"};
         int y = 1;
 
         for (String m : menu) {
@@ -529,7 +530,7 @@ public class SanPhamView extends JFrame {
                         // Đang ở chính nó, không cần làm gì
                         break;
                     default:
-                        JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
+
                         break;
                 }
             });
@@ -547,7 +548,7 @@ public class SanPhamView extends JFrame {
         btnExit.setForeground(Color.WHITE);
         btnExit.setFont(new Font("Arial", Font.BOLD, 14));
         btnExit.setBorder(new MatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
-btnExit.addActionListener(e -> {
+        btnExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát chương trình?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 System.exit(0); // Thoát toàn bộ ứng dụng
@@ -586,5 +587,8 @@ btnExit.addActionListener(e -> {
         cboDangBan.setSelectedIndex(0);
         cboTrangThai.setSelectedIndex(0);
         lblHinhAnh.setIcon(null);
+        lblHinhAnh.setPreferredSize(new Dimension(180, 180));
+        lblHinhAnh.revalidate();
+        lblHinhAnh.repaint();
     }
 }

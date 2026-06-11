@@ -17,4 +17,5 @@ public interface DanhMucRepository {
     boolean add(DanhMuc dm);
     boolean update(DanhMuc dm, String maDM);
     boolean delete(String maDM);
+    List<DanhMuc> getAllByTrangThai();
 }

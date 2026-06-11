@@ -7,40 +7,40 @@ package Services.impl;
 import DomainModels.DanhMuc;
 import Repositories.DanhMucRepository;
 import Repositories.impl.DanhMucRepositoryImpl;
-import Services.DanhMucServices;
 import ViewModels.DanhMucViewModel;
 import java.util.ArrayList;
 import java.util.List;
-
+import Services.DanhMucService;
 
 /**
  *
  * @author ADMIN
  */
-public class DanhMucServiceImpl implements DanhMucServices{
+public class DanhMucServiceImpl implements DanhMucService {
+
     private DanhMucRepository DanhMucRep = new DanhMucRepositoryImpl();
-    
+
     // Domain
     @Override
     public List<DanhMuc> getAll() {
         return DanhMucRep.getAll();
     }
-    
+
     @Override
-    public boolean add(DanhMuc dm){
+    public boolean add(DanhMuc dm) {
         return DanhMucRep.add(dm);
     }
-    
+
     @Override
-    public boolean update(DanhMuc dm, String maDM){
+    public boolean update(DanhMuc dm, String maDM) {
         return DanhMucRep.update(dm, maDM);
     }
-    
+
     @Override
-    public boolean delete(String maDM){
+    public boolean delete(String maDM) {
         return DanhMucRep.delete(maDM);
     }
-    
+
     // View
     @Override
     public List<DanhMucViewModel> getAllView() {
@@ -56,9 +56,10 @@ public class DanhMucServiceImpl implements DanhMucServices{
 
             result.add(vm);
         }
-    return result;
-    
+        return result;
+
     }
+
     @Override
     public List<DanhMucViewModel> search(String keyword) {
         List<DanhMuc> listdm = DanhMucRep.getAll();
@@ -77,5 +78,21 @@ public class DanhMucServiceImpl implements DanhMucServices{
             }
         }
         return resultdm;
+    }
+
+    @Override
+    public List<DanhMucViewModel> getAllByTrangThai() {
+        List<DanhMuc> list = DanhMucRep.getAllByTrangThai();
+        List<DanhMucViewModel> result = new ArrayList<>();
+
+        for (DanhMuc dm : list) {
+            DanhMucViewModel vm = new DanhMucViewModel();
+            vm.setId(dm.getId());
+            vm.setMaDanhMuc(dm.getMaDanhMuc());
+            vm.setTenDanhMuc(dm.getTenDanhMuc());
+            vm.setTrangThaiHienThi(dm.isTrangThaiHienThi());
+            result.add(vm);
+        }
+        return result;
     }
 }

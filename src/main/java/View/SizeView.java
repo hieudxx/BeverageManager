@@ -2,9 +2,7 @@ package View;
 
 import DomainModels.SanPham;
 import DomainModels.Size;
-import Services.SizeServices;
 import Services.impl.SizeServiceImpl;
-import Services.SanPhamServices;
 import Services.impl.SanPhamServiceImpl;
 import ViewModels.SizeViewModel;
 import ViewModels.SanPhamResponse;
@@ -16,6 +14,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.List;
+import Services.SanPhamService;
+import Services.SizeService;
 
 public class SizeView extends JFrame {
 
@@ -26,8 +26,8 @@ public class SizeView extends JFrame {
     private JComboBox<String> cboTrangThai;
     private JComboBox<SanPhamResponse> cboSanPham;
 
-    private SizeServices service = new SizeServiceImpl();
-    private SanPhamServices sanPhamService = new SanPhamServiceImpl();
+    private SizeService service = new SizeServiceImpl();
+    private SanPhamService sanPhamService = new SanPhamServiceImpl();
 
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);
@@ -95,9 +95,15 @@ public class SizeView extends JFrame {
         };
 
         for (int i = 0; i < labels.length; i++) {
+            JLabel lbl = new JLabel(labels[i]); 
+
+            if (i == 0) {
+                lbl.setVisible(false);
+                inputs[i].setVisible(false);
+            }
             f.gridx = 0;
             f.gridy = i;
-            pnlForm.add(new JLabel(labels[i]), f);
+            pnlForm.add(lbl, f);
 
             f.gridx = 1;
             pnlForm.add(inputs[i], f);
@@ -357,6 +363,11 @@ public class SizeView extends JFrame {
                 s.isTrangThaiHienThi() ? "Hiển thị" : "Ẩn"
             });
         }
+        if (table.getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMinWidth(0);
+            table.getColumnModel().getColumn(0).setMaxWidth(0);
+            table.getColumnModel().getColumn(0).setPreferredWidth(0);
+        }
     }
 
     private void loadCboSanPham() {
@@ -406,7 +417,7 @@ public class SizeView extends JFrame {
         JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
-                ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
         // Lấy đối tượng Image từ icon
         Image img = icon.getImage();
 
@@ -422,7 +433,7 @@ public class SizeView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng"};
 
         int y = 1;
         for (String m : menu) {
@@ -441,7 +452,7 @@ public class SizeView extends JFrame {
             } else {
                 btn.setBackground(COLOR_SIDEBAR);
             }
-            
+
             // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
             btn.addActionListener(e -> {
                 switch (m) {
@@ -466,7 +477,7 @@ public class SizeView extends JFrame {
                         this.dispose();
                         break;
                     default:
-                        JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
+                        
                         break;
                 }
             });
@@ -490,7 +501,7 @@ public class SizeView extends JFrame {
                 System.exit(0); // Thoát toàn bộ ứng dụng
             }
         });
-        
+
         g.gridy = y;
         g.weighty = 0;
         p.add(btnExit, g);

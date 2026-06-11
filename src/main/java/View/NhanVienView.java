@@ -232,7 +232,7 @@ public class NhanVienView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng"};
         int y = 1;
         for (String m : menu) {
             JButton btn = new JButton(m);
@@ -275,7 +275,7 @@ public class NhanVienView extends JFrame {
                         this.dispose();
                         break;
                     default:
-                        JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
+                        
                         break;
                 }
             });
