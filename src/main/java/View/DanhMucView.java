@@ -1,7 +1,6 @@
 package View;
 
 import DomainModels.DanhMuc;
-import Services.DanhMucServices;
 import Services.impl.DanhMucServiceImpl;
 import ViewModels.DanhMucViewModel;
 
@@ -11,6 +10,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import Services.DanhMucService;
 
 public class DanhMucView extends JFrame {
 
@@ -20,7 +20,7 @@ public class DanhMucView extends JFrame {
     private JTextField txtId, txtMa, txtTen, txtTim;
     private JComboBox<String> cboTrangThai;
 
-    private DanhMucServices service = new DanhMucServiceImpl();
+    private DanhMucService service = new DanhMucServiceImpl();
 
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);
@@ -69,9 +69,15 @@ public class DanhMucView extends JFrame {
         JComponent[] inputs = {txtId, txtMa, txtTen, cboTrangThai};
 
         for (int i = 0; i < labels.length; i++) {
+            JLabel lbl = new JLabel(labels[i]);
+
+            if (i == 0) {
+                lbl.setVisible(false);
+                inputs[i].setVisible(false);
+            }
             f.gridx = 0;
             f.gridy = i;
-            pnlForm.add(new JLabel(labels[i]), f);
+            pnlForm.add(lbl, f);
 
             f.gridx = 1;
             pnlForm.add(inputs[i], f);
@@ -312,7 +318,7 @@ public class DanhMucView extends JFrame {
         JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
-                ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
         // Lấy đối tượng Image từ icon
         Image img = icon.getImage();
 
@@ -328,7 +334,7 @@ public class DanhMucView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng"};
         int y = 1;
 
         for (String m : menu) {
@@ -366,7 +372,7 @@ public class DanhMucView extends JFrame {
                         this.dispose();
                         break;
                     default:
-                        JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
+                        
                         break;
                 }
             });
@@ -384,7 +390,7 @@ public class DanhMucView extends JFrame {
         btnExit.setForeground(Color.WHITE);
         btnExit.setFont(new Font("Arial", Font.BOLD, 14));
         btnExit.setBorder(new MatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
-btnExit.addActionListener(e -> {
+        btnExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát chương trình?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 System.exit(0); // Thoát toàn bộ ứng dụng
@@ -413,6 +419,11 @@ btnExit.addActionListener(e -> {
                 dm.getTenDanhMuc(),
                 dm.isTrangThaiHienThi() ? "Hiển thị" : "Ẩn"
             });
+        }
+        if (table.getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMinWidth(0);
+            table.getColumnModel().getColumn(0).setMaxWidth(0);
+            table.getColumnModel().getColumn(0).setPreferredWidth(0);
         }
     }
 

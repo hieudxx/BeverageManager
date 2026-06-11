@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author ADMIN
  */
-public interface DanhMucServices {
+public interface DanhMucService {
     // Domain
     List<DanhMuc> getAll();
     public boolean add(DanhMuc dm);
@@ -22,4 +22,5 @@ public interface DanhMucServices {
     // View
     List<DanhMucViewModel> getAllView();
     List<DanhMucViewModel> search(String keyword);
+    List<DanhMucViewModel> getAllByTrangThai();
 }

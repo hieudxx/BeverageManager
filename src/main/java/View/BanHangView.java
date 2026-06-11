@@ -7,12 +7,9 @@ import DomainModels.Size;
 import DomainModels.DanhMuc;
 import DomainModels.KhachHang;
 import DomainModels.SanPham;
-import Services.DanhMucServices;
 import Services.HoaDonChiTietService;
 import Services.HoaDonService;
 import Services.KhachHangService;
-import Services.SanPhamServices;
-import Services.SizeServices;
 import Services.impl.DanhMucServiceImpl;
 import Services.impl.HoaDonChiTietServiceImpl;
 import Services.impl.HoaDonServiceImpl;
@@ -21,6 +18,7 @@ import Services.impl.SanPhamServiceImpl;
 import Services.impl.SizeServiceImpl;
 import Utilities.SessionUser;
 import ViewModels.KhachHangViewModel;
+import ViewModels.DanhMucViewModel;
 import ViewModels.SanPhamResponse;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -44,18 +42,21 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.BaseFont;
 import java.io.InputStream;
+import Services.DanhMucService;
+import Services.SanPhamService;
+import Services.SizeService;
 
 public class BanHangView extends JFrame {
 
-    private SanPhamServices spService = new SanPhamServiceImpl();
+    private SanPhamService spService = new SanPhamServiceImpl();
     private HoaDonService hoaDonService = new HoaDonServiceImpl();
     private HoaDonChiTietService hdctService = new HoaDonChiTietServiceImpl();
-    private SizeServices sizeService = new SizeServiceImpl();
+    private SizeService sizeService = new SizeServiceImpl();
     private KhachHangService khService = new KhachHangServiceImpl();
     private DefaultTableModel dtmCart;
     private JTable tblCart;
 
-    private DanhMucServices dmService = new DanhMucServiceImpl();
+    private DanhMucService dmService = new DanhMucServiceImpl();
     private JTextField txtSearchSP;
     private JComboBox<Object> cboDanhMuc;
     private List<SanPhamResponse> allProducts;
@@ -335,8 +336,8 @@ public class BanHangView extends JFrame {
         cboDanhMuc.removeAllItems();
         cboDanhMuc.addItem("Tất cả");
         try {
-            List<DanhMuc> list = dmService.getAll();
-            for (DanhMuc dm : list) {
+            List<DanhMucViewModel> list = dmService.getAllByTrangThai();
+            for (DanhMucViewModel dm : list) {
                 cboDanhMuc.addItem(dm.getTenDanhMuc());
             }
         } catch (Exception e) {
@@ -494,7 +495,7 @@ public class BanHangView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng"};
 
         NhanVien user = SessionUser.getInstance().getCurrentUser();
         String role = user.getVaiTro();
@@ -549,7 +550,7 @@ public class BanHangView extends JFrame {
                         this.dispose();
                         break;
                     default:
-                        JOptionPane.showMessageDialog(this, "Chức năng " + m + " đang phát triển!");
+
                         break;
                 }
             });
@@ -1020,7 +1021,8 @@ public class BanHangView extends JFrame {
     private void exportToPDF(HoaDon hd, List<HoaDonChiTiet> listCT) {
         try {
 
-            String defaultPath = "E:" + File.separator + "HoaDon_Java";
+            String userHome = System.getProperty("user.home");
+            String defaultPath = userHome + File.separator + "Desktop" + File.separator + "HoaDon_Java";
 
             File folder = new File(defaultPath);
             if (!folder.exists()) {

@@ -29,5 +29,6 @@
       <type>jar</type>
     </dependency>
     </dependencies>
+
     <name>QuanLyBanTraSuaNootea</name>
 </project>

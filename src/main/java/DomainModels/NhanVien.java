@@ -83,7 +83,7 @@ public class NhanVien {
     }
 
     public boolean isTrangThai() {
-        return trangThai;
+        return trangThai;   
     }
 
     public void setTrangThai(boolean trangThai) {
