@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package Responsitories;
+package Repositories;
 
 import DomainModels.HoaDonChiTiet;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author admin
  */
-public interface HoaDonChiTietResponsitories {
+public interface HoaDonChiTietRepository {
     
     int insert (HoaDonChiTiet hdct);
     

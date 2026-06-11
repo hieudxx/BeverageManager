@@ -2,7 +2,7 @@ package View;
 
 import DomainModels.DanhMuc;
 import Services.DanhMucServices;
-import Services.impl.DanhMucServicesImpl;
+import Services.impl.DanhMucServiceImpl;
 import ViewModels.DanhMucViewModel;
 
 import javax.swing.*;
@@ -20,7 +20,7 @@ public class DanhMucView extends JFrame {
     private JTextField txtId, txtMa, txtTen, txtTim;
     private JComboBox<String> cboTrangThai;
 
-    private DanhMucServices service = new DanhMucServicesImpl();
+    private DanhMucServices service = new DanhMucServiceImpl();
 
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);

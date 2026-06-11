@@ -1,8 +1,7 @@
 package View;
 
 import DomainModels.KhachHang;
-import Services.IKhachHangService;
-import Services.impl.KhachHangServicesImpl;
+import Services.impl.KhachHangServiceImpl;
 import ViewModels.KhachHangViewModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -10,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.MatteBorder;
 import java.util.List;
+import Services.KhachHangService;
 
 public class KhachHangView extends JFrame {
 
@@ -21,10 +21,10 @@ public class KhachHangView extends JFrame {
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE_ACTIVE = new Color(243, 156, 18);
     private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
-    private IKhachHangService IKhService;
+    private KhachHangService IKhService;
 
     public KhachHangView() {
-        IKhService = new KhachHangServicesImpl();
+        IKhService = new KhachHangServiceImpl();
         initComponents();
         loadDataToTable();
         setTitle("Quản lý khách hàng");

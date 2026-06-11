@@ -2,29 +2,29 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Responsitories.impl;
+package Repositories.impl;
 
 import DomainModels.HoaDon;
 import DomainModels.KhachHang;
 import DomainModels.NhanVien;
-import Responsitories.HoaDonResponsitories;
 import Utilities.JDBC_Helper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import Repositories.HoaDonRepository;
 
 /**
  *
  * @author admin
  */
-public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
+public class HoaDonRepositoryImpl implements HoaDonRepository{
     
         @Override
     public HoaDon selectByMaHD(String maHD) {
         String query = "SELECT HoaDon.id, ma_hoa_don,NhanVien.id as 'IDNV', NhanVien.ma_nhan_vien,NhanVien.ten_dang_nhap, NhanVien.ho_ten as 'HoTenNV', KhachHang.id as 'IDKH', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
-"                       HoaDon.ngay_tao,trang_thai,phuong_thuc_tt,tong_tien, tien_thanh_toan\n" +
+"                       HoaDon.ngay_tao,HoaDon.trang_thai as 'TrangThaiHD',phuong_thuc_tt,tong_tien, tien_thanh_toan\n" +
 "                       FROM HoaDon LEFT JOIN NhanVien ON HoaDon.id_nhan_vien = NhanVien.id\n" +
 "                                   LEFT JOIN KhachHang ON HoaDon.id_khach_hang = KhachHang.id Where HoaDon.ma_hoa_don = ?";
         ResultSet rs = JDBC_Helper.selectTongQuat(query, maHD);
@@ -37,7 +37,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
                 nv.setTenDangNhap(rs.getString("ten_dang_nhap")); nv.setHoTen(rs.getString("HoTenNV"));
                 hd.setId(rs.getInt("id"));
                 hd.setMaHoaDon(rs.getString("ma_hoa_don"));
-                hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("trang_thai"));
+                hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("TrangThaiHD"));
                 kh.setId(rs.getInt("IDKH"));
                 kh.setMaKhachHang(rs.getString("ma_khach_hang")); kh.setHoTen(rs.getString("HoTenKH")); kh.setSoDienThoai(rs.getString("so_dien_thoai"));
                 hd.setKhachHang(kh);
@@ -56,7 +56,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
     public List<HoaDon> selectByHDChoTT() {
         List<HoaDon> listHD = new ArrayList<>();
         String query = "SELECT HoaDon.id, ma_hoa_don, NhanVien.ma_nhan_vien,NhanVien.ten_dang_nhap, NhanVien.ho_ten as 'HoTenNV', KhachHang.ma_khach_hang, KhachHang.ho_ten as 'HoTenKH', KhachHang.so_dien_thoai, \n" +
-"                       HoaDon.ngay_tao,trang_thai,phuong_thuc_tt,tong_tien, tien_thanh_toan\n" +
+"                       HoaDon.ngay_tao,HoaDon.trang_thai as 'TrangThaiHD',phuong_thuc_tt,tong_tien, tien_thanh_toan\n" +
 "                       FROM HoaDon LEFT JOIN NhanVien ON HoaDon.id_nhan_vien = NhanVien.id\n" +
 "                                   LEFT JOIN KhachHang ON HoaDon.id_khach_hang = KhachHang.id Where HoaDon.trang_thai LIKE N'%Chờ thanh toán%' ORDER BY HoaDon.ngay_tao DESC";
         ResultSet rs = JDBC_Helper.selectTongQuat(query);
@@ -67,11 +67,10 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
                 KhachHang kh = new KhachHang();
                 nv.setTenDangNhap(rs.getString("ten_dang_nhap")); 
                 nv.setHoTen(rs.getString("HoTenNV"));
-//vì đã đặt tên bảng tạm là as 'HoTenNV' nên giá trị  phải để tên giống bảng tên trong bảng tạm
                 nv.setMaNhanVien(rs.getString("ma_nhan_vien"));
                 hd.setId(rs.getInt("id"));
                 hd.setMaHoaDon(rs.getString("ma_hoa_don"));
-                hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("trang_thai"));
+                hd.setNhanVien(nv); hd.setNgayTao(rs.getObject("ngay_tao", LocalDateTime.class)); hd.setTrangThai(rs.getString("TrangThaiHD"));
                 kh.setMaKhachHang(rs.getString("ma_khach_hang")); kh.setHoTen(rs.getString("HoTenKH")); kh.setSoDienThoai(rs.getString("so_dien_thoai"));
                 hd.setKhachHang(kh);
                 hd.setTongTien(rs.getBigDecimal("tong_tien"));
@@ -89,17 +88,17 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
     @Override
     public int update(HoaDon hd) {
         String query = "UPDATE HoaDon SET [id_nhan_vien] = ?, [id_khach_hang] = ?, \n" +
-                       " [tong_tien] = ?,[tien_thanh_toan] = ?, [phuong_thuc_tt] = ?, [trang_thai] = ? WHERE ma_hoa_don = ?";
-        // Kiểm tra null an toàn trước khi lấy ID
+                       " [tong_tien] = ?,[tien_thanh_toan] = ?, [phuong_thuc_tt] = ?, HoaDon.[trang_thai] = ? WHERE HoaDon.ma_hoa_don = ?";
+       
     Object idNV = (hd.getNhanVien() != null) ? hd.getNhanVien().getId() : null;
     Object idKH = (hd.getKhachHang() != null) ? hd.getKhachHang().getId() : null;
         return JDBC_Helper.updateTongQuat(query, 
-        idNV,             // ? 1
-        idKH,             // ? 2 (Nếu null, SQL sẽ tự động set NULL cho cột FK)
-        hd.getTongTien(),                                             // ? 3
-        hd.getTienThanhToan(),                                        // ? 4
-        hd.getPhuongThucTT(),                                         // ? 5
-        hd.getTrangThai(),                                            // ? 6
+        idNV,            
+        idKH,             
+        hd.getTongTien(),                                            
+        hd.getTienThanhToan(),                                       
+        hd.getPhuongThucTT(),                                         
+        hd.getTrangThai(),                                           
         hd.getMaHoaDon()
         );
     }
@@ -107,15 +106,15 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
     @Override
     public int insert(HoaDon hd) {
         String query = "INSERT INTO [dbo].[HoaDon] ([ma_hoa_don],[id_nhan_vien],[id_khach_hang], [ngay_tao], \n" +
-                       "[tong_tien], [tien_thanh_toan], [phuong_thuc_tt], [trang_thai]) VALUES (?, ?, ?, ?, ?, ?,?,?)";
+                       "[tong_tien], [tien_thanh_toan], [phuong_thuc_tt], HoaDon.[trang_thai]) VALUES (?, ?, ?, ?, ?, ?,?,?)";
         return JDBC_Helper.updateTongQuat(query,
         hd.getMaHoaDon(),
-        hd.getNhanVien() != null ? hd.getNhanVien().getId() : null,   // 1
-        hd.getKhachHang() != null ? hd.getKhachHang().getId() : null, // 2
-        hd.getNgayTao(),                                              // 3
-        hd.getTongTien() != null ? hd.getTongTien() : 0,              // 4 (Tránh lỗi nếu BigDecimal bị null)
-        hd.getTienThanhToan() != null ? hd.getTienThanhToan() : 0,    // 5
-        hd.getPhuongThucTT(),                                         // 6
+        hd.getNhanVien() != null ? hd.getNhanVien().getId() : null,  
+        hd.getKhachHang() != null ? hd.getKhachHang().getId() : null, 
+        hd.getNgayTao(),                                              
+        hd.getTongTien() != null ? hd.getTongTien() : 0,              
+        hd.getTienThanhToan() != null ? hd.getTienThanhToan() : 0,    
+        hd.getPhuongThucTT(),                                         
         hd.getTrangThai()
                 
         );
@@ -124,7 +123,7 @@ public class HoaDonResponsitoriesImpl implements HoaDonResponsitories{
     @Override
     public int updateNoKH(HoaDon hd) {
          String query = "UPDATE [dbo].[HoaDon] SET [id_nhan_vien] = ?, \n" +
-                       " [tong_tien] = ?,[tien_thanh_toan] = ?, [phuong_thuc_tt] = ?, [trang_thai] = ? WHERE ma_hoa_don = ?";
+                       " [tong_tien] = ?,[tien_thanh_toan] = ?, [phuong_thuc_tt] = ?, HoaDon.[trang_thai] = ? WHERE HoaDon.ma_hoa_don = ?";
         return JDBC_Helper.updateTongQuat(query, hd.getNhanVien().getId(), hd.getTongTien(),
         hd.getTienThanhToan(), hd.getPhuongThucTT(), hd.getTrangThai(), hd.getMaHoaDon()
         );

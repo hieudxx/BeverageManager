@@ -1,10 +1,10 @@
-package Responsitories;
+package Repositories;
 
 import DomainModels.NhanVien;
 import ViewModels.NhanVienViewModel;
 import java.util.List;
 
-public interface INhanVienRes {
+public interface NhanVienRepository {
 
     List<NhanVienViewModel> getAll();
 

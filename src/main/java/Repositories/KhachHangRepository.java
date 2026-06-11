@@ -1,10 +1,10 @@
-package Responsitories;
+package Repositories;
 
 import DomainModels.KhachHang;
 import ViewModels.KhachHangViewModel;
 import java.util.List;
 
-public interface IKhachHangRes {
+public interface KhachHangRepository {
 
     List<KhachHangViewModel> getAll();
 
@@ -13,5 +13,7 @@ public interface IKhachHangRes {
     boolean update(String maKh, KhachHang kh);
 
     boolean delete(String maKH);
+    
+    KhachHangViewModel getBySdt(String sdt);
 
 }

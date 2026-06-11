@@ -5,19 +5,19 @@
 package Services.impl;
 
 import DomainModels.Size;
-import Responsitories.SizeResponsitories;
-import Responsitories.impl.SizeResponsitoriesImpl;
+import Repositories.impl.SizeRepositoryImpl;
 import Services.SizeServices;
 import ViewModels.SizeViewModel;
 import java.util.ArrayList;
 import java.util.List;
+import Repositories.SizeRepository;
 
 /**
  *
  * @author ADMIN
  */
-public class SizeServicesImpl implements SizeServices{
-    private SizeResponsitories SizeRep = new SizeResponsitoriesImpl();
+public class SizeServiceImpl implements SizeServices{
+    private SizeRepository SizeRep = new SizeRepositoryImpl();
     
     // List
     @Override

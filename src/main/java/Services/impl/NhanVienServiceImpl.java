@@ -1,15 +1,15 @@
 package Services.impl;
 
 import DomainModels.NhanVien;
-import Responsitories.INhanVienRes;
-import Responsitories.impl.NhanVienResImpl;
-import Services.INhanVienService;
+import Repositories.impl.NhanVienResImpl;
 import ViewModels.NhanVienViewModel;
 import java.util.List;
+import Repositories.NhanVienRepository;
+import Services.NhanVienService;
 
-public class NhanVienServiceImpl implements INhanVienService {
+public class NhanVienServiceImpl implements NhanVienService {
 
-    private final INhanVienRes nvRes = new NhanVienResImpl();
+    private final NhanVienRepository nvRes = new NhanVienResImpl();
 
     @Override
     public List<NhanVienViewModel> getAll() {

@@ -2,11 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Responsitories.impl;
+package Repositories.impl;
 
 import DomainModels.DanhMuc;
 import DomainModels.SanPham;
-import Responsitories.SanPhamResponsitories;
 import Utilities.JDBC_Helper;
 import ViewModels.SanPhamResponse;
 import java.sql.ResultSet;
@@ -14,12 +13,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import Repositories.SanPhamRepository;
 
 /**
  *
  * @author admin
  */
-public class SanPhamResponsitoriesImpl implements SanPhamResponsitories {
+public class SanPhamRepositoryImpl implements SanPhamRepository {
 
     @Override
     public List<SanPhamResponse> getAll() {

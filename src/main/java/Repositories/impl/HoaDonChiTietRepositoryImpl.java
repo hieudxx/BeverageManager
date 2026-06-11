@@ -2,24 +2,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Responsitories.impl;
+package Repositories.impl;
 
 import DomainModels.HoaDon;
 import DomainModels.HoaDonChiTiet;
 import DomainModels.SanPham;
 import DomainModels.Size;
-import Responsitories.HoaDonChiTietResponsitories;
 import Utilities.JDBC_Helper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import Repositories.HoaDonChiTietRepository;
 
 /**
  *
  * @author admin
  */
-public class HoaDonChiTietReponsitoriesImpl implements HoaDonChiTietResponsitories{
+public class HoaDonChiTietRepositoryImpl implements HoaDonChiTietRepository{
 
     @Override
     public List<HoaDonChiTiet> selectByID(int idHoaDon) {

@@ -7,23 +7,23 @@ package Services.impl;
 import DomainModels.SanPham;
 import Services.SanPhamServices;
 import ViewModels.SanPhamResponse;
-import Responsitories.SanPhamResponsitories;
-import Responsitories.impl.SanPhamResponsitoriesImpl;
+import Repositories.impl.SanPhamRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;
+import Repositories.SanPhamRepository;
 
 /**
  *
  * @author admin
  */
-public class SanPhamServicesImpl implements SanPhamServices {
+public class SanPhamServiceImpl implements SanPhamServices {
 
 //        private SanPhamRepository1 sanPhamRep = new SanPhamRepositoryImpl1();
 //    @Override
 //    public List<SanPhamResponse1> getALL() {
 //        return sanPhamRep.getALL();
 //    }
-    private SanPhamResponsitories spRep = new SanPhamResponsitoriesImpl();
+    private SanPhamRepository spRep = new SanPhamRepositoryImpl();
 
     @Override
     public List<SanPhamResponse> getAll() {

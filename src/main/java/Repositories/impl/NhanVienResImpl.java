@@ -1,4 +1,4 @@
-package Responsitories.impl;
+package Repositories.impl;
 
 import DomainModels.NhanVien;
 import Utilities.JDBC_Helper;
@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import Responsitories.INhanVienRes;
+import Repositories.NhanVienRepository;
 
-public class NhanVienResImpl implements INhanVienRes {
+public class NhanVienResImpl implements NhanVienRepository {
 
     @Override
     public NhanVien getOne(String TaiKhoan) {

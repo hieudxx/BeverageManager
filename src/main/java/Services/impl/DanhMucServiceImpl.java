@@ -5,8 +5,8 @@
 package Services.impl;
 
 import DomainModels.DanhMuc;
-import Responsitories.DanhMucRepository;
-import Responsitories.impl.DanhMucRepositoryImpl;
+import Repositories.DanhMucRepository;
+import Repositories.impl.DanhMucRepositoryImpl;
 import Services.DanhMucServices;
 import ViewModels.DanhMucViewModel;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author ADMIN
  */
-public class DanhMucServicesImpl implements DanhMucServices{
+public class DanhMucServiceImpl implements DanhMucServices{
     private DanhMucRepository DanhMucRep = new DanhMucRepositoryImpl();
     
     // Domain

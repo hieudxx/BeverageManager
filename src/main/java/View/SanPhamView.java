@@ -1,9 +1,9 @@
 package View;
 
 import Services.SanPhamServices;
-import Services.impl.SanPhamServicesImpl;
+import Services.impl.SanPhamServiceImpl;
 import Services.DanhMucServices;
-import Services.impl.DanhMucServicesImpl;
+import Services.impl.DanhMucServiceImpl;
 
 import ViewModels.SanPhamResponse;
 import DomainModels.DanhMuc;
@@ -27,8 +27,8 @@ public class SanPhamView extends JFrame {
     private JLabel lblHinhAnh;
     private List<DanhMuc> listDanhMuc;
 
-    private SanPhamServices service = new SanPhamServicesImpl();
-    private DanhMucServices danhMucService = new DanhMucServicesImpl();
+    private SanPhamServices service = new SanPhamServiceImpl();
+    private DanhMucServices danhMucService = new DanhMucServiceImpl();
 
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);

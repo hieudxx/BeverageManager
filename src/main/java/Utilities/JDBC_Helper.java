@@ -45,9 +45,6 @@ try {
      }
      
      public static int updateTongQuat(String sql, Object...params) {
-// try-with-resources để tự động đóng ps sau khi chạy xong
-        //không để DBConnect.getConnect() vào trong ngoặc này 
-        // để tránh việc đóng nhầm kết nối dùng chung.
         try (PreparedStatement ps = DBConnect.getConnect().prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
                 ps.setObject(i + 1, params[i]);
