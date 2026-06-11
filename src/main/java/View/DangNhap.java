@@ -1,7 +1,6 @@
 package View;
 
 import DomainModels.NhanVien;
-import Services.INhanVienService;
 import Services.impl.NhanVienServiceImpl;
 import Utilities.Auth;
 import Utilities.SessionUser;
@@ -10,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import Services.NhanVienService;
 
 public class DangNhap extends JFrame {
 
@@ -18,7 +18,7 @@ public class DangNhap extends JFrame {
     private JButton btnDangNhap;
     private JLabel lblMessage;
 
-    private INhanVienService nvService = new NhanVienServiceImpl();
+    private NhanVienService nvService = new NhanVienServiceImpl();
 
     public DangNhap() {
         initComponents();

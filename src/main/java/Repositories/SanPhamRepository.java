@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package Responsitories;
+package Repositories;
 
 import DomainModels.SanPham;
 import ViewModels.SanPhamResponse;
@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author admin
  */
-public interface SanPhamResponsitories {
+public interface SanPhamRepository {
     
     List<SanPhamResponse> getAll();
     SanPhamResponse getOne(String ma);

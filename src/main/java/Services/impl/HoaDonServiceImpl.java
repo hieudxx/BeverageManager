@@ -5,17 +5,17 @@
 package Services.impl;
 
 import DomainModels.HoaDon;
-import Responsitories.HoaDonResponsitories;
-import Responsitories.impl.HoaDonResponsitoriesImpl;
+import Repositories.impl.HoaDonRepositoryImpl;
 import Services.HoaDonService;
 import java.util.List;
+import Repositories.HoaDonRepository;
 
 /**
  *
  * @author admin
  */
 public class HoaDonServiceImpl implements HoaDonService{
-        private HoaDonResponsitories hoaDonRep = new HoaDonResponsitoriesImpl();
+        private HoaDonRepository hoaDonRep = new HoaDonRepositoryImpl();
     
     @Override
     public List<HoaDon> selectByHDChoTT() {

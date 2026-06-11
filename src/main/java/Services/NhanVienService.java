@@ -4,7 +4,7 @@ import DomainModels.NhanVien;
 import ViewModels.NhanVienViewModel;
 import java.util.List;
 
-public interface INhanVienService {
+public interface NhanVienService {
 
     public List<NhanVienViewModel> getAll();
 

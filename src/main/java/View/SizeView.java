@@ -3,9 +3,9 @@ package View;
 import DomainModels.SanPham;
 import DomainModels.Size;
 import Services.SizeServices;
-import Services.impl.SizeServicesImpl;
+import Services.impl.SizeServiceImpl;
 import Services.SanPhamServices;
-import Services.impl.SanPhamServicesImpl;
+import Services.impl.SanPhamServiceImpl;
 import ViewModels.SizeViewModel;
 import ViewModels.SanPhamResponse;
 
@@ -26,8 +26,8 @@ public class SizeView extends JFrame {
     private JComboBox<String> cboTrangThai;
     private JComboBox<SanPhamResponse> cboSanPham;
 
-    private SizeServices service = new SizeServicesImpl();
-    private SanPhamServices sanPhamService = new SanPhamServicesImpl();
+    private SizeServices service = new SizeServiceImpl();
+    private SanPhamServices sanPhamService = new SanPhamServiceImpl();
 
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);

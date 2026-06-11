@@ -9,9 +9,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
-import Services.INhanVienService;
 import Services.impl.NhanVienServiceImpl;
 import javax.swing.border.MatteBorder;
+import Services.NhanVienService;
 
 public class NhanVienView extends JFrame {
 
@@ -21,7 +21,7 @@ public class NhanVienView extends JFrame {
     private JButton btnThem, btnSua, btnXoa, btnReset;
     private JTable tableNhanVien;
     private DefaultTableModel tableModel;
-    private INhanVienService INvService;
+    private NhanVienService INvService;
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE_ACTIVE = new Color(243, 156, 18);
     private final Color COLOR_BG_MAIN = new Color(213, 216, 220);

@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Responsitories.impl;
+package Repositories.impl;
 
 import DomainModels.DanhMuc;
-import Responsitories.DanhMucRepository;
+import Repositories.DanhMucRepository;
 import Utilities.DBConnect;
 import Utilities.JDBC_Helper;
 import java.sql.Connection;

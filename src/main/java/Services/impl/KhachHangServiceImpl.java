@@ -1,15 +1,15 @@
 package Services.impl;
 
 import DomainModels.KhachHang;
-import Responsitories.IKhachHangRes;
-import Responsitories.impl.KhachHangResImpl;
-import Services.IKhachHangService;
+import Repositories.impl.KhachHangResImpl;
 import ViewModels.KhachHangViewModel;
 import java.util.List;
+import Repositories.KhachHangRepository;
+import Services.KhachHangService;
 
-public class KhachHangServicesImpl implements IKhachHangService {
+public class KhachHangServiceImpl implements KhachHangService {
 
-    private final IKhachHangRes khRes = new KhachHangResImpl();
+    private final KhachHangRepository khRes = new KhachHangResImpl();
 
     @Override
     public List<KhachHangViewModel> getAll() {
@@ -30,6 +30,11 @@ public class KhachHangServicesImpl implements IKhachHangService {
     public boolean delete(String ma_kh) {
         return khRes.delete(ma_kh);
 
+    }
+
+    @Override
+    public KhachHangViewModel getBySdt(String sdt) {
+        return khRes.getBySdt(sdt);
     }
 
 }

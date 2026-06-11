@@ -2,11 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Responsitories.impl;
+package Repositories.impl;
 
 import DomainModels.SanPham;
 import DomainModels.Size;
-import Responsitories.SizeResponsitories;
 import Utilities.DBConnect;
 import Utilities.JDBC_Helper;
 import ViewModels.SizeViewModel;
@@ -20,12 +19,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
+import Repositories.SizeRepository;
 
 /**
  *
  * @author ADMIN
  */
-public class SizeResponsitoriesImpl implements SizeResponsitories {
+public class SizeRepositoryImpl implements SizeRepository {
 
     // Câu lệnh SQL
     private static final String GET_ALL_SQL
@@ -125,9 +125,9 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
     @Override
     public List<Size> getSizesBySPId(int spId) {
         List<Size> listSize = new ArrayList<>();
-        // Truy vấn tất cả các cột của SizeSanPham dựa trên id_san_pham
+        
         String sql = "SELECT id, ma_size, ten_size, gia_chenh_lech, trang_thai_hien_thi "
-                   + "FROM SizeSanPham WHERE id_san_pham = ? AND trang_thai_hien_thi = 0";
+                   + "FROM SizeSanPham WHERE id_san_pham = ? AND trang_thai_hien_thi = 1";
         
         ResultSet rs = JDBC_Helper.selectTongQuat(sql, spId);
         try {
@@ -139,7 +139,6 @@ public class SizeResponsitoriesImpl implements SizeResponsitories {
                 s.setGiaChenhLech(rs.getBigDecimal("gia_chenh_lech"));
                 s.setTrangThaiHienThi(rs.getBoolean("trang_thai_hien_thi"));
                 
-                // Trả về danh sách Domain Model để phục vụ tính toán ở tầng Service/View
                 listSize.add(s);
             }
         } catch (SQLException ex) {

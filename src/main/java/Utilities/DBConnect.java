@@ -26,7 +26,7 @@ public class DBConnect {
     
     public static Connection getConnect() {
 try {
-            // Nếu kết nối chưa tồn tại hoặc đã bị đóng thì mới tạo mới
+           
             if (conn == null || conn.isClosed()) {
                 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
                 conn = DriverManager.getConnection(url, user, pass);

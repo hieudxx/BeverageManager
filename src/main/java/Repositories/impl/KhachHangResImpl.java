@@ -1,15 +1,15 @@
-package Responsitories.impl;
+package Repositories.impl;
 
 import DomainModels.KhachHang;
-import Responsitories.IKhachHangRes;
 import Utilities.JDBC_Helper;
 import ViewModels.KhachHangViewModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import Repositories.KhachHangRepository;
 
-public class KhachHangResImpl implements IKhachHangRes {
+public class KhachHangResImpl implements KhachHangRepository {
 
     @Override
     public List<KhachHangViewModel> getAll() {
@@ -89,5 +89,26 @@ public class KhachHangResImpl implements IKhachHangRes {
             e.printStackTrace();
             throw new RuntimeException("Xóa khách hàng thất bại!");
         }
+    }
+
+    @Override
+    public KhachHangViewModel getBySdt(String sdt) {
+        String sql = "SELECT id, ma_khach_hang, ho_ten, so_dien_thoai, trang_thai "
+               + "FROM KhachHang WHERE so_dien_thoai = ? AND trang_thai = 1";
+    try {
+        ResultSet rs = JDBC_Helper.selectTongQuat(sql, sdt);
+        if (rs.next()) {
+            KhachHangViewModel kh = new KhachHangViewModel();
+            kh.setId(rs.getInt("id"));
+            kh.setMaKhachHang(rs.getString("ma_khach_hang"));
+            kh.setHoTen(rs.getString("ho_ten"));
+            kh.setSoDienThoai(rs.getString("so_dien_thoai"));
+            kh.setTrangThai(rs.getBoolean("trang_thai"));
+            return kh;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
     }
 }

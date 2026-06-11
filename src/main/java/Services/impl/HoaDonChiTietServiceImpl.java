@@ -5,18 +5,18 @@
 package Services.impl;
 
 import DomainModels.HoaDonChiTiet;
-import Responsitories.HoaDonChiTietResponsitories;
-import Responsitories.impl.HoaDonChiTietReponsitoriesImpl;
+import Repositories.impl.HoaDonChiTietRepositoryImpl;
 import Services.HoaDonChiTietService;
 import java.util.List;
+import Repositories.HoaDonChiTietRepository;
 
 /**
  *
  * @author admin
  */
-public class HoaDonChiTietServicesImpl implements HoaDonChiTietService{
+public class HoaDonChiTietServiceImpl implements HoaDonChiTietService{
     
-    public HoaDonChiTietResponsitories hdctRepo=new HoaDonChiTietReponsitoriesImpl();
+    public HoaDonChiTietRepository hdctRepo=new HoaDonChiTietRepositoryImpl();
 
     @Override
     public int insert(HoaDonChiTiet hdct) {
