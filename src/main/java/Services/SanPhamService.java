@@ -8,7 +8,7 @@ import DomainModels.SanPham;
 import ViewModels.SanPhamResponse;
 import java.util.List;
 
-public interface SanPhamServices {
+public interface SanPhamService {
     List<SanPhamResponse> getAll();
     SanPhamResponse getOne(String ma);
     boolean add(SanPham sp);

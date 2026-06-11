@@ -5,18 +5,18 @@
 package Services.impl;
 
 import DomainModels.SanPham;
-import Services.SanPhamServices;
 import ViewModels.SanPhamResponse;
 import Repositories.impl.SanPhamRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;
 import Repositories.SanPhamRepository;
+import Services.SanPhamService;
 
 /**
  *
  * @author admin
  */
-public class SanPhamServiceImpl implements SanPhamServices {
+public class SanPhamServiceImpl implements SanPhamService {
 
 //        private SanPhamRepository1 sanPhamRep = new SanPhamRepositoryImpl1();
 //    @Override

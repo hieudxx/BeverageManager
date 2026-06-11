@@ -6,17 +6,17 @@ package Services.impl;
 
 import DomainModels.Size;
 import Repositories.impl.SizeRepositoryImpl;
-import Services.SizeServices;
 import ViewModels.SizeViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import Repositories.SizeRepository;
+import Services.SizeService;
 
 /**
  *
  * @author ADMIN
  */
-public class SizeServiceImpl implements SizeServices{
+public class SizeServiceImpl implements SizeService{
     private SizeRepository SizeRep = new SizeRepositoryImpl();
     
     // List

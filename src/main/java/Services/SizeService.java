@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author ADMIN
  */
-public interface SizeServices {
+public interface SizeService {
     List<SizeViewModel> getAll();
     List<SizeViewModel> search(String keyword);
     public boolean add(Size s);

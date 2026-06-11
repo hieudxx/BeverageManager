@@ -29,4 +29,5 @@
       <type>jar</type>
     </dependency>
     </dependencies>
+    <name>QuanLyBanTraSuaNooTea</name>
 </project>
