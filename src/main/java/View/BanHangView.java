@@ -19,7 +19,7 @@ import Services.impl.SizeServiceImpl;
 import Utilities.SessionUser;
 import ViewModels.KhachHangViewModel;
 import ViewModels.DanhMucViewModel;
-import ViewModels.SanPhamResponse;
+import ViewModels.SanPhamViewModel;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
@@ -59,7 +59,7 @@ public class BanHangView extends JFrame {
     private DanhMucService dmService = new DanhMucServiceImpl();
     private JTextField txtSearchSP;
     private JComboBox<Object> cboDanhMuc;
-    private List<SanPhamResponse> allProducts;
+    private List<SanPhamViewModel> allProducts;
 
     private JTable tblPending;
     private DefaultTableModel dtmPending;
@@ -353,7 +353,7 @@ public class BanHangView extends JFrame {
         String loaiSelected = (cboDanhMuc.getSelectedItem() == null)
                 ? "Tất cả" : cboDanhMuc.getSelectedItem().toString();
 
-        for (SanPhamResponse sp : allProducts) {
+        for (SanPhamViewModel sp : allProducts) {
 
             boolean isPublic = sp.isDangBan() && sp.isTrangThaiHienThi();
 
@@ -473,6 +473,7 @@ public class BanHangView extends JFrame {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBackground(COLOR_SIDEBAR);
         p.setPreferredSize(new Dimension(200, 0));
+        p.setMinimumSize(new Dimension(200, 0));
         GridBagConstraints g = new GridBagConstraints();
         g.gridx = 0;
         g.fill = GridBagConstraints.HORIZONTAL;
@@ -481,6 +482,7 @@ public class BanHangView extends JFrame {
         JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
+        logo.setMinimumSize(new Dimension(200, 150));
 
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
         Image img = icon.getImage();
@@ -504,6 +506,7 @@ public class BanHangView extends JFrame {
         for (String m : menu) {
             JButton btn = new JButton(m);
             btn.setPreferredSize(new Dimension(200, 60));
+            btn.setMinimumSize(new Dimension(200, 60));
             btn.setContentAreaFilled(false);
             btn.setOpaque(true);
             btn.setFocusPainted(false);
@@ -514,7 +517,7 @@ public class BanHangView extends JFrame {
 
             if (role.equalsIgnoreCase("Nhân viên") && !m.equals("Bán hàng")) {
                 btn.setEnabled(false);
-                btn.setBackground(new Color(60, 60, 60)); // xám đi cho giống bị khóa
+                btn.setBackground(new Color(60, 60, 60));
             }
 
             btn.addActionListener(e -> {
@@ -669,7 +672,7 @@ public class BanHangView extends JFrame {
         g.insets = new Insets(8, 5, 8, 5);
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        String[] fields = {"SĐT:", "Họ tên:", "Mã hóa đơn:", "Tổng tiền:", "Tiền khách đưa:", "Tiền thừa:", "Hình thức:"};
+        String[] fields = {"SĐT:", "Họ tên:", "Mã hóa đơn:", "Tổng tiền:", "Tiền khách thanh toán:", "Tiền thừa:", "Hình thức:"};
         for (int i = 0; i < fields.length; i++) {
             g.gridx = 0;
             g.gridy = i;

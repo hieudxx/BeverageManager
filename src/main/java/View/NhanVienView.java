@@ -26,6 +26,7 @@ public class NhanVienView extends JFrame {
     private final Color COLOR_ORANGE_ACTIVE = new Color(243, 156, 18);
     private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
     private final Color COLOR_YELLOW_BTN = new Color(255, 215, 0);
+    
 
     public NhanVienView() {
         INvService = new NhanVienServiceImpl();

@@ -5,14 +5,14 @@
 package Services;
 
 import DomainModels.SanPham;
-import ViewModels.SanPhamResponse;
+import ViewModels.SanPhamViewModel;
 import java.util.List;
 
 public interface SanPhamService {
-    List<SanPhamResponse> getAll();
-    SanPhamResponse getOne(String ma);
+    List<SanPhamViewModel> getAll();
+    SanPhamViewModel getOne(String ma);
     boolean add(SanPham sp);
     boolean update(SanPham sp);
     boolean delete(String maSP);
-    List<SanPhamResponse> search (String keyword);
+    List<SanPhamViewModel> search (String keyword);
 }
