@@ -7,7 +7,7 @@ package Repositories.impl;
 import DomainModels.DanhMuc;
 import DomainModels.SanPham;
 import Utilities.JDBC_Helper;
-import ViewModels.SanPhamResponse;
+import ViewModels.SanPhamViewModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,14 +22,14 @@ import Repositories.SanPhamRepository;
 public class SanPhamRepositoryImpl implements SanPhamRepository {
 
     @Override
-    public List<SanPhamResponse> getAll() {
-        List<SanPhamResponse> listSP = new ArrayList<>();
+    public List<SanPhamViewModel> getAll() {
+        List<SanPhamViewModel> listSP = new ArrayList<>();
         String query = "select sp.id,ma_san_pham, ten_san_pham, gia_co_ban, hinh_anh,dang_ban,sp.trang_thai_hien_thi, dm.ten_danh_muc  \n"
                 + "from SanPham sp join DanhMuc dm on sp.id_danh_muc=dm.id ";
         ResultSet rs = JDBC_Helper.selectTongQuat(query);
         try {
             while (rs.next()) {
-                SanPhamResponse sp = new SanPhamResponse();
+                SanPhamViewModel sp = new SanPhamViewModel();
                 sp.setId(rs.getInt("id"));
                 sp.setMaSanPham(rs.getString("ma_san_pham"));
                 sp.setTenSanPham(rs.getString("ten_san_pham"));
@@ -48,7 +48,7 @@ public class SanPhamRepositoryImpl implements SanPhamRepository {
     }
 
     @Override
-    public SanPhamResponse getOne(String ma) {
+    public SanPhamViewModel getOne(String ma) {
         String query = "SELECT sp.id, ma_san_pham, ten_san_pham, gia_co_ban, hinh_anh, dang_ban, sp.trang_thai_hien_thi, dm.ten_danh_muc "
                 + "FROM SanPham sp JOIN DanhMuc dm ON sp.id_danh_muc = dm.id "
                 + "WHERE ma_san_pham = ?";
@@ -57,7 +57,7 @@ public class SanPhamRepositoryImpl implements SanPhamRepository {
 
         try {
             if (rs.next()) {
-                SanPhamResponse sp = new SanPhamResponse();
+                SanPhamViewModel sp = new SanPhamViewModel();
 
                 sp.setId(rs.getInt("id"));
                 sp.setMaSanPham(rs.getString("ma_san_pham"));

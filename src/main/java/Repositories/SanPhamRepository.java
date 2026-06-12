@@ -5,7 +5,7 @@
 package Repositories;
 
 import DomainModels.SanPham;
-import ViewModels.SanPhamResponse;
+import ViewModels.SanPhamViewModel;
 import java.util.List;
 
 /**
@@ -14,8 +14,8 @@ import java.util.List;
  */
 public interface SanPhamRepository {
     
-    List<SanPhamResponse> getAll();
-    SanPhamResponse getOne(String ma);
+    List<SanPhamViewModel> getAll();
+    SanPhamViewModel getOne(String ma);
     
     boolean add(SanPham sp);
     boolean update(SanPham sp);

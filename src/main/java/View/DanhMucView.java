@@ -24,7 +24,7 @@ public class DanhMucView extends JFrame {
 
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);
-    private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
+    private final Color COLOR_BG_MAIN = new Color(240, 190, 90);
 
     public DanhMucView() {
         initUI();
@@ -43,14 +43,17 @@ public class DanhMucView extends JFrame {
 
         JPanel main = new JPanel(new GridBagLayout());
         main.setBackground(COLOR_BG_MAIN);
-
+        main.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK, 1),
+                BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.BOTH;
 
         // ===== FORM =====
         JPanel pnlForm = new JPanel(new GridBagLayout());
-        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setOpaque(false);
         pnlForm.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         GridBagConstraints f = new GridBagConstraints();
@@ -108,7 +111,7 @@ public class DanhMucView extends JFrame {
 
         // ===== TABLE =====
         JPanel pnlTable = new JPanel(new BorderLayout(10, 10));
-        pnlTable.setBackground(Color.WHITE);
+        pnlTable.setOpaque(false);
         pnlTable.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         // ===== SEARCH (ĐÃ FIX) =====
@@ -153,8 +156,9 @@ public class DanhMucView extends JFrame {
 
         table = new JTable(model);
         table.setRowHeight(25);
-
-        pnlTable.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        pnlTable.add(scrollPane, BorderLayout.CENTER);
 
         gbc.gridx = 1;
         gbc.weightx = 0.6;

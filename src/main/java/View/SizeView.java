@@ -5,7 +5,7 @@ import DomainModels.Size;
 import Services.impl.SizeServiceImpl;
 import Services.impl.SanPhamServiceImpl;
 import ViewModels.SizeViewModel;
-import ViewModels.SanPhamResponse;
+import ViewModels.SanPhamViewModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -24,7 +24,7 @@ public class SizeView extends JFrame {
 
     private JTextField txtId, txtMaSize, txtTenSize, txtGia, txtTim;
     private JComboBox<String> cboTrangThai;
-    private JComboBox<SanPhamResponse> cboSanPham;
+    private JComboBox<SanPhamViewModel> cboSanPham;
 
     private SizeService service = new SizeServiceImpl();
     private SanPhamService sanPhamService = new SanPhamServiceImpl();
@@ -32,6 +32,7 @@ public class SizeView extends JFrame {
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);
     private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
+    private final Color COLOR_FORM_ORANGE = new Color(240, 190, 90);
 
     public SizeView() {
         initUI();
@@ -48,7 +49,7 @@ public class SizeView extends JFrame {
         add(createSidebar(), BorderLayout.WEST);
 
         JPanel main = new JPanel(new GridBagLayout());
-        main.setBackground(COLOR_BG_MAIN);
+        main.setBackground(COLOR_FORM_ORANGE);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -56,7 +57,7 @@ public class SizeView extends JFrame {
 
         // ===== FORM =====
         JPanel pnlForm = new JPanel(new GridBagLayout());
-        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setOpaque(false);
         pnlForm.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         GridBagConstraints f = new GridBagConstraints();
@@ -182,7 +183,7 @@ public class SizeView extends JFrame {
                 String giaStr = txtGia.getText().trim();
 
                 boolean trangThai = cboTrangThai.getSelectedItem().equals("Hiển thị");
-                SanPhamResponse spRes = (SanPhamResponse) cboSanPham.getSelectedItem();
+                SanPhamViewModel spRes = (SanPhamViewModel) cboSanPham.getSelectedItem();
 
                 if (ma.isEmpty() || ten.isEmpty() || giaStr.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Không được để trống!");
@@ -242,7 +243,7 @@ public class SizeView extends JFrame {
                     return;
                 }
 
-                SanPhamResponse spRes = (SanPhamResponse) cboSanPham.getSelectedItem();
+                SanPhamViewModel spRes = (SanPhamViewModel) cboSanPham.getSelectedItem();
                 if (spRes == null) {
                     JOptionPane.showMessageDialog(this, "Chưa chọn sản phẩm!");
                     return;
@@ -337,7 +338,7 @@ public class SizeView extends JFrame {
                 String maSP = model.getValueAt(row, 2).toString();
 
                 for (int i = 0; i < cboSanPham.getItemCount(); i++) {
-                    SanPhamResponse sp = cboSanPham.getItemAt(i);
+                    SanPhamViewModel sp = cboSanPham.getItemAt(i);
                     if (sp.getMaSanPham().equals(maSP)) {
                         cboSanPham.setSelectedIndex(i);
                         break;
@@ -373,13 +374,13 @@ public class SizeView extends JFrame {
     private void loadCboSanPham() {
         cboSanPham.removeAllItems();
 
-        SanPhamResponse macDinh = new SanPhamResponse();
+        SanPhamViewModel macDinh = new SanPhamViewModel();
         macDinh.setId(0);
         macDinh.setMaSanPham("Chọn mã sản phẩm");
 
         cboSanPham.addItem(macDinh);
 
-        for (SanPhamResponse sp : sanPhamService.getAll()) {
+        for (SanPhamViewModel sp : sanPhamService.getAll()) {
             cboSanPham.addItem(sp);
         }
 
