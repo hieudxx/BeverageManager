@@ -129,7 +129,7 @@ public class KhachHangView extends JFrame {
         JScrollPane sp = new JScrollPane(tableKhachHang);
         main.add(sp, BorderLayout.CENTER);
 
-        // ===== EVENT DEMO (UI ONLY) =====
+    
         btnThem.addActionListener(e -> themKh());
 
         btnXoa.addActionListener(e -> xoaKhachHang());
@@ -174,16 +174,16 @@ public class KhachHangView extends JFrame {
         logo.setPreferredSize(new Dimension(200, 150));
 
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
-        // Lấy đối tượng Image từ icon
+    
         Image img = icon.getImage();
 
-// Resize ảnh về đúng kích thước panel (200x150)
+
         Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
 
-// Tạo lại ImageIcon từ ảnh đã resize
+
         ImageIcon scaledIcon = new ImageIcon(scaledImg);
 
-// Đưa vào JLabel
+
         JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
         logo.add(lblLogo, BorderLayout.CENTER);
 
@@ -203,8 +203,7 @@ public class KhachHangView extends JFrame {
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
-            // --- THÊM SỰ KIỆN CLICK TẠI ĐÂY ---
-            // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
+     
             btn.addActionListener(e -> {
                 switch (m) {
                     case "Bán hàng":
