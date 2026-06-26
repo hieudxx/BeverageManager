@@ -271,6 +271,10 @@ public class DanhMucView extends JFrame {
                 ex.printStackTrace();
             }
         });
+        
+        btnReset.addActionListener(e -> {
+            resetForm();
+        });
 
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {

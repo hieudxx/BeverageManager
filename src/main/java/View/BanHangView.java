@@ -87,7 +87,7 @@ public class BanHangView extends JFrame {
     }
 
     private void initUI() {
-        setTitle("Hệ Thống Quản Lý Bán Hàng - Fixed Scroll Version");
+        setTitle("Hệ Thống Quản Lý Bán Hàng");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setMinimumSize(new Dimension(1300, 850));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
