@@ -3,7 +3,7 @@ package View;
 import Services.impl.SanPhamServiceImpl;
 import Services.impl.DanhMucServiceImpl;
 
-import ViewModels.SanPhamResponse;
+import ViewModels.SanPhamViewModel;
 import DomainModels.DanhMuc;
 
 import javax.swing.*;
@@ -15,6 +15,7 @@ import java.awt.*;
 import java.util.List;
 import Services.DanhMucService;
 import Services.SanPhamService;
+import DomainModels.SanPham;
 
 public class SanPhamView extends JFrame {
 
@@ -33,6 +34,7 @@ public class SanPhamView extends JFrame {
     private final Color COLOR_SIDEBAR = new Color(23, 32, 42);
     private final Color COLOR_ORANGE = new Color(243, 156, 18);
     private final Color COLOR_BG_MAIN = new Color(213, 216, 220);
+    private final Color COLOR_BG_SP = new Color(240, 190, 90);
 
     public SanPhamView() {
         initUI();
@@ -49,7 +51,7 @@ public class SanPhamView extends JFrame {
         add(createSidebar(), BorderLayout.WEST);
 
         JPanel main = new JPanel(new GridBagLayout());
-        main.setBackground(COLOR_BG_MAIN);
+        main.setBackground(COLOR_BG_SP);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -57,18 +59,18 @@ public class SanPhamView extends JFrame {
 
         // ===== FORM =====
         JPanel form = new JPanel(new GridBagLayout());
-        form.setBackground(Color.WHITE);
+        form.setOpaque(false);
         form.setBorder(new EmptyBorder(20, 20, 20, 20));
+        form.setPreferredSize(new Dimension(600, 700));
 
         GridBagConstraints f = new GridBagConstraints();
         f.insets = new Insets(10, 10, 10, 10);
         f.fill = GridBagConstraints.HORIZONTAL;
 
-        txtMa = new JTextField();
-        txtTen = new JTextField();
-        txtGia = new JTextField();
-
-        txtHinhAnh = new JTextField();
+        txtMa = new JTextField(25);
+        txtTen = new JTextField(25);
+        txtGia = new JTextField(25);
+        txtHinhAnh = new JTextField(25);
         txtHinhAnh.setEditable(false);
 
         JButton btnChonAnh = new JButton("Chọn ảnh");
@@ -97,24 +99,41 @@ public class SanPhamView extends JFrame {
         };
 
         for (int i = 0; i < labels.length; i++) {
+
             f.gridx = 0;
             f.gridy = i;
+            f.weightx = 0;
+            f.gridwidth = 1;
+
             form.add(new JLabel(labels[i]), f);
 
             f.gridx = 1;
+            f.weightx = 1;
+
             form.add(inputs[i], f);
         }
 
         // ===== HIỂN THỊ ẢNH =====
-        lblHinhAnh = new JLabel();
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.setPreferredSize(new Dimension(500, 250));
+        imagePanel.setBackground(Color.WHITE);
+        imagePanel.setBorder(
+                BorderFactory.createTitledBorder("Ảnh sản phẩm")
+        );
+
+        lblHinhAnh = new JLabel("", JLabel.CENTER);
         lblHinhAnh.setPreferredSize(new Dimension(180, 180));
-        lblHinhAnh.setBorder(BorderFactory.createTitledBorder("Ảnh sản phẩm"));
-        lblHinhAnh.setHorizontalAlignment(JLabel.CENTER);
+        lblHinhAnh.setOpaque(true);
+        lblHinhAnh.setBackground(Color.WHITE);
+
+        imagePanel.add(lblHinhAnh, BorderLayout.CENTER);
 
         f.gridx = 0;
         f.gridy = labels.length;
         f.gridwidth = 2;
-        form.add(lblHinhAnh, f);
+        f.fill = GridBagConstraints.HORIZONTAL;
+
+        form.add(imagePanel, f);
 
         // ===== BUTTON =====
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
@@ -126,18 +145,21 @@ public class SanPhamView extends JFrame {
         btnPanel.add(btnUpdate);
         JButton btnDelete = createYellowBtn("Xóa");
         btnPanel.add(btnDelete);
-        btnPanel.add(createYellowBtn("Reset"));
+        JButton btnReset = createYellowBtn("Reset");
+        btnPanel.add(btnReset);
 
         f.gridy = labels.length + 1;
         form.add(btnPanel, f);
 
         gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.weightx = 0.4;
+        gbc.weighty = 1;
         main.add(form, gbc);
 
         // ===== TABLE =====
         JPanel pnlTable = new JPanel(new BorderLayout(10, 10));
-        pnlTable.setBackground(Color.WHITE);
+        pnlTable.setOpaque(false);
         pnlTable.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         txtTim = new JTextField(15);
@@ -157,7 +179,12 @@ public class SanPhamView extends JFrame {
 
         model = new DefaultTableModel(
                 new String[]{"Mã", "Tên", "Danh mục", "Giá", "Ảnh", "Đang bán", "Trạng thái"}, 0
-        );
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho sửa trực tiếp trên bảng
+            }
+        };
 
         table = new JTable(model);
         table.setRowHeight(25);
@@ -165,7 +192,9 @@ public class SanPhamView extends JFrame {
         pnlTable.add(new JScrollPane(table), BorderLayout.CENTER);
 
         gbc.gridx = 1;
+        gbc.gridy = 0;
         gbc.weightx = 0.6;
+        gbc.weighty = 1;
         main.add(pnlTable, gbc);
 
         add(main, BorderLayout.CENTER);
@@ -179,8 +208,10 @@ public class SanPhamView extends JFrame {
 
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 String path = fc.getSelectedFile().getAbsolutePath();
-                txtHinhAnh.setText(path);
-                showImage(path);
+                // Chỉ hiển thị tên file ngắn gọn lên textField để đồng bộ khi lưu vào DB
+                String fileName = fc.getSelectedFile().getName();
+                txtHinhAnh.setText(fileName);
+                showImage(fileName);
             }
         });
 
@@ -242,19 +273,13 @@ public class SanPhamView extends JFrame {
 
                 DanhMuc dm = listDanhMuc.get(indexDanhMuc);
 
-                // chỉ lấy tên file ảnh
-                String tenFile = "";
-                if (!path.isEmpty()) {
-                    tenFile = new java.io.File(path).getName();
-                }
-
                 // ===== 4. Tạo object =====
-                DomainModels.SanPham sp = new DomainModels.SanPham();
+                SanPham sp = new SanPham();
 
                 sp.setMaSanPham(ma);
                 sp.setTenSanPham(ten);
                 sp.setGiaCoBan(gia);
-                sp.setHinhAnh(tenFile);
+                sp.setHinhAnh(path);
                 sp.setDangBan(dangBan);
                 sp.setTrangThaiHienThi(trangThai);
                 sp.setDanhMuc(dm);
@@ -400,7 +425,7 @@ public class SanPhamView extends JFrame {
                 JOptionPane.showMessageDialog(this, "Không thể xóa! Có thể dữ liệu đang được sử dụng.");
             }
         });
-
+        btnReset.addActionListener(e -> clearForm());
         // search
         txtTim.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -423,10 +448,10 @@ public class SanPhamView extends JFrame {
     }
 
     // ===== LOAD TABLE =====
-    private void loadTable(List<SanPhamResponse> list) {
+    private void loadTable(List<SanPhamViewModel> list) {
         model.setRowCount(0);
 
-        for (SanPhamResponse sp : list) {
+        for (SanPhamViewModel sp : list) {
             model.addRow(new Object[]{
                 sp.getMaSanPham(),
                 sp.getTenSanPham(),
@@ -587,7 +612,6 @@ public class SanPhamView extends JFrame {
         cboDangBan.setSelectedIndex(0);
         cboTrangThai.setSelectedIndex(0);
         lblHinhAnh.setIcon(null);
-        lblHinhAnh.setPreferredSize(new Dimension(180, 180));
         lblHinhAnh.revalidate();
         lblHinhAnh.repaint();
     }

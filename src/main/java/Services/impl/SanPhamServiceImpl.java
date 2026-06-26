@@ -5,7 +5,7 @@
 package Services.impl;
 
 import DomainModels.SanPham;
-import ViewModels.SanPhamResponse;
+import ViewModels.SanPhamViewModel;
 import Repositories.impl.SanPhamRepositoryImpl;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +26,12 @@ public class SanPhamServiceImpl implements SanPhamService {
     private SanPhamRepository spRep = new SanPhamRepositoryImpl();
 
     @Override
-    public List<SanPhamResponse> getAll() {
+    public List<SanPhamViewModel> getAll() {
         return spRep.getAll();
     }
 
     @Override
-    public SanPhamResponse getOne(String ma) {
+    public SanPhamViewModel getOne(String ma) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -51,13 +51,13 @@ public class SanPhamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public List<SanPhamResponse> search(String keyword) {
-        List<SanPhamResponse> listSP = spRep.getAll();
-        List<SanPhamResponse> resultSP = new ArrayList<>();
+    public List<SanPhamViewModel> search(String keyword) {
+        List<SanPhamViewModel> listSP = spRep.getAll();
+        List<SanPhamViewModel> resultSP = new ArrayList<>();
 
-        for (SanPhamResponse sp : listSP) {
+        for (SanPhamViewModel sp : listSP) {
             if (sp.getMaSanPham().toLowerCase().contains(keyword.toLowerCase())) {
-                SanPhamResponse spr = new SanPhamResponse();
+                SanPhamViewModel spr = new SanPhamViewModel();
                 spr.setMaSanPham(sp.getMaSanPham());
                 spr.setTenSanPham(sp.getTenSanPham());
                 resultSP.add(spr);

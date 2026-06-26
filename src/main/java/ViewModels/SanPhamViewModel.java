@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  *
  * @author admin
  */
-public class SanPhamResponse {
+public class SanPhamViewModel {
     
     private int id;
     private String maSanPham;
@@ -24,11 +24,11 @@ public class SanPhamResponse {
     private String tenSize;
     private BigDecimal giaChenhLech;
     
-    public SanPhamResponse(){
+    public SanPhamViewModel(){
         
     }
     
-    public SanPhamResponse(int id, String maSanPham, String tenDanhMuc, String tenSanPham, BigDecimal giaCoBan, String hinhAnh, boolean dangBan, boolean  trangThaiHienThi, String tenSize, BigDecimal giaChenhLech){
+    public SanPhamViewModel(int id, String maSanPham, String tenDanhMuc, String tenSanPham, BigDecimal giaCoBan, String hinhAnh, boolean dangBan, boolean  trangThaiHienThi, String tenSize, BigDecimal giaChenhLech){
         this.id=id;
         this.maSanPham=maSanPham;
         this.tenDanhMuc=tenDanhMuc;

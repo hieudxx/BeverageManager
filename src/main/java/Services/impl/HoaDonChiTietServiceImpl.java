@@ -14,9 +14,9 @@ import Repositories.HoaDonChiTietRepository;
  *
  * @author admin
  */
-public class HoaDonChiTietServiceImpl implements HoaDonChiTietService{
-    
-    public HoaDonChiTietRepository hdctRepo=new HoaDonChiTietRepositoryImpl();
+public class HoaDonChiTietServiceImpl implements HoaDonChiTietService {
+
+    public HoaDonChiTietRepository hdctRepo = new HoaDonChiTietRepositoryImpl();
 
     @Override
     public int insert(HoaDonChiTiet hdct) {
@@ -34,18 +34,8 @@ public class HoaDonChiTietServiceImpl implements HoaDonChiTietService{
     }
 
     @Override
-    public List<HoaDonChiTiet> getSpByID(int idsanpham) {
-        return hdctRepo.getSpByID(idsanpham);
-    }
-
-    @Override
-    public List<HoaDonChiTiet> getAll() {
-        return hdctRepo.getAll();
-    }
-
-    @Override
     public int deleteOne(int idHDCT) {
         return hdctRepo.deleteOne(idHDCT);
     }
-    
+
 }
