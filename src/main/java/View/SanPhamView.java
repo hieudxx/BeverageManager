@@ -57,7 +57,6 @@ public class SanPhamView extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.BOTH;
 
-        // ===== FORM =====
         JPanel form = new JPanel(new GridBagLayout());
         form.setOpaque(false);
         form.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -113,7 +112,6 @@ public class SanPhamView extends JFrame {
             form.add(inputs[i], f);
         }
 
-        // ===== HIỂN THỊ ẢNH =====
         JPanel imagePanel = new JPanel(new BorderLayout());
         imagePanel.setPreferredSize(new Dimension(500, 250));
         imagePanel.setBackground(Color.WHITE);
@@ -135,7 +133,6 @@ public class SanPhamView extends JFrame {
 
         form.add(imagePanel, f);
 
-        // ===== BUTTON =====
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         btnPanel.setOpaque(false);
 
@@ -157,7 +154,6 @@ public class SanPhamView extends JFrame {
         gbc.weighty = 1;
         main.add(form, gbc);
 
-        // ===== TABLE =====
         JPanel pnlTable = new JPanel(new BorderLayout(10, 10));
         pnlTable.setOpaque(false);
         pnlTable.setBorder(new EmptyBorder(15, 15, 15, 15));
@@ -182,7 +178,7 @@ public class SanPhamView extends JFrame {
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Không cho sửa trực tiếp trên bảng
+                return false;
             }
         };
 
@@ -199,8 +195,6 @@ public class SanPhamView extends JFrame {
 
         add(main, BorderLayout.CENTER);
 
-        // ===== EVENT =====
-        // chọn ảnh
         btnChonAnh.addActionListener(e -> {
             String projectPath = System.getProperty("user.dir");
             JFileChooser fc = new JFileChooser(projectPath + "/src/main/resources/images");
@@ -208,14 +202,12 @@ public class SanPhamView extends JFrame {
 
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 String path = fc.getSelectedFile().getAbsolutePath();
-                // Chỉ hiển thị tên file ngắn gọn lên textField để đồng bộ khi lưu vào DB
                 String fileName = fc.getSelectedFile().getName();
                 txtHinhAnh.setText(fileName);
                 showImage(fileName);
             }
         });
 
-        // click table
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int row = table.getSelectedRow();
@@ -237,10 +229,8 @@ public class SanPhamView extends JFrame {
             }
         });
 
-        // Add
         btnAdd.addActionListener(e -> {
             try {
-                // ===== 1. Lấy dữ liệu từ form =====
                 String ma = txtMa.getText().trim();
                 String ten = txtTen.getText().trim();
                 String giaStr = txtGia.getText().trim();
@@ -251,7 +241,6 @@ public class SanPhamView extends JFrame {
                 boolean dangBan = cboDangBan.getSelectedIndex() == 0;
                 boolean trangThai = cboTrangThai.getSelectedIndex() == 0;
 
-                // ===== 2. Validate =====
                 if (ma.isEmpty() || ten.isEmpty() || giaStr.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Không được để trống!");
                     return;
@@ -262,7 +251,6 @@ public class SanPhamView extends JFrame {
                     return;
                 }
 
-                // ===== 3. Convert dữ liệu =====
                 java.math.BigDecimal gia;
                 try {
                     gia = new java.math.BigDecimal(giaStr);
@@ -273,7 +261,6 @@ public class SanPhamView extends JFrame {
 
                 DanhMuc dm = listDanhMuc.get(indexDanhMuc);
 
-                // ===== 4. Tạo object =====
                 SanPham sp = new SanPham();
 
                 sp.setMaSanPham(ma);
@@ -284,15 +271,13 @@ public class SanPhamView extends JFrame {
                 sp.setTrangThaiHienThi(trangThai);
                 sp.setDanhMuc(dm);
 
-                // ===== 5. Gọi service =====
                 boolean result = service.add(sp);
 
-                // ===== 6. Kết quả =====
                 if (result) {
                     JOptionPane.showMessageDialog(this, "Thêm thành công!");
 
-                    loadTable(service.getAll()); // reload bảng
-                    clearForm(); // reset form
+                    loadTable(service.getAll());
+                    clearForm();
 
                 } else {
                     JOptionPane.showMessageDialog(this, "Thêm thất bại!");
@@ -304,7 +289,6 @@ public class SanPhamView extends JFrame {
             }
         });
 
-        // Update
         btnUpdate.addActionListener(e -> {
             try {
                 int selectedRow = table.getSelectedRow();
@@ -314,7 +298,6 @@ public class SanPhamView extends JFrame {
                     return;
                 }
 
-                // ===== 1. Lấy dữ liệu từ form =====
                 String ma = txtMa.getText().trim();
                 String ten = txtTen.getText().trim();
                 String giaStr = txtGia.getText().trim();
@@ -325,7 +308,6 @@ public class SanPhamView extends JFrame {
                 boolean dangBan = cboDangBan.getSelectedIndex() == 0;
                 boolean trangThai = cboTrangThai.getSelectedIndex() == 0;
 
-                // ===== 2. Validate =====
                 if (ma.isEmpty() || ten.isEmpty() || giaStr.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Không được để trống!");
                     return;
@@ -336,7 +318,6 @@ public class SanPhamView extends JFrame {
                     return;
                 }
 
-                // ===== 3. Convert giá =====
                 java.math.BigDecimal gia;
                 try {
                     gia = new java.math.BigDecimal(giaStr);
@@ -347,13 +328,11 @@ public class SanPhamView extends JFrame {
 
                 DanhMuc dm = listDanhMuc.get(indexDanhMuc);
 
-                // chỉ lấy tên file ảnh
                 String tenFile = "";
                 if (!path.isEmpty()) {
                     tenFile = new java.io.File(path).getName();
                 }
 
-                // ===== 4. Tạo object =====
                 DomainModels.SanPham sp = new DomainModels.SanPham();
 
                 sp.setMaSanPham(ma);
@@ -364,10 +343,8 @@ public class SanPhamView extends JFrame {
                 sp.setTrangThaiHienThi(trangThai);
                 sp.setDanhMuc(dm);
 
-                // ===== 5. Gọi service =====
                 boolean result = service.update(sp);
 
-                // ===== 6. Kết quả =====
                 if (result) {
                     JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
                     loadTable(service.getAll());
@@ -382,21 +359,17 @@ public class SanPhamView extends JFrame {
             }
         });
 
-        // Delete
         btnDelete.addActionListener(e -> {
             try {
                 int row = table.getSelectedRow();
 
-                // ===== 1. Check chọn dòng =====
                 if (row == -1) {
                     JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm cần xóa!");
                     return;
                 }
 
-                // ===== 2. Lấy mã sản phẩm =====
                 String ma = model.getValueAt(row, 0).toString();
 
-                // ===== 3. Confirm =====
                 int confirm = JOptionPane.showConfirmDialog(
                         this,
                         "Bạn có chắc muốn xóa sản phẩm này?",
@@ -408,10 +381,8 @@ public class SanPhamView extends JFrame {
                     return;
                 }
 
-                // ===== 4. Gọi service =====
                 boolean result = service.delete(ma);
 
-                // ===== 5. Kết quả =====
                 if (result) {
                     JOptionPane.showMessageDialog(this, "Xóa thành công!");
                     loadTable(service.getAll());
@@ -447,7 +418,6 @@ public class SanPhamView extends JFrame {
         }
     }
 
-    // ===== LOAD TABLE =====
     private void loadTable(List<SanPhamViewModel> list) {
         model.setRowCount(0);
 
@@ -464,7 +434,6 @@ public class SanPhamView extends JFrame {
         }
     }
 
-    // ===== HIỂN THỊ ẢNH =====
     private void showImage(String fileName) {
         try {
             java.net.URL url = getClass().getResource("/images/" + fileName);
@@ -488,7 +457,6 @@ public class SanPhamView extends JFrame {
         }
     }
 
-    // ===== SIDEBAR =====
     private JPanel createSidebar() {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBackground(COLOR_SIDEBAR);
@@ -503,16 +471,12 @@ public class SanPhamView extends JFrame {
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
-        // Lấy đối tượng Image từ icon
         Image img = icon.getImage();
 
-// Resize ảnh về đúng kích thước panel (200x150)
         Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
 
-// Tạo lại ImageIcon từ ảnh đã resize
         ImageIcon scaledIcon = new ImageIcon(scaledImg);
 
-// Đưa vào JLabel
         JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
         logo.add(lblLogo, BorderLayout.CENTER);
         g.gridy = 0;
@@ -532,7 +496,6 @@ public class SanPhamView extends JFrame {
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
-            // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
             btn.addActionListener(e -> {
                 switch (m) {
                     case "Bán hàng":
@@ -552,7 +515,6 @@ public class SanPhamView extends JFrame {
                         this.dispose();
                         break;
                     case "Sản phẩm":
-                        // Đang ở chính nó, không cần làm gì
                         break;
                     default:
 
@@ -576,7 +538,7 @@ public class SanPhamView extends JFrame {
         btnExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát chương trình?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                System.exit(0); // Thoát toàn bộ ứng dụng
+                System.exit(0);
             }
         });
         g.gridy = y;
@@ -594,7 +556,6 @@ public class SanPhamView extends JFrame {
 
     public static void main(String[] args) {
         try {
-            // Thêm dòng này để đồng bộ giao diện
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
@@ -602,7 +563,6 @@ public class SanPhamView extends JFrame {
         SwingUtilities.invokeLater(() -> new SanPhamView().setVisible(true));
     }
 
-    // ===== CLEAR FORM =====
     private void clearForm() {
         txtMa.setText("");
         txtTen.setText("");

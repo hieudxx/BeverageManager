@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class DanhMucRepositoryImpl implements DanhMucRepository {
 
-    // Câu lệnh Sql
     private static final String GET_ALL_SQL
             = "SELECT [id], [ma_Danh_Muc], [ten_Danh_Muc], [trang_Thai_Hien_Thi] FROM [dbo].[DanhMuc]";
     private static final String INSERT_SQL
@@ -33,7 +32,6 @@ public class DanhMucRepositoryImpl implements DanhMucRepository {
     private static final String GET_ALL_BY_TRANGTHAI
             = "SELECT [id], [ma_Danh_Muc], [ten_Danh_Muc], [trang_Thai_Hien_Thi] FROM [dbo].[DanhMuc] WHERE trang_Thai_Hien_Thi = 1";
 
-    // List
     @Override
     public List<DanhMuc> getAll() {
         List<DanhMuc> listDanhMuc = new ArrayList<>();
@@ -54,7 +52,6 @@ public class DanhMucRepositoryImpl implements DanhMucRepository {
         }
     }
 
-    // Add
     @Override
     public boolean add(DanhMuc dm) {
         try (
@@ -70,7 +67,6 @@ public class DanhMucRepositoryImpl implements DanhMucRepository {
         return false;
     }
 
-    // Update
     public boolean update(DanhMuc dm, String maDM) {
         try (
                 Connection con = DBConnect.getConnect(); PreparedStatement ps = con.prepareStatement(UPDATE_SQL);) {
@@ -85,7 +81,6 @@ public class DanhMucRepositoryImpl implements DanhMucRepository {
         return false;
     }
 
-    // Delete
     public boolean delete(String maDM) {
         try (
                 Connection con = DBConnect.getConnect(); PreparedStatement ps = con.prepareStatement(DELETE_SQL);) {

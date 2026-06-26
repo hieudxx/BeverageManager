@@ -124,7 +124,7 @@ public class SanPhamViewModel {
     
     @Override
     public String toString() {
-        return this.maSanPham; // hoặc getMaSanPham()
+        return this.maSanPham;
     }
     
 }

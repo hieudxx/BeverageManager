@@ -13,13 +13,11 @@ import java.util.List;
  * @author ADMIN
  */
 public interface DanhMucService {
-    // Domain
+
     List<DanhMuc> getAll();
     public boolean add(DanhMuc dm);
     public boolean update(DanhMuc dm, String maDM);
     public boolean delete(String maDM);
-    
-    // View
     List<DanhMucViewModel> getAllView();
     List<DanhMucViewModel> search(String keyword);
     List<DanhMucViewModel> getAllByTrangThai();

@@ -55,7 +55,6 @@ public class SizeView extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.BOTH;
 
-        // ===== FORM =====
         JPanel pnlForm = new JPanel(new GridBagLayout());
         pnlForm.setOpaque(false);
         pnlForm.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -135,7 +134,6 @@ public class SizeView extends JFrame {
         gbc.anchor = GridBagConstraints.NORTH;
         main.add(pnlForm, gbc);
 
-        // ===== TABLE =====
         JPanel pnlTable = new JPanel(new BorderLayout(10, 10));
         pnlTable.setBackground(Color.WHITE);
         pnlTable.setBorder(new EmptyBorder(15, 15, 15, 15));
@@ -168,14 +166,11 @@ public class SizeView extends JFrame {
 
         add(main, BorderLayout.CENTER);
 
-        // ===== EVENT =====
-        // Search
         btnSearch.addActionListener(e -> {
             String key = txtTim.getText().trim();
             loadTable(key.isEmpty() ? service.getAll() : service.search(key));
         });
 
-        // Add
         btnAdd.addActionListener(e -> {
             try {
                 String ma = txtMaSize.getText().trim();
@@ -201,7 +196,6 @@ public class SizeView extends JFrame {
 
                 BigDecimal gia = new BigDecimal(giaStr);
 
-                // convert sang SanPham
                 SanPham sp = new SanPham();
                 sp.setId(spRes.getId());
 
@@ -225,7 +219,6 @@ public class SizeView extends JFrame {
             }
         });
 
-        // Update
         btnUpdate.addActionListener(e -> {
             try {
                 String idStr = txtId.getText().trim();
@@ -267,7 +260,6 @@ public class SizeView extends JFrame {
                 s.setTrangThaiHienThi(trangThai);
                 s.setSanPham(sp);
 
-                // lấy mã cũ đang chọn trong table
                 int row = table.getSelectedRow();
                 String maCu = model.getValueAt(row, 1).toString();
 
@@ -287,7 +279,6 @@ public class SizeView extends JFrame {
             }
         });
 
-        // Delete
         btnDelete.addActionListener(e -> {
             String id = txtId.getText().trim();
 
@@ -319,7 +310,6 @@ public class SizeView extends JFrame {
             }
         });
 
-        // Reset
         btnReset.addActionListener(e -> {
             resetForm();
             loadTable(service.getAll());
@@ -419,16 +409,12 @@ public class SizeView extends JFrame {
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
-        // Lấy đối tượng Image từ icon
         Image img = icon.getImage();
 
-// Resize ảnh về đúng kích thước panel (200x150)
         Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
 
-// Tạo lại ImageIcon từ ảnh đã resize
         ImageIcon scaledIcon = new ImageIcon(scaledImg);
 
-// Đưa vào JLabel
         JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
         logo.add(lblLogo, BorderLayout.CENTER);
         g.gridy = 0;
@@ -447,14 +433,12 @@ public class SizeView extends JFrame {
             btn.setPreferredSize(new Dimension(200, 60));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
-            // Logic tô màu cam cho nút "Size" đang được chọn
             if (m.equals("Size")) {
                 btn.setBackground(COLOR_ORANGE);
             } else {
                 btn.setBackground(COLOR_SIDEBAR);
             }
 
-            // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
             btn.addActionListener(e -> {
                 switch (m) {
                     case "Bán hàng":
@@ -499,7 +483,7 @@ public class SizeView extends JFrame {
         btnExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát chương trình?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                System.exit(0); // Thoát toàn bộ ứng dụng
+                System.exit(0);
             }
         });
 
@@ -511,7 +495,6 @@ public class SizeView extends JFrame {
 
     public static void main(String[] args) {
         try {
-            // Thêm dòng này để đồng bộ giao diện
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
