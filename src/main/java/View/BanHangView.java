@@ -753,9 +753,9 @@ public class BanHangView extends JFrame {
         g.gridy = 8;
         g.gridx = 0;
         g.gridwidth = 2;
-        p.add(createYellowBtn("Làm mới"), g);
+        //p.add(createYellowBtn("Làm mới"), g);
 
-        g.gridy = 9;
+        g.gridy = 8;
         g.ipady = 15;
         JButton btnPay = new JButton("THANH TOÁN");
         btnPay.setBackground(COLOR_YELLOW_BTN);
