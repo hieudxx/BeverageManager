@@ -51,7 +51,6 @@ public class DanhMucView extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.BOTH;
 
-        // ===== FORM =====
         JPanel pnlForm = new JPanel(new GridBagLayout());
         pnlForm.setOpaque(false);
         pnlForm.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -109,12 +108,10 @@ public class DanhMucView extends JFrame {
         gbc.weighty = 1;
         main.add(pnlForm, gbc);
 
-        // ===== TABLE =====
         JPanel pnlTable = new JPanel(new BorderLayout(10, 10));
         pnlTable.setOpaque(false);
         pnlTable.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // ===== SEARCH (ĐÃ FIX) =====
         JPanel searchPanel = new JPanel(new GridBagLayout());
         searchPanel.setOpaque(false);
 
@@ -122,19 +119,16 @@ public class DanhMucView extends JFrame {
         s.insets = new Insets(5, 5, 5, 5);
         s.fill = GridBagConstraints.HORIZONTAL;
 
-        // label
         s.gridx = 0;
         s.gridy = 0;
         s.weightx = 0;
         searchPanel.add(new JLabel("Tìm mã:"), s);
 
-        // input
         txtTim.setPreferredSize(new Dimension(100, 30));
         s.gridx = 1;
         s.weightx = 0;
         searchPanel.add(txtTim, s);
 
-        // button
         JButton btnSearch = createYellowBtn("Tìm");
         btnSearch.setPreferredSize(new Dimension(90, 30));
 
@@ -142,14 +136,12 @@ public class DanhMucView extends JFrame {
         s.weightx = 0;
         searchPanel.add(btnSearch, s);
 
-//        pnlTable.add(searchPanel, BorderLayout.NORTH);
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.LEFT));
         wrapper.setOpaque(false);
         wrapper.add(searchPanel);
 
         pnlTable.add(wrapper, BorderLayout.NORTH);
 
-        // TABLE
         model = new DefaultTableModel(
                 new String[]{"ID", "Mã", "Tên", "Trạng thái"}, 0
         );
@@ -166,8 +158,6 @@ public class DanhMucView extends JFrame {
 
         add(main, BorderLayout.CENTER);
 
-        // ===== EVENT =====
-        // Search
         btnSearch.addActionListener(e -> {
             String ma = txtTim.getText().trim();
             if (ma.isEmpty()) {
@@ -177,7 +167,6 @@ public class DanhMucView extends JFrame {
             loadTable(service.search(ma));
         });
 
-        // Add
         btnAdd.addActionListener(e -> {
             try {
                 String ma = txtMa.getText().trim();
@@ -210,10 +199,8 @@ public class DanhMucView extends JFrame {
             }
         });
 
-        // Update
         btnUpdate.addActionListener(e -> {
             try {
-                // Lấy ID
                 if (txtId.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Chọn dòng cần sửa!");
                     return;
@@ -229,14 +216,12 @@ public class DanhMucView extends JFrame {
                     return;
                 }
 
-                // Tạo object
                 DanhMuc dm = new DanhMuc();
                 dm.setId(id);
                 dm.setMaDanhMuc(ma);
                 dm.setTenDanhMuc(ten);
                 dm.setTrangThaiHienThi(trangThai);
 
-                // Gọi update
                 boolean check = service.update(dm, dm.getMaDanhMuc());
 
                 if (check) {
@@ -252,19 +237,15 @@ public class DanhMucView extends JFrame {
             }
         });
 
-        // Delete
         btnDelete.addActionListener(e -> {
             try {
-                // Lấy mã từ textbox
                 String maDM = txtMa.getText().trim();
 
-                // Kiểm tra chưa chọn dòng
                 if (maDM.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Chọn dòng cần xóa!");
                     return;
                 }
 
-                // Hộp thoại xác nhận
                 int confirm = JOptionPane.showConfirmDialog(
                         this,
                         "Bạn có chắc muốn xóa?",
@@ -276,19 +257,18 @@ public class DanhMucView extends JFrame {
                     return;
                 }
 
-                // Gọi service để xóa
                 boolean check = service.delete(maDM);
 
                 if (check) {
                     JOptionPane.showMessageDialog(this, "Xóa thành công!");
-                    loadTable(service.getAllView()); // reload bảng
-                    resetForm(); // reset form
+                    loadTable(service.getAllView());
+                    resetForm();
                 } else {
                     JOptionPane.showMessageDialog(this, "Xóa thất bại!");
                 }
 
             } catch (Exception ex) {
-                ex.printStackTrace(); // debug lỗi
+                ex.printStackTrace();
             }
         });
 
@@ -308,7 +288,6 @@ public class DanhMucView extends JFrame {
         });
     }
 
-    // ===== SIDEBAR =====
     private JPanel createSidebar() {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBackground(COLOR_SIDEBAR);
@@ -323,16 +302,12 @@ public class DanhMucView extends JFrame {
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
-        // Lấy đối tượng Image từ icon
         Image img = icon.getImage();
 
-// Resize ảnh về đúng kích thước panel (200x150)
         Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
 
-// Tạo lại ImageIcon từ ảnh đã resize
         ImageIcon scaledIcon = new ImageIcon(scaledImg);
 
-// Đưa vào JLabel
         JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
         logo.add(lblLogo, BorderLayout.CENTER);
         g.gridy = 0;
@@ -352,7 +327,6 @@ public class DanhMucView extends JFrame {
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
-            // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
             btn.addActionListener(e -> {
                 switch (m) {
                     case "Bán hàng":
@@ -397,7 +371,7 @@ public class DanhMucView extends JFrame {
         btnExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát chương trình?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                System.exit(0); // Thoát toàn bộ ứng dụng
+                System.exit(0);
             }
         });
         g.gridy = y;
@@ -433,7 +407,6 @@ public class DanhMucView extends JFrame {
 
     public static void main(String[] args) {
         try {
-            // Thêm dòng này để đồng bộ giao diện
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();

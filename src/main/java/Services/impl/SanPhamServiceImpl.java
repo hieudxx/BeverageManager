@@ -18,11 +18,6 @@ import Services.SanPhamService;
  */
 public class SanPhamServiceImpl implements SanPhamService {
 
-//        private SanPhamRepository1 sanPhamRep = new SanPhamRepositoryImpl1();
-//    @Override
-//    public List<SanPhamResponse1> getALL() {
-//        return sanPhamRep.getALL();
-//    }
     private SanPhamRepository spRep = new SanPhamRepositoryImpl();
 
     @Override
@@ -32,7 +27,7 @@ public class SanPhamServiceImpl implements SanPhamService {
 
     @Override
     public SanPhamViewModel getOne(String ma) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

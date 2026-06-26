@@ -76,7 +76,6 @@ public class SanPhamRepositoryImpl implements SanPhamRepository {
         return null;
     }
 
-// Check trùng mã
     public boolean check_trung_ma(String ma) {
         if (getOne(ma) == null) {
             return false;
@@ -85,7 +84,6 @@ public class SanPhamRepositoryImpl implements SanPhamRepository {
         }
     }
 
-// Add
     @Override
     public boolean add(SanPham sp) {
         if (check_trung_ma(sp.getMaSanPham())) {
@@ -109,7 +107,6 @@ public class SanPhamRepositoryImpl implements SanPhamRepository {
         }
     }
 
-// Update
     @Override
     public boolean update(SanPham sp) {
         try{
@@ -132,7 +129,6 @@ public class SanPhamRepositoryImpl implements SanPhamRepository {
         }
     }
     
-// Delete
     @Override
     public boolean delete(String maSP){
         try{

@@ -20,7 +20,6 @@ public class DanhMucServiceImpl implements DanhMucService {
 
     private DanhMucRepository DanhMucRep = new DanhMucRepositoryImpl();
 
-    // Domain
     @Override
     public List<DanhMuc> getAll() {
         return DanhMucRep.getAll();
@@ -41,10 +40,9 @@ public class DanhMucServiceImpl implements DanhMucService {
         return DanhMucRep.delete(maDM);
     }
 
-    // View
     @Override
     public List<DanhMucViewModel> getAllView() {
-        List<DanhMuc> list = DanhMucRep.getAll(); // Domain
+        List<DanhMuc> list = DanhMucRep.getAll();
         List<DanhMucViewModel> result = new ArrayList<>();
 
         for (DanhMuc dm : list) {
