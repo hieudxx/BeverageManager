@@ -66,8 +66,8 @@ public class KhachHangView extends JFrame {
         form.add(new JLabel("Mã KH:"), gbc);
         gbc.gridx = 1;
         txtMaKH = new JTextField(20);
-        txtMaKH.setEditable(false);  // Không cho phép sửa
-        txtMaKH.setBackground(new Color(230, 230, 230)); // Màu nền xám báo hiệu không nhập
+        txtMaKH.setEditable(false);
+        txtMaKH.setBackground(new Color(230, 230, 230));
         form.add(txtMaKH, gbc);
 
         // Họ tên
@@ -129,7 +129,6 @@ public class KhachHangView extends JFrame {
         JScrollPane sp = new JScrollPane(tableKhachHang);
         main.add(sp, BorderLayout.CENTER);
 
-    
         btnThem.addActionListener(e -> themKh());
 
         btnXoa.addActionListener(e -> xoaKhachHang());
@@ -174,15 +173,12 @@ public class KhachHangView extends JFrame {
         logo.setPreferredSize(new Dimension(200, 150));
 
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
-    
-        Image img = icon.getImage();
 
+        Image img = icon.getImage();
 
         Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
 
-
         ImageIcon scaledIcon = new ImageIcon(scaledImg);
-
 
         JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
         logo.add(lblLogo, BorderLayout.CENTER);
@@ -203,7 +199,6 @@ public class KhachHangView extends JFrame {
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
-     
             btn.addActionListener(e -> {
                 switch (m) {
                     case "Bán hàng":
@@ -231,7 +226,7 @@ public class KhachHangView extends JFrame {
                         this.dispose();
                         break;
                     default:
-                        
+
                         break;
                 }
             });
@@ -253,7 +248,7 @@ public class KhachHangView extends JFrame {
         btnExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Bạn có muốn thoát chương trình?", "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                System.exit(0); // Thoát toàn bộ ứng dụng
+                System.exit(0);
             }
         });
         g.gridy = y;
@@ -340,7 +335,7 @@ public class KhachHangView extends JFrame {
         txtHoTen.setText("");
         txtSDT.setText("");
         txtMaKH.setEnabled(true);
-        tableKhachHang.clearSelection();   // thêm dòng này để bỏ chọn dòng trên bảng
+        tableKhachHang.clearSelection();
     }
 
     private void xoaKhachHang() {
@@ -376,9 +371,15 @@ public class KhachHangView extends JFrame {
             int choice = JOptionPane.showConfirmDialog(this, "Có muốn sửa khách hàng", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (choice == JOptionPane.YES_OPTION) {
                 KhachHangViewModel kh = IKhService.getAll().get(rows);
-                IKhService.update(kh.getMaKhachHang(), getDataFromForm(txtMaKH.getText()));
-                loadDataToTable();
-                resetForm();
+
+                if (IKhService.update(kh.getMaKhachHang(), getDataFromForm(txtMaKH.getText()))) {
+                    JOptionPane.showMessageDialog(this, "✅ Sửa thành công!");
+                    loadDataToTable();
+                    resetForm();
+                }
+//                IKhService.update(kh.getMaKhachHang(), getDataFromForm(txtMaKH.getText()));
+//                loadDataToTable();
+//                resetForm();
 
             }
         }
