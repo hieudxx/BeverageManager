@@ -29,6 +29,7 @@
       <type>jar</type>
     </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -58,4 +59,5 @@
         </plugins>
     </build>
     <name>QuanLyBanTraSuaNooTea</name>
+
 </project>

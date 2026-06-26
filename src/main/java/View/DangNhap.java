@@ -147,7 +147,7 @@ public class DangNhap extends JFrame {
         ));
     }
 
-    // ===== LOGIN CHUẨN =====
+  
     private void dangNhap() {
         try {
             String taiKhoan = txtTaiKhoan.getText().trim();

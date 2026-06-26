@@ -39,22 +39,21 @@ public class NhanVienView extends JFrame {
     }
 
     private void initComponents() {
-        // 1. TẠO KHE HỞ 15px VÀ ĐẶT MÀU NỀN CỬA SỔ (Màu xám nhạt để lộ khe hở)
+     
         setLayout(new BorderLayout(0, 0));
         getContentPane().setBackground(COLOR_BG_MAIN);
 
         // --- SIDEBAR ---
-        // --- GỌI HÀM TẠO SIDEBAR MỚI ---
+
         add(createSidebar(), BorderLayout.WEST);
 
-        // --- MAIN PANEL (Vùng quản lý) ---
+ 
         JPanel main = new JPanel(new BorderLayout());
         main.setBackground(new Color(240, 190, 90));
 
-        // 2. CHỐNG TRÀN: Thêm viền đen và khoảng cách bên trong (Padding)
         main.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.BLACK, 1), // Viền đen mỏng bao quanh
-                BorderFactory.createEmptyBorder(10, 20, 10, 20) // Khoảng cách để component không dính lề
+                BorderFactory.createLineBorder(Color.BLACK, 1), 
+                BorderFactory.createEmptyBorder(10, 20, 10, 20) 
         ));
 
         add(main, BorderLayout.CENTER);
@@ -81,8 +80,8 @@ public class NhanVienView extends JFrame {
         formContainer.add(new JLabel("Mã NV:"), gbc);
         gbc.gridx = 1;
         txtMaNV = new JTextField(25);
-        txtMaNV.setEditable(false);  // Không cho phép sửa
-        txtMaNV.setBackground(new Color(230, 230, 230)); // Màu nền xám báo hiệu không nhập
+        txtMaNV.setEditable(false);  
+        txtMaNV.setBackground(new Color(230, 230, 230)); 
         formContainer.add(txtMaNV, gbc);
 
         gbc.gridx = 0;
@@ -122,11 +121,11 @@ public class NhanVienView extends JFrame {
 
         topMain.add(formContainer);
 
-        // --- BUTTONS PANEL ---
+   
         JPanel pnlButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 10));
         pnlButtons.setOpaque(false);
 
-        // Đã xóa Emoji ở các nút chức năng
+   
         btnThem = btn("Thêm");
         btnSua = btn("Sửa");
         btnXoa = btn("Xóa");
@@ -138,7 +137,7 @@ public class NhanVienView extends JFrame {
         pnlButtons.add(btnReset);
         topMain.add(pnlButtons);
 
-        // --- FILTER & SEARCH ---
+
         JPanel pnlFilter = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         pnlFilter.setOpaque(false);
         pnlFilter.add(new JLabel("Lọc chức vụ:"));
@@ -152,7 +151,7 @@ public class NhanVienView extends JFrame {
 
         main.add(topMain, BorderLayout.NORTH);
 
-        // --- TABLE ---
+
         String[] cols = {"Mã NV", "Tài khoản", "Họ tên", "Vai trò", "Trạng thái"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
@@ -188,7 +187,7 @@ public class NhanVienView extends JFrame {
 
         main.add(sp, BorderLayout.CENTER);
 
-        // --- EVENTS ---
+
         btnThem.addActionListener(e -> themNhanVien());
         btnSua.addActionListener(e -> suaNhanVien());
         btnXoa.addActionListener(e -> xoaNhanVien());
@@ -212,22 +211,22 @@ public class NhanVienView extends JFrame {
         g.fill = GridBagConstraints.HORIZONTAL;
         g.weightx = 1.0;
 
-        // Logo vàng phía trên
+ 
         JPanel logo = new JPanel();
         logo.setBackground(new Color(255, 204, 0));
         logo.setPreferredSize(new Dimension(200, 150));
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoNootea.png"));
 
-        // Lấy đối tượng Image từ icon
+
         Image img = icon.getImage();
 
-// Resize ảnh về đúng kích thước panel (200x150)
+
         Image scaledImg = img.getScaledInstance(200, 150, Image.SCALE_SMOOTH);
 
-// Tạo lại ImageIcon từ ảnh đã resize
+
         ImageIcon scaledIcon = new ImageIcon(scaledImg);
 
-// Đưa vào JLabel
+
         JLabel lblLogo = new JLabel(scaledIcon, JLabel.CENTER);
         logo.add(lblLogo, BorderLayout.CENTER);
         g.gridy = 0;
@@ -238,9 +237,9 @@ public class NhanVienView extends JFrame {
         for (String m : menu) {
             JButton btn = new JButton(m);
             btn.setPreferredSize(new Dimension(200, 60));
-            btn.setContentAreaFilled(false); // Tắt vẽ nền mặc định của Look and Feel
-            btn.setOpaque(true);             // Cho phép hiển thị màu nền tự chọn
-            // Highlight màu cam nếu là mục "Nhân viên"
+            btn.setContentAreaFilled(false); 
+            btn.setOpaque(true);             
+       
             btn.setBackground(m.equals("Nhân viên") ? COLOR_ORANGE_ACTIVE : COLOR_SIDEBAR);
 
             btn.setForeground(Color.WHITE);
@@ -248,7 +247,7 @@ public class NhanVienView extends JFrame {
             btn.setFocusPainted(false);
             btn.setBorder(new MatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
-            // ===== XỬ LÝ SỰ KIỆN CHUYỂN MÀN HÌNH =====
+
             btn.addActionListener(e -> {
                 switch (m) {
                     case "Bán hàng":
@@ -285,12 +284,12 @@ public class NhanVienView extends JFrame {
             p.add(btn, g);
         }
 
-        // Tạo khoảng trống đẩy nút Thoát xuống cuối
+
         g.gridy = y++;
         g.weighty = 1.0;
         p.add(new JLabel(""), g);
 
-        // Nút Thoát
+
         JButton btnExit = new JButton("🚪 Thoát");
         btnExit.setPreferredSize(new Dimension(200, 60));
         btnExit.setBackground(COLOR_SIDEBAR);
@@ -315,12 +314,12 @@ public class NhanVienView extends JFrame {
     private JButton menuBtn(String text, int y, boolean active) {
         JButton b = new JButton(text);
         b.setBounds(0, y, 220, 50);
-        b.setFont(new Font("Segoe UI", Font.BOLD, 15)); // Chỉnh lại font đậm và to hơn một chút
+        b.setFont(new Font("Segoe UI", Font.BOLD, 15)); 
         b.setForeground(Color.WHITE);
         b.setFocusPainted(false);
         b.setBorderPainted(false);
         b.setHorizontalAlignment(SwingConstants.LEFT);
-        b.setMargin(new Insets(0, 30, 0, 0)); // Căn lề lùi vào một chút cho đẹp
+        b.setMargin(new Insets(0, 30, 0, 0));
         b.setBackground(active ? new Color(255, 153, 51) : new Color(10, 40, 60));
 
         b.addMouseListener(new MouseAdapter() {
@@ -347,7 +346,7 @@ public class NhanVienView extends JFrame {
         return b;
     }
 
-    // --- LOGIC ---
+
     private void filterData() {
         String role = cboLocVaiTro.getSelectedItem().toString();
         String keyword = txtTimKiem.getText().toLowerCase();
@@ -453,10 +452,10 @@ public class NhanVienView extends JFrame {
         txtTenDangNhap.setText("");
         txtMatKhau.setText("");
         txtHoTen.setText("");
-        cboVaiTro.setSelectedIndex(0);   // item rỗng
-        cboTrangThai.setSelectedIndex(0); // ite
+        cboVaiTro.setSelectedIndex(0);   
+        cboTrangThai.setSelectedIndex(0); 
         txtMaNV.setEnabled(true);
-        tableNhanVien.clearSelection();   // thêm dòng này để bỏ chọn dòng trên bảng
+        tableNhanVien.clearSelection();   
     }
 
     private boolean validateInput() {
@@ -521,7 +520,7 @@ public class NhanVienView extends JFrame {
         nv.setMatKhau(new String(txtMatKhau.getPassword()));
         nv.setHoTen(txtHoTen.getText());
         nv.setVaiTro(cboVaiTro.getSelectedItem().toString());
-        nv.setTrangThai(cboTrangThai.getSelectedItem().toString().equals("Đang làm")); // true nếu đang làm, false nếu đã nghỉ
+        nv.setTrangThai(cboTrangThai.getSelectedItem().toString().equals("Đang làm")); 
         return nv;
     }
 
@@ -539,7 +538,7 @@ public class NhanVienView extends JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
-            e.printStackTrace(); // Nên in lỗi ra để kiểm tra
+            e.printStackTrace(); 
         }
         SwingUtilities.invokeLater(() -> new NhanVienView().setVisible(true));
     }
