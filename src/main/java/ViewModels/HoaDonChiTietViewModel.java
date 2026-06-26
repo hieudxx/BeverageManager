@@ -23,12 +23,12 @@ public class HoaDonChiTietViewModel {
     public HoaDonChiTietViewModel(){
         
     }
-        public HoaDonChiTietViewModel(int id, String maHD, String maSP, String tenSP, String donGia, int soLuong, BigDecimal thanhTien){
+        public HoaDonChiTietViewModel(int id, String maHD, String maSP, String tenSP, double donGia, int soLuong, BigDecimal thanhTien){
         this.id=id;
         this.maHD=maHD;
         this.maSP=maSP;
         this.tenSP=tenSP;
-        this.donGia=this.donGia;
+        this.donGia=donGia;
         this.soLuong=soLuong;
         this.thanhTien=thanhTien;
     }
