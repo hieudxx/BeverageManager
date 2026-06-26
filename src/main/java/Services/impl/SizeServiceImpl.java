@@ -19,13 +19,11 @@ import Services.SizeService;
 public class SizeServiceImpl implements SizeService{
     private SizeRepository SizeRep = new SizeRepositoryImpl();
     
-    // List
     @Override
     public List<SizeViewModel> getAll(){
         return SizeRep.getAll();
     }
     
-    // Search
     @Override
     public List<SizeViewModel> search(String keyword){
         List<SizeViewModel> lists = SizeRep.getAll();
@@ -40,19 +38,16 @@ public class SizeServiceImpl implements SizeService{
         return results;
     }
     
-    // Add
     @Override
     public boolean add(Size s){
         return SizeRep.add(s);
     }
     
-    // Update
     @Override
     public boolean update(Size s, String maS){
         return SizeRep.update(s, maS);
     }
     
-    // Delete
     public boolean delete(String maS){
         return SizeRep.delete(maS);
     }

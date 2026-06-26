@@ -27,7 +27,6 @@ import Repositories.SizeRepository;
  */
 public class SizeRepositoryImpl implements SizeRepository {
 
-    // Câu lệnh SQL
     private static final String GET_ALL_SQL
             = "SELECT s.id, s.ma_size, s.id_san_pham, s.ten_size, s.gia_chenh_lech, s.trang_thai_hien_thi, "
             + "sp.ma_san_pham, sp.ten_san_pham "
@@ -40,7 +39,6 @@ public class SizeRepositoryImpl implements SizeRepository {
     private static final String DELETE_SQL
             = "DELETE FROM SizeSanPham WHERE ma_size=?";
 
-// List
     @Override
     public List<SizeViewModel> getAll() {
         List<SizeViewModel> ListSize = new ArrayList<>();
@@ -69,7 +67,6 @@ public class SizeRepositoryImpl implements SizeRepository {
         return null;
     }
 
-// Add
     @Override
 
     public boolean add(Size s) {
@@ -89,7 +86,6 @@ public class SizeRepositoryImpl implements SizeRepository {
         }
     }
 
-// Update
     public boolean update(Size s, String maS) {
         try (
                 Connection con = DBConnect.getConnect(); PreparedStatement ps = con.prepareStatement(UPDATE_SQL);) {
@@ -109,7 +105,6 @@ public class SizeRepositoryImpl implements SizeRepository {
         }
     }
 
-// Delete
     public boolean delete(String maS) {
         try (
                 Connection con = DBConnect.getConnect(); PreparedStatement ps = con.prepareStatement(DELETE_SQL);) {
