@@ -87,7 +87,7 @@ public class BanHangView extends JFrame {
     }
 
     private void initUI() {
-        setTitle("Hệ Thống Quản Lý Bán Hàng - Fixed Scroll Version");
+        setTitle("Hệ Thống Quản Lý Bán Hàng");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setMinimumSize(new Dimension(1300, 850));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -497,7 +497,7 @@ public class BanHangView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
 
         NhanVien user = SessionUser.getInstance().getCurrentUser();
         String role = user.getVaiTro();
@@ -550,6 +550,10 @@ public class BanHangView extends JFrame {
                         break;
                     case "Khách hàng":
                         new KhachHangView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Thống kê":
+                        new ThongKeView().setVisible(true);
                         this.dispose();
                         break;
                     default:

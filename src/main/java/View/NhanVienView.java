@@ -219,7 +219,7 @@ public class NhanVienView extends JFrame {
         g.gridy = 0;
         p.add(logo, g);
 
-        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng"};
+        String[] menu = {"Bán hàng", "Danh Mục", "Sản phẩm", "Size", "Nhân viên", "Khách hàng", "Thống kê"};
         int y = 1;
         for (String m : menu) {
             JButton btn = new JButton(m);
@@ -258,6 +258,10 @@ public class NhanVienView extends JFrame {
                         break;
                     case "Khách hàng":
                         new KhachHangView().setVisible(true);
+                        this.dispose();
+                        break;
+                    case "Thống kê":
+                        new ThongKeView().setVisible(true);
                         this.dispose();
                         break;
                     default:
