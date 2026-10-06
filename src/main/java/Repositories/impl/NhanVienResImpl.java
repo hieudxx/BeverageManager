@@ -2,6 +2,7 @@ package Repositories.impl;
 
 import DomainModels.NhanVien;
 import Utilities.JDBC_Helper;
+import Utilities.PasswordUtil;
 import ViewModels.NhanVienViewModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,7 +47,9 @@ public class NhanVienResImpl implements NhanVienRepository {
             return false;
         } else {
             String sql = "insert into NhanVien(ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten, vai_tro, trang_thai_lam_viec) values (?,?,?,?,?,?)";
-            JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getMatKhau(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai());
+            // Băm mật khẩu trước khi lưu, không lưu văn bản thô
+            String matKhauDaBam = PasswordUtil.hash(nv.getMatKhau());
+            JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), matKhauDaBam, nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai());
             return true;
         }
     }
