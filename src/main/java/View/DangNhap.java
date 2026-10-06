@@ -3,6 +3,7 @@ package View;
 import DomainModels.NhanVien;
 import Services.impl.NhanVienServiceImpl;
 import Utilities.Auth;
+import Utilities.PasswordUtil;
 import Utilities.SessionUser;
 
 import javax.swing.*;
@@ -147,7 +148,6 @@ public class DangNhap extends JFrame {
         ));
     }
 
-  
     private void dangNhap() {
         try {
             String taiKhoan = txtTaiKhoan.getText().trim();
@@ -174,8 +174,17 @@ public class DangNhap extends JFrame {
                 return;
             }
 
-            if (!pass.equals(nv.getMatKhau())) {
+            if (!PasswordUtil.verify(pass, nv.getMatKhau())) {
                 lblMessage.setText("Sai mật khẩu!");
+                return;
+            }
+
+            // Nhân viên đã nghỉ (trang_thai_lam_viec = 0) thì không cho đăng nhập
+            if (!nv.isTrangThai()) {
+                lblMessage.setText("Tài khoản không còn hoạt động!");
+                JOptionPane.showMessageDialog(this,
+                        "Tài khoản không còn hoạt động!",
+                        "Thông báo", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
