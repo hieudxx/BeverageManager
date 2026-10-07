@@ -67,7 +67,9 @@ public class NhanVienResImpl implements NhanVienRepository {
 
     @Override
     public int delete(String id) {
-        String sql = "delete from NhanVien where ma_nhan_vien = ?";
+        // Xóa mềm: chuyển sang "Đã nghỉ" (trang_thai_lam_viec = 0) thay vì DELETE,
+        // vì nhân viên đã có hóa đơn (khóa ngoại) không thể xóa cứng và cần giữ lịch sử.
+        String sql = "update NhanVien set trang_thai_lam_viec = 0 where ma_nhan_vien = ?";
         return JDBC_Helper.updateTongQuat(sql, id);
     }
 
