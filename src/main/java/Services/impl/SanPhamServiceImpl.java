@@ -52,10 +52,7 @@ public class SanPhamServiceImpl implements SanPhamService {
 
         for (SanPhamViewModel sp : listSP) {
             if (sp.getMaSanPham().toLowerCase().contains(keyword.toLowerCase())) {
-                SanPhamViewModel spr = new SanPhamViewModel();
-                spr.setMaSanPham(sp.getMaSanPham());
-                spr.setTenSanPham(sp.getTenSanPham());
-                resultSP.add(spr);
+                resultSP.add(sp);
             }
         }
         return resultSP;
