@@ -47,17 +47,22 @@ public class NhanVienResImpl implements NhanVienRepository {
             return false;
         } else {
             String sql = "insert into NhanVien(ma_nhan_vien, ten_dang_nhap, mat_khau, ho_ten, vai_tro, trang_thai_lam_viec) values (?,?,?,?,?,?)";
-            // Băm mật khẩu trước khi lưu, không lưu văn bản thô
-            String matKhauDaBam = PasswordUtil.hash(nv.getMatKhau());
-            JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), matKhauDaBam, nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai());
+            JDBC_Helper.updateTongQuat(sql, nv.getMaNhanVien(), nv.getTenDangNhap(), PasswordUtil.hash(nv.getMatKhau()), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai());
             return true;
         }
     }
 
     @Override
     public int update(String id, NhanVien nv) {
-        String sql = "update NhanVien set ten_dang_nhap = ?, ho_ten = ?, vai_tro = ?, trang_thai_lam_viec =? where ma_nhan_vien = ? ";
-        return JDBC_Helper.updateTongQuat(sql, nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai(), id);
+        String matKhau = nv.getMatKhau();
+        // Để trống mật khẩu = giữ nguyên mật khẩu cũ, không ghi đè cột mat_khau
+        if (matKhau == null || matKhau.isEmpty()) {
+            String sql = "update NhanVien set ten_dang_nhap = ?, ho_ten = ?, vai_tro = ?, trang_thai_lam_viec = ? where ma_nhan_vien = ? ";
+            return JDBC_Helper.updateTongQuat(sql, nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai(), id);
+        }
+        // Có nhập mật khẩu mới thì băm rồi mới lưu
+        String sql = "update NhanVien set ten_dang_nhap = ?, mat_khau = ?, ho_ten = ?, vai_tro = ?, trang_thai_lam_viec = ? where ma_nhan_vien = ? ";
+        return JDBC_Helper.updateTongQuat(sql, nv.getTenDangNhap(), PasswordUtil.hash(matKhau), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai(), id);
     }
 
     @Override
