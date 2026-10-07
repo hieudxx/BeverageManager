@@ -343,7 +343,7 @@ public class NhanVienView extends JFrame {
             boolean matchRole = role.equals("Tất cả") || nv.getVaiTro().equals(role);
             boolean matchText = nv.getMaNhanVien().toLowerCase().contains(keyword) || nv.getHoTen().toLowerCase().contains(keyword);
             if (matchRole && matchText) {
-                tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai()});
+                tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), trangThaiText(nv.isTrangThai())});
             }
         }
     }
@@ -352,8 +352,13 @@ public class NhanVienView extends JFrame {
         tableModel.setRowCount(0);
         List<NhanVienViewModel> list = INvService.getAll();
         for (NhanVienViewModel nv : list) {
-            tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), nv.isTrangThai() ? "Đang làm" : "Đã nghỉ việc"});
+            tableModel.addRow(new Object[]{nv.getMaNhanVien(), nv.getTenDangNhap(), nv.getHoTen(), nv.getVaiTro(), trangThaiText(nv.isTrangThai())});
         }
+    }
+
+    // Đổi trạng thái (true/false) thành chữ hiển thị; renderer cột 4 dựa vào chữ này để tô màu
+    private String trangThaiText(boolean dangLam) {
+        return dangLam ? "Đang làm" : "Đã nghỉ";
     }
 
     private void loadSelectedRowToForm() {
@@ -385,7 +390,7 @@ public class NhanVienView extends JFrame {
                     loadDataToTable();
                     resetForm();
                 } else {
-                    JOptionPane.showMessageDialog(this, "❌ Thêm thất bại! Mã NV hoặc tài khoản có thể đã tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+//                    JOptionPane.showMessageDialog(this, "❌ Thêm thất bại! Mã NV hoặc tài khoản có thể đã tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -405,8 +410,9 @@ public class NhanVienView extends JFrame {
         if (rows >= 0) {
             int choice = JOptionPane.showConfirmDialog(this, "Có muốn sửa nhân viên không ?", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (choice == JOptionPane.YES_OPTION) {
-                NhanVienViewModel nv = INvService.getAll().get(rows);
-                if (INvService.update(nv.getMaNhanVien(), getDataFromForm("")) == 1) {
+                // Lấy mã NV từ chính dòng đang chọn trong bảng (đúng cả khi bảng đang lọc/tìm kiếm)
+                String maNv = tableModel.getValueAt(rows, 0).toString();
+                if (INvService.update(maNv, getDataFromForm(maNv)) == 1) {
                     JOptionPane.showMessageDialog(this, "✅ Sửa thành công!");
                     loadDataToTable();
                     resetForm();
