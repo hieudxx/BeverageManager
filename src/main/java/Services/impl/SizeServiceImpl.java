@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import Repositories.SizeRepository;
 import Services.SizeService;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -25,17 +26,11 @@ public class SizeServiceImpl implements SizeService{
     }
     
     @Override
-    public List<SizeViewModel> search(String keyword){
-        List<SizeViewModel> lists = SizeRep.getAll();
-        List<SizeViewModel> results = new ArrayList<>();
-        for(SizeViewModel size : lists){
-            if(size.getMaSize().toLowerCase().contains(keyword.toLowerCase())){
-                SizeViewModel vm = new SizeViewModel();
-                vm.setMaSize(size.getMaSize());
-                results.add(vm);
-            }
-        }
-        return results;
+    public List<SizeViewModel> search(String keyword) {
+        String kw = keyword.toLowerCase();
+        return SizeRep.getAll().stream()
+                .filter(s -> s.getMaSize().toLowerCase().contains(kw))
+                .collect(Collectors.toList());
     }
     
     @Override
