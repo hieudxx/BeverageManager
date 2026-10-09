@@ -12,6 +12,7 @@ import java.util.List;
 import Services.impl.NhanVienServiceImpl;
 import javax.swing.border.MatteBorder;
 import Services.NhanVienService;
+import Utilities.Auth;
 
 public class NhanVienView extends JFrame {
 
@@ -123,7 +124,7 @@ public class NhanVienView extends JFrame {
 
         btnThem = btn("Thêm");
         btnSua = btn("Sửa");
-        btnXoa = btn("Xóa");
+        btnXoa = btn("Cho nghỉ");
         btnReset = btn("Reset");
 
         pnlButtons.add(btnThem);
@@ -408,48 +409,73 @@ public class NhanVienView extends JFrame {
         }
         int rows = tableNhanVien.getSelectedRow();
         if (rows >= 0) {
+            // Lấy mã NV từ chính dòng đang chọn trong bảng (đúng cả khi bảng đang lọc/tìm kiếm)
+            String maNv = tableModel.getValueAt(rows, 0).toString();
+
+            // Không cho tự chuyển tài khoản đang đăng nhập sang "Đã nghỉ" (tương đương tự xóa mình)
+            if (laTaiKhoanDangDangNhap(maNv) && cboTrangThai.getSelectedItem().toString().equals("Đã nghỉ")) {
+                JOptionPane.showMessageDialog(this,
+                        "Không thể chuyển tài khoản đang đăng nhập sang trạng thái \"Đã nghỉ\"!",
+                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             int choice = JOptionPane.showConfirmDialog(this, "Có muốn sửa nhân viên không ?", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (choice == JOptionPane.YES_OPTION) {
-                // Lấy mã NV từ chính dòng đang chọn trong bảng (đúng cả khi bảng đang lọc/tìm kiếm)
-                String maNv = tableModel.getValueAt(rows, 0).toString();
                 if (INvService.update(maNv, getDataFromForm(maNv)) == 1) {
                     JOptionPane.showMessageDialog(this, "✅ Sửa thành công!");
                     loadDataToTable();
                     resetForm();
                 }
-//                INvService.update(nv.getMaNhanVien(), getDataFromForm(""));
-//                loadDataToTable();
-//                resetForm();
             }
         }
     }
 
+    // Xóa mềm: chuyển nhân viên sang "Đã nghỉ", không xóa khỏi DB để giữ lịch sử hóa đơn
     private void xoaNhanVien() {
         int rows = tableNhanVien.getSelectedRow();
-        if (rows >= 0) {
-            int choice = JOptionPane.showConfirmDialog(this, "Có muốn xóa nhân viên không ?", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (choice == JOptionPane.YES_OPTION) {
-                if (INvService.delete(txtMaNV.getText()) == 1) {
-                    JOptionPane.showMessageDialog(this, "✅ Xóa thành công!");
-                    loadDataToTable();
-                    resetForm();
-                } else {
-                    JOptionPane.showMessageDialog(this, "❌ Xóa thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                }
-//                INvService.delete(txtMaNV.getText());
-//                loadDataToTable();
-//                resetForm();
-            } else {
-                return;
-            }
-        } else {
+        if (rows < 0) {
             JOptionPane.showMessageDialog(this, "Chọn nhân viên cần xóa");
             return;
         }
 
-//        if (txtMaNV.isEnabled()) {
-//            return;
-//        }
+        String maNv = tableModel.getValueAt(rows, 0).toString();
+        String hoTen = tableModel.getValueAt(rows, 2).toString();
+
+        // Không cho xóa chính tài khoản đang đăng nhập
+        if (laTaiKhoanDangDangNhap(maNv)) {
+            JOptionPane.showMessageDialog(this,
+                    "Không thể xóa tài khoản đang đăng nhập!",
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Đã nghỉ rồi thì không cần làm lại
+        if ("Đã nghỉ".equals(tableModel.getValueAt(rows, 4))) {
+            JOptionPane.showMessageDialog(this, "Nhân viên " + hoTen + " đã ở trạng thái nghỉ việc.");
+            return;
+        }
+
+        int choice = JOptionPane.showConfirmDialog(this,
+                "Cho nhân viên " + hoTen + " (" + maNv + ") nghỉ việc?\n"
+                + "Tài khoản sẽ không thể đăng nhập, lịch sử hóa đơn vẫn được giữ lại.",
+                "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        if (INvService.delete(maNv) == 1) {
+            JOptionPane.showMessageDialog(this, "✅ Đã chuyển nhân viên sang trạng thái nghỉ việc!");
+            loadDataToTable();
+            resetForm();
+        } else {
+            JOptionPane.showMessageDialog(this, "❌ Thao tác thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Mã NV này có phải của người đang đăng nhập không (an toàn khi chưa có ai đăng nhập)
+    private boolean laTaiKhoanDangDangNhap(String maNv) {
+        return Auth.user != null && maNv.equalsIgnoreCase(Auth.user.getMaNhanVien());
     }
 
     private void resetForm() {

@@ -9,6 +9,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.MatteBorder;
 import java.util.List;
+import java.text.Normalizer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import Services.KhachHangService;
 
 public class KhachHangView extends JFrame {
@@ -135,15 +138,32 @@ public class KhachHangView extends JFrame {
 
         btnSua.addActionListener(e -> suaKhachHang());
 
-        btnReset.addActionListener(e -> {
-            txtMaKH.setText("");
-            txtHoTen.setText("");
-            txtSDT.setText("");
+        btnReset.addActionListener(e -> resetForm());
+
+        // Tìm kiếm: lọc bảng ngay khi gõ
+        txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                loadDataToTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                loadDataToTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                loadDataToTable();
+            }
         });
 
         tableKhachHang.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int i = tableKhachHang.getSelectedRow();
+                if (i < 0) {
+                    return;
+                }
                 txtMaKH.setText(tableModel.getValueAt(i, 0).toString());
                 txtHoTen.setText(tableModel.getValueAt(i, 1).toString());
                 txtSDT.setText(tableModel.getValueAt(i, 2).toString());
@@ -262,12 +282,32 @@ public class KhachHangView extends JFrame {
         return p;
     }
 
+    // Nạp bảng từ DB, đồng thời áp dụng từ khóa đang có trong ô tìm kiếm (tìm theo mã, họ tên, SĐT)
     private void loadDataToTable() {
         tableModel.setRowCount(0);
         List<KhachHangViewModel> list = IKhService.getAll();
-        for (KhachHangViewModel kh : list) {
-            tableModel.addRow(new Object[]{kh.getMaKhachHang(), kh.getHoTen(), kh.getSoDienThoai()});
+        if (list == null) {
+            JOptionPane.showMessageDialog(this, "❌ Không tải được danh sách khách hàng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        String keyword = chuanHoa(txtTimKiem.getText());
+        for (KhachHangViewModel kh : list) {
+            if (keyword.isEmpty()
+                    || chuanHoa(kh.getMaKhachHang()).contains(keyword)
+                    || chuanHoa(kh.getHoTen()).contains(keyword)
+                    || chuanHoa(kh.getSoDienThoai()).contains(keyword)) {
+                tableModel.addRow(new Object[]{kh.getMaKhachHang(), kh.getHoTen(), kh.getSoDienThoai()});
+            }
+        }
+    }
+
+    // Bỏ dấu + chữ thường để tìm "nguyen" ra "Nguyễn"
+    private String chuanHoa(String s) {
+        if (s == null) {
+            return "";
+        }
+        String n = Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+        return n.replace('đ', 'd').replace('Đ', 'D').toLowerCase().trim();
     }
 
     public static void main(String[] args) {
@@ -314,7 +354,7 @@ public class KhachHangView extends JFrame {
             return false;
         }
 
-        if (!txtSDT.getText().matches("^0\\d{9}$")) {
+        if (!txtSDT.getText().trim().matches("^0\\d{9}$")) {
             JOptionPane.showMessageDialog(this,
                     "SĐT phải gồm 10 số và bắt đầu bằng 0!",
                     "Lỗi",
@@ -328,8 +368,8 @@ public class KhachHangView extends JFrame {
     private KhachHang getDataFromForm(String maKh) {
         KhachHang kh = new KhachHang();
         kh.setMaKhachHang(maKh);
-        kh.setHoTen(txtHoTen.getText());
-        kh.setSoDienThoai(txtSDT.getText());
+        kh.setHoTen(txtHoTen.getText().trim());
+        kh.setSoDienThoai(txtSDT.getText().trim());
         kh.setTrangThai(true);
         return kh;
     }
@@ -348,7 +388,8 @@ public class KhachHangView extends JFrame {
             int choice = JOptionPane.showConfirmDialog(this, "Có muốn xóa khách hàng không ?", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (choice == JOptionPane.YES_OPTION) {
                 try {
-                    boolean result = IKhService.delete(txtMaKH.getText());
+                    String maKh = tableModel.getValueAt(rows, 0).toString();
+                    boolean result = IKhService.delete(maKh);
                     if (result) {
                         JOptionPane.showMessageDialog(this, "✅ Xóa khách hàng thành công!");
                         loadDataToTable();
@@ -367,26 +408,32 @@ public class KhachHangView extends JFrame {
     }
 
     private void suaKhachHang() {
+        int rows = tableKhachHang.getSelectedRow();
+        if (rows < 0) {
+            JOptionPane.showMessageDialog(this, "Chọn khách hàng cần sửa");
+            return;
+        }
         if (!validateInput()) {
             return;
         }
-        int rows = tableKhachHang.getSelectedRow();
-        if (rows >= 0) {
-            int choice = JOptionPane.showConfirmDialog(this, "Có muốn sửa khách hàng", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (choice == JOptionPane.YES_OPTION) {
-                KhachHangViewModel kh = IKhService.getAll().get(rows);
+        // Lấy mã KH từ chính dòng đang chọn trong bảng (đúng cả khi bảng đang lọc/tìm kiếm)
+        String maKh = tableModel.getValueAt(rows, 0).toString();
 
-                if (IKhService.update(kh.getMaKhachHang(), getDataFromForm(txtMaKH.getText()))) {
-                    JOptionPane.showMessageDialog(this, "✅ Sửa thành công!");
-                    loadDataToTable();
-                    resetForm();
-                }
-//                IKhService.update(kh.getMaKhachHang(), getDataFromForm(txtMaKH.getText()));
-//                loadDataToTable();
-//                resetForm();
-
-            }
+        int choice = JOptionPane.showConfirmDialog(this, "Có muốn sửa khách hàng", "Xác nhận", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
         }
-
+        try {
+            if (IKhService.update(maKh, getDataFromForm(maKh))) {
+                JOptionPane.showMessageDialog(this, "✅ Sửa thành công!");
+                loadDataToTable();
+                resetForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "❌ Sửa thất bại! Khách hàng không còn tồn tại hoặc đã bị xóa.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "❌ Lỗi: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
