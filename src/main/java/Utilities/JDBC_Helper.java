@@ -44,6 +44,19 @@ try {
         }
      }
      
+     /**
+      * Giống updateTongQuat nhưng ném SQLException ra ngoài thay vì nuốt lỗi và trả về 0,
+      * để tầng trên biết nguyên nhân (vd: vi phạm unique index) và báo cho người dùng.
+      */
+     public static int updateOrThrow(String sql, Object...params) throws SQLException {
+        try (PreparedStatement ps = DBConnect.getConnect().prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            return ps.executeUpdate();
+        }
+    }
+
      public static int updateTongQuat(String sql, Object...params) {
         try (PreparedStatement ps = DBConnect.getConnect().prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {

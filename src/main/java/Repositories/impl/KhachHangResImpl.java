@@ -35,22 +35,15 @@ public class KhachHangResImpl implements KhachHangRepository {
 
     @Override
     public boolean add(KhachHang kh) {
+        // Luôn tạo bản ghi MỚI. Khách đã xóa mềm (trang_thai = 0) được giữ nguyên để lưu lịch sử hóa đơn.
+        // Chỉ mục sdt_active chỉ tính khách đang hoạt động, nên:
+        //  - SĐT thuộc khách đã xóa mềm  -> cho phép tạo mới
+        //  - SĐT thuộc khách đang hoạt động -> bị chặn, báo "Số điện thoại đã tồn tại!"
         String sql = "INSERT INTO KhachHang (ma_khach_hang, so_dien_thoai, ho_ten, trang_thai) VALUES (?, ?, ?, ?)";
         try {
-            int result = JDBC_Helper.updateTongQuat(sql, kh.getMaKhachHang(), kh.getSoDienThoai(), kh.getHoTen(), 1);
-            return result > 0;
-        } catch (Exception e) {
-            String msg = e.getMessage();
-            if (msg != null) {
-                if (msg.contains("ma_kh_active")) {
-                    throw new RuntimeException("Mã khách hàng đã tồn tại!");
-                }
-                if (msg.contains("sdt_active")) {
-                    throw new RuntimeException("Số điện thoại đã tồn tại!");
-                }
-            }
-            e.printStackTrace();
-            throw new RuntimeException("Thêm khách hàng thất bại!");
+            return JDBC_Helper.updateOrThrow(sql, kh.getMaKhachHang(), kh.getSoDienThoai(), kh.getHoTen(), 1) > 0;
+        } catch (SQLException e) {
+            throw chuyenLoi(e, "Thêm khách hàng thất bại!");
         }
     }
 
@@ -58,24 +51,26 @@ public class KhachHangResImpl implements KhachHangRepository {
     public boolean update(String maKh, KhachHang kh) {
         String sql = "UPDATE KhachHang SET so_dien_thoai = ?, ho_ten = ? "
                 + "WHERE ma_khach_hang = ? AND trang_thai = 1";
-
         try {
-            int result = JDBC_Helper.updateTongQuat(sql, kh.getSoDienThoai(), kh.getHoTen(), maKh);
-            return result > 0;
-
-        } catch (Exception e) {
-            String msg = e.getMessage();
-
-            if (msg != null) {
-                if (msg.contains("ma_kh_active")) {
-                    throw new RuntimeException("Mã khách hàng đã tồn tại!");
-                }
-                if (msg.contains("sdt_active")) {
-                    throw new RuntimeException("Số điện thoại đã tồn tại!");
-                }
-            }
-            throw new RuntimeException("Cập nhật khách hàng thất bại!");
+            return JDBC_Helper.updateOrThrow(sql, kh.getSoDienThoai(), kh.getHoTen(), maKh) > 0;
+        } catch (SQLException e) {
+            throw chuyenLoi(e, "Cập nhật khách hàng thất bại!");
         }
+    }
+
+    // Đổi lỗi SQL thành thông báo dễ hiểu (tên unique index nằm trong nội dung lỗi của SQL Server)
+    private RuntimeException chuyenLoi(SQLException e, String thongBaoMacDinh) {
+        String msg = e.getMessage();
+        if (msg != null) {
+            if (msg.contains("sdt_active")) {
+                return new RuntimeException("Số điện thoại đã tồn tại!");
+            }
+            if (msg.contains("ma_kh_active")) {
+                return new RuntimeException("Mã khách hàng đã tồn tại!");
+            }
+        }
+        e.printStackTrace();
+        return new RuntimeException(thongBaoMacDinh);
     }
 
     @Override
